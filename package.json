@@ -1,0 +1,19 @@
+{
+  "name": "june",
+  "version": "0.0.0",
+  "private": "true",
+  "license": "MIT",
+  "author": "soulsam480 <soulsam480@hotmail.com>",
+  "workspaces": [
+    "app"
+  ],
+  "scripts": {
+    "dev:app": "yarn workspace appv2 dev",
+    "build:app": "yarn workspace appv2 build",
+    "start:app": "yarn workspace appv2 serve",
+    "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\""
+  },
+  "dependencies": {
+    "concurrently": "^6.1.0"
+  }
+}

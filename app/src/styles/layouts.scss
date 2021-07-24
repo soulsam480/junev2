@@ -1,0 +1,28 @@
+.j-layout {
+  @apply flex flex-row sm:space-x-2 pt-3 items-start relative;
+
+  &__leftbar {
+    @apply w-1/4 sm:min-w-1/4 flex-none hidden sm:block;
+    @apply p-3 bg-warm-gray-200 rounded-lg;
+    @apply h-auto sticky top-[68px];
+  }
+
+  &__content {
+    @apply flex-grow;
+  }
+
+  &__rightbar {
+    @apply w-1/4 sm:min-w-1/4 flex-none hidden lg:block;
+    @apply p-3 bg-warm-gray-200 rounded-lg;
+    @apply h-auto sticky top-[68px];
+  }
+
+  &__bottombar {
+    @apply fixed w-full bottom-0 z-40 bg-warm-gray-200 sm:hidden h-14;
+    @apply inset-x-0 transition-all ease-in-out duration-300;
+
+    &--hidden {
+      @apply -bottom-[60px];
+    }
+  }
+}

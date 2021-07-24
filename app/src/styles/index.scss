@@ -1,0 +1,115 @@
+:root,
+body {
+  @apply bg-warm-gray-100;
+  font-size: 16px;
+  line-height: normal;
+  font-family: 'Roboto Slab', serif;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.j-button {
+  @apply focus:outline-none disabled:(cursor-not-allowed hover:bg-red-100) px-3 py-2;
+  @apply relative transition-colors duration-300 ease-in-out justify-center flex items-center;
+
+  &__content {
+    @apply flex items-center justify-center space-x-1;
+
+    &--loading {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  &__bottom {
+    @apply absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
+  }
+  &__loading {
+    &--invert {
+      border-top-color: rgba(163, 230, 53, var(--tw-bg-opacity)) !important;
+      border-right-color: rgba(163, 230, 53, var(--tw-bg-opacity)) !important;
+    }
+    &--normal {
+      border-top-color: white !important;
+      border-right-color: white !important;
+    }
+
+    @apply ease-linear rounded-full border-2 border-t-2 border-transparent;
+    -webkit-animation: spinner 1s linear infinite;
+    animation: spinner 1s linear infinite;
+  }
+}
+
+.j-menu {
+  &-enter {
+    @apply opacity-0 scale-90;
+  }
+
+  &-enter-active {
+    @apply transform opacity-100 scale-100 duration-300;
+  }
+
+  &-exit {
+    @apply opacity-100 scale-100;
+  }
+
+  &-exit-active {
+    @apply transform opacity-0 scale-90 duration-300;
+  }
+
+  &__list__parent {
+    @apply absolute z-50 min-w-32 mt-2 rounded-md bg-white shadow-lg;
+  }
+
+  &__list-item {
+    @apply cursor-pointer select-none relative px-3 py-2 flex transition-colors duration-300 ease-in-out;
+  }
+
+  &__list {
+    @apply max-h-56 rounded-md text-base leading-6 shadow focus:outline-none;
+    @apply sm:text-sm overflow-auto sm:leading-5;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+      @apply bg-transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-cool-gray-600;
+    }
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+  }
+}
+
+.j-input {
+  @apply outline-none ease-in-out transition-all border-none hover:(ring-lime-200 ring-2);
+  @apply rounded-md focus:(ring-lime-200 ring-2);
+  @apply text-black dark:text-white bg-warm-gray-200;
+}
+
+.j-image {
+  @apply relative transition-all duration-200 ease-in-out;
+
+  &__content {
+    @apply max-w-full max-h-full w-full h-full transition-all duration-300 ease-in;
+  }
+
+  &__loading {
+    @apply absolute inset-0 flex items-center justify-center;
+  }
+}
