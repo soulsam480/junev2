@@ -1,18 +1,34 @@
+require('tsconfig-paths/register');
+import { join } from 'path';
 import dotenv from 'dotenv';
-dotenv.config();
-import nanoexpress from 'nanoexpress';
+dotenv.config({ path: join(__dirname, '../.env') });
 
-const PORT = parseInt(process.env.PORT as string) || 3000;
+import fastify from 'fastify';
+import { createConnection } from 'src/db';
+import { parseEnv } from 'src/utils/helpers';
+import { setLogLevel } from '@typegoose/typegoose';
+import { authController } from './controllers/auth';
+
+const PORT = parseEnv<number>('PORT') || 3000;
+
+setLogLevel('TRACE');
 
 async function main() {
-  const app = nanoexpress();
-
-  app.get('/', (req, res) => {
-    return res.send({ status: 'ok' });
+  const app = fastify({
+    logger: true,
   });
 
-  await app.listen(PORT);
-  console.log(`Listening on http://localhost:${PORT}`);
+  authController(app);
+
+  await createConnection();
+
+  app.listen(PORT, (err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    console.log(`Listening on http://localhost:${PORT}`);
+  });
 }
 
 main();
