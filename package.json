@@ -5,13 +5,17 @@
   "license": "MIT",
   "author": "soulsam480 <soulsam480@hotmail.com>",
   "workspaces": [
-    "app"
+    "app",
+    "api"
   ],
   "scripts": {
-    "dev:app": "yarn workspace appv2 dev",
-    "build:app": "yarn workspace appv2 build",
-    "start:app": "yarn workspace appv2 serve",
-    "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\""
+    "dev:app": "yarn workspace app dev",
+    "build:app": "yarn workspace app build",
+    "start:app": "yarn workspace app serve",
+    "dev:api": "yarn workspace api dev",
+    "build:api": "yarn workspace api build",
+    "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\"",
+    "build": "concurrently --kill-others-on-fail \"yarn build:app\"  \"yarn build:api\""
   },
   "dependencies": {
     "concurrently": "^6.1.0"
