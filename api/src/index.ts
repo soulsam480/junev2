@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: join(__dirname, '../.env') });
 
 import fastify from 'fastify';
+import fastifyAuth from 'fastify-auth';
 import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
 import { setLogLevel } from '@typegoose/typegoose';
@@ -17,6 +18,10 @@ async function main() {
   const app = fastify({
     logger: true,
   });
+
+  app.register(fastifyAuth);
+
+  await app.after();
 
   authController(app);
 
