@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
-import Index from 'src/layouts/Index';
-const Home = React.lazy(() => import('src/layouts/Home'));
-const Feed = React.lazy(() => import('src/pages/Feed'));
-const Login = React.lazy(() => import('src/pages/Login'));
-const Lib = React.lazy(() => import('src/pages/Lib'));
-import AppNavbar from 'src/components/AppNavbar';
+import Index from 'src/Shared/layouts/Index';
+const Home = React.lazy(() => import('src/Feed/layouts/Home'));
+const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
+const Login = React.lazy(() => import('src/User/pages/Login'));
+const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
+import AppNavbar from 'src/Shared/components/AppNavbar';
 
 interface Props {}
 

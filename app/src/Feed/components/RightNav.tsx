@@ -1,7 +1,7 @@
 import React from 'react';
-import JAvatar from 'src/lib/JAvatar';
-import JButton from 'src/lib/JButton';
-import JIcon from 'src/lib/JIcon';
+import JAvatar from 'src/Lib/JAvatar';
+import JButton from 'src/Lib/JButton';
+import JIcon from 'src/Lib/JIcon';
 
 interface Props {}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import JAvatar from 'src/lib/JAvatar';
+import JAvatar from 'src/Lib/JAvatar';
 
 interface Props {}
 

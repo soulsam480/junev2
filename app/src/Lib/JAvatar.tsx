@@ -1,6 +1,6 @@
 import React from 'react';
 import { classNames } from 'src/utils/hepers';
-import JIcon from 'src/lib/JIcon';
+import JIcon from 'src/Lib/JIcon';
 
 interface Props {
   /**

@@ -1,11 +1,11 @@
 import React from 'react';
-import JButton from 'src/lib/JButton';
-import JAvatar from 'src/lib/JAvatar';
-import JMenu from 'src/lib/JMenu';
-import JIcon from 'src/lib/JIcon';
+import JButton from 'src/Lib/JButton';
+import JAvatar from 'src/Lib/JAvatar';
+import JMenu from 'src/Lib/JMenu';
+import JIcon from 'src/Lib/JIcon';
 import { useState } from 'react';
 import { classNames } from 'src/utils/hepers';
-import JCard from 'src/lib/JCard';
+import JCard from 'src/Lib/JCard';
 
 interface Props {}
 
@@ -193,7 +193,7 @@ const Lib: React.FC<Props> = () => {
               avatar="icn:ion:person"
               listAlign="left"
             />
-          </div>  
+          </div>
           <JCard
             headerSlot={
               <div className="flex px-2 pt-2 justify-between items-center">

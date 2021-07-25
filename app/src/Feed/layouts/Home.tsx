@@ -1,9 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import BottomNav from 'src/components/user/BottomNav';
-import LeftNav from 'src/components/user/LeftNav';
-import RightNav from 'src/components/user/RightNav';
-import 'src/styles/layouts.scss';
+import BottomNav from 'src/Feed/components/BottomNav';
+import LeftNav from 'src/Feed/components/LeftNav';
+import RightNav from 'src/Feed/components/RightNav';
+import 'src/Feed/styles/layouts.scss';
 import { classNames } from 'src/utils/hepers';
 import { useHideOnScroll } from 'src/utils/hooks';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import JButton from 'src/lib/JButton';
+import JButton from 'src/Lib/JButton';
 
 interface Props {}
 

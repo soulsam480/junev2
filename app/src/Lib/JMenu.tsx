@@ -2,7 +2,7 @@ import React, { MouseEvent, useCallback, useEffect, useMemo, useState } from 're
 import { CSSTransition } from 'react-transition-group';
 import { classNames } from 'src/utils/hepers';
 import { useClickoutside } from 'src/utils/hooks';
-import JButton from 'src/lib/JButton';
+import JButton from 'src/Lib/JButton';
 import { BaseJButtonProps } from 'src/utils/types';
 
 export type optionType = string | { [k in 'label' | 'value']: any };

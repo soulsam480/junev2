@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import JButton from 'src/lib/JButton';
-import JIcon from 'src/lib/JIcon';
-import JMenu from 'src/lib/JMenu';
+import JButton from 'src/Lib/JButton';
+import JIcon from 'src/Lib/JIcon';
+import JMenu from 'src/Lib/JMenu';
 import { classNames } from 'src/utils/hepers';
 
 interface Props {}

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { classNames } from 'src/utils/hepers';
-import JIcon from 'src/lib/JIcon';
-import JAvatar from 'src/lib/JAvatar';
+import JIcon from 'src/Lib/JIcon';
+import JAvatar from 'src/Lib/JAvatar';
 import { BaseJButtonProps } from 'src/utils/types';
 
 export interface JButtonProps extends BaseJButtonProps {

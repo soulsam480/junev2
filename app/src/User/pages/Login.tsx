@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import JButton from 'src/lib/JButton';
-import JInput from 'src/lib/JInput';
+import JButton from 'src/Lib/JButton';
+import JInput from 'src/Lib/JInput';
 
 interface Props {}
 

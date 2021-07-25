@@ -1,5 +1,5 @@
 import React from 'react';
-import PostCard from 'src/components/feed/PostCard';
+import PostCard from 'src/Feed/components/PostCard';
 
 interface Props {}
 

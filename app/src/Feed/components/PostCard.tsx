@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import JAvatar from 'src/lib/JAvatar';
-import JButton from 'src/lib/JButton';
-import JCard from 'src/lib/JCard';
-import JImage from 'src/lib/JImage';
-import JMenu from 'src/lib/JMenu';
+import JAvatar from 'src/Lib/JAvatar';
+import JButton from 'src/Lib/JButton';
+import JCard from 'src/Lib/JCard';
+import JImage from 'src/Lib/JImage';
+import JMenu from 'src/Lib/JMenu';
 import Linkify from 'react-linkify';
 interface Props {
   imgSrc: string;
