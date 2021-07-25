@@ -43,7 +43,6 @@ export function createController(routes: Route[], opts?: ControllerOpts) {
         fAuthHandler = !!fAuthHandler ? fAuthHandler : [];
         GlobalAuthHandler = !!GlobalAuthHandler ? GlobalAuthHandler : [];
 
-        console.log([...GlobalAuthHandler, ...fAuthHandler].length);
         modRoute.preHandler = app.auth([...GlobalAuthHandler, ...fAuthHandler], {
           ...authOpts,
         });

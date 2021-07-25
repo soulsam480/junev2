@@ -10,6 +10,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/jsonwebtoken": "^8.5.4",
     "@types/mongoose": "^5.10.5",
     "@types/node": "^15.12.2",
     "ts-node-dev": "^1.1.8",
@@ -22,6 +23,7 @@
     "dotenv": "^10.0.0",
     "fastify": "^3.19.2",
     "fastify-auth": "^1.1.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "5.10.18"
   }
 }

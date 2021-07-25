@@ -1,9 +1,21 @@
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, pre, prop, Ref } from '@typegoose/typegoose';
 import { compare, hash } from 'bcrypt';
 import { parseEnv } from 'src/utils/helpers';
+import { Comment, Post } from 'src/entities/post';
 
-@modelOptions({ schemaOptions: { timestamps: true } })
-class User {
+@modelOptions({
+  schemaOptions: { timestamps: true, toJSON: { virtuals: true } },
+})
+@pre<User>('save', async function (next) {
+  if (!this.isModified('password')) next();
+  try {
+    this.password = await this.hashPassword(this.password);
+    next();
+  } catch (error) {
+    next(error);
+  }
+})
+export class User {
   @prop({ required: true })
   public name!: string;
 
@@ -17,24 +29,25 @@ class User {
   public bio?: string;
 
   @prop({ default: '' })
-  public profile_pic?: string;
+  public image?: string;
 
   @prop({ ref: () => User })
-  public followers?: Ref<User>[];
+  public followers: Ref<User>[];
 
   @prop({ ref: () => User })
-  public followings?: Ref<User>[];
+  public followings: Ref<User>[];
 
   @prop({ required: true })
-  public hashed_pass!: string;
+  public password!: string;
 
-  public set password(val: string) {
-    this.hashPassword(val).then((dat) => (this.hashed_pass = dat));
-  }
+  @prop({ ref: () => Post })
+  public liked_posts: Ref<Post>[];
 
-  public get password() {
-    return this.hashed_pass;
-  }
+  @prop({ ref: () => Post })
+  public commented_posts: Ref<Post>[];
+
+  @prop({ ref: () => Comment })
+  public liked_comments: Ref<Comment>[];
 
   public async hashPassword(pass: string) {
     if (!pass) return '';
@@ -46,7 +59,7 @@ class User {
   }
 
   public async comparePassword(pass: string) {
-    return await compare(pass, this.hashed_pass);
+    return await compare(pass, this.password);
   }
 }
 

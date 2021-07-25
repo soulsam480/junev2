@@ -8,8 +8,10 @@ export async function createConnection() {
       useCreateIndex: true,
       useNewUrlParser: true,
     });
+
     console.log('DB connected !');
   } catch (err) {
     console.log(err);
+    process.exit(1);
   }
 }

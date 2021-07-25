@@ -5,10 +5,10 @@ dotenv.config({ path: join(__dirname, '../.env') });
 
 import fastify from 'fastify';
 import fastifyAuth from 'fastify-auth';
+import { setLogLevel } from '@typegoose/typegoose';
 import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
-import { setLogLevel } from '@typegoose/typegoose';
-import { authController } from './controllers/auth';
+import { authController } from 'src/controllers/auth';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
@@ -32,6 +32,7 @@ async function main() {
       console.error(err);
       process.exit(1);
     }
+
     console.log(`Listening on http://localhost:${PORT}`);
   });
 }
