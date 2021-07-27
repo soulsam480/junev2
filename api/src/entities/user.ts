@@ -32,22 +32,25 @@ export class User {
   public image?: string;
 
   @prop({ ref: () => User })
-  public followers: Ref<User>[];
+  public followers?: Ref<User>[];
 
   @prop({ ref: () => User })
-  public followings: Ref<User>[];
+  public followings?: Ref<User>[];
 
   @prop({ required: true })
   public password!: string;
 
-  @prop({ ref: () => Post })
-  public liked_posts: Ref<Post>[];
+  @prop()
+  public ga_id!: string;
 
   @prop({ ref: () => Post })
-  public commented_posts: Ref<Post>[];
+  public liked_posts?: Ref<Post>[];
+
+  @prop({ ref: () => Post })
+  public commented_posts?: Ref<Post>[];
 
   @prop({ ref: () => Comment })
-  public liked_comments: Ref<Comment>[];
+  public liked_comments?: Ref<Comment>[];
 
   public async hashPassword(pass: string) {
     if (!pass) return '';

@@ -1,67 +1,76 @@
+import { Router } from 'express';
+import { sign } from 'jsonwebtoken';
+import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
 import { createTokens } from 'src/services/auth';
-import { createController, createRoute } from 'src/utils/routing';
+import { cerateError, parseEnv } from 'src/utils/helpers';
 
-const register = createRoute({
-  method: 'POST',
-  url: '/register',
-  handler: async (req, reply) => {
-    const { user } = req.body as { user: any };
-    if (!user) return reply.code(404).send({ message: 'User not found!' });
+const authRouter = Router();
 
-    const userFound = await userModel.find({
-      $or: [{ email: user.email }, { username: user.username }],
+authRouter.post('/register', async (req, res) => {
+  const { user } = req.body as { user: any };
+  if (!user) return res.status(404).send(cerateError('User not found!'));
+
+  const userFound = await userModel.find({
+    $or: [{ email: user.email }, { username: user.username }],
+  });
+
+  if (userFound.length > 0)
+    return res.status(400).send(cerateError('An user exists with the same credentials!'));
+
+  try {
+    const newUser = await userModel.create({ ...user });
+
+    (newUser.password as any) = undefined;
+    res.send(newUser.toJSON());
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(cerateError('Internal server error', error));
+  }
+});
+
+authRouter.post('/login', async (req, res) => {
+  const { user } = req.body as { user: Record<string, string> };
+  const { key, password } = user;
+
+  if (!user) return res.status(404).send(cerateError('User not found!'));
+
+  try {
+    const userFromDb = await userModel
+      .findOne(key.includes('@') ? { email: key } : { username: key })
+      .select('-followers -followings -liked_posts -commented_posts -liked_comments');
+
+    if (!userFromDb) return res.status(404).send(cerateError('Username or password is incorrect!'));
+
+    if (!(await userFromDb.comparePassword(password)))
+      return res.status(400).send(cerateError('Username or password is incorrect!'));
+
+    (userFromDb.password as any) = undefined;
+
+    res.send({
+      ...userFromDb.toJSON(),
+      ...createTokens(userFromDb),
     });
-
-    if (userFound.length > 0)
-      return reply.code(400).send({ message: 'An user exists with the same credentials!' });
-
-    try {
-      const newUser = await userModel.create({ ...user });
-
-      (newUser.password as any) = undefined;
-      reply.send(newUser.toJSON());
-    } catch (error) {
-      console.log(error);
-      reply.code(500).send(error);
-    }
-  },
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(cerateError('Internal server error', error));
+  }
 });
 
-const login = createRoute({
-  method: 'POST',
-  url: '/login',
-  handler: async (req, reply) => {
-    const { user } = req.body as { user: Record<string, string> };
+authRouter.get('/google', authenticate('google', { scope: ['profile', 'email'] }));
 
-    const { key, password } = user;
+authRouter.get('/google/redirect', authenticate('google'), (req, res) => {
+  const uid = (req?.user as any).id;
 
-    if (!user) return reply.code(404).send({ message: 'User not found' });
+  const token = sign({ userId: uid }, parseEnv<string>('ACCESS_TOKEN_SECRET'), {
+    expiresIn: '15min',
+  });
 
-    try {
-      const userFromDb = await userModel
-        .findOne(key.includes('@') ? { email: key } : { username: key })
-        .select('-followers -followings -liked_posts -commented_posts -liked_comments');
+  const redirectUrl = !process.env.PROD
+    ? `http://localhost:4000/#/?auth_success=${token}`
+    : `https://june.sambitsahoo.com/?auth_success=${token}`;
 
-      if (!userFromDb)
-        return reply.code(404).send({ message: 'Username or password is incorrect!' });
-
-      if (!(await userFromDb.comparePassword(password)))
-        return reply.code(400).send({ message: 'Username or password is incorrect!' });
-
-      (userFromDb.password as any) = undefined;
-
-      reply.send({
-        ...userFromDb.toJSON(),
-        ...createTokens(userFromDb),
-      });
-    } catch (error) {
-      console.log(error);
-      reply.code(500).send(error);
-    }
-  },
+  res.redirect(redirectUrl);
 });
 
-export const authController = createController([register, login], {
-  prefix: 'auth',
-});
+export { authRouter };

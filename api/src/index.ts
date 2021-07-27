@@ -3,38 +3,42 @@ import { join } from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: join(__dirname, '../.env') });
 
-import fastify from 'fastify';
-import fastifyAuth from 'fastify-auth';
 import { setLogLevel } from '@typegoose/typegoose';
+import express from 'express';
+import cors from 'cors';
 import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
-import { authController } from 'src/controllers/auth';
+import { authRouter } from 'src/controllers/auth';
+import { setupOauth } from './oauth';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
 setLogLevel('TRACE');
 
 async function main() {
-  const app = fastify({
-    logger: true,
-  });
+  const app = express();
 
-  app.register(fastifyAuth);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(
+    cors({
+      credentials: true,
+      origin: ['*'],
+    }),
+  );
 
-  await app.after();
+  setupOauth(app);
 
-  authController(app);
+  app.use('/auth', authRouter);
 
-  await createConnection();
+  try {
+    await createConnection();
 
-  app.listen(PORT, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-
-    console.log(`Listening on http://localhost:${PORT}`);
-  });
+    app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
 }
 
 main();
