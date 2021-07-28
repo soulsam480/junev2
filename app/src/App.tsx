@@ -6,6 +6,7 @@ const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
 const Login = React.lazy(() => import('src/User/pages/Login'));
 const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
 import AppNavbar from 'src/Shared/components/AppNavbar';
+import { useAuthRedirect } from 'src/utils/auth';
 
 interface Props {}
 
@@ -40,6 +41,8 @@ const App: React.FC<Props> = () => {
       ],
     },
   ]);
+
+  useAuthRedirect();
 
   return (
     <div>

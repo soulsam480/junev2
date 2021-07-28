@@ -6,12 +6,13 @@ export interface User {
   email: string | null;
   bio: string | null;
   image: string | null;
-  accessToken: string | null;
+  token: string | null;
+  refresh: string;
 }
 
 export interface UserState extends State {
   isLoggedIn: boolean;
-  user: User;
+  user: Omit<User, 'refresh' | 'token'>;
   setLogin: (val: boolean) => void;
   setUser: (val: User) => void;
 }
@@ -19,7 +20,6 @@ export interface UserState extends State {
 export const useUserStore = create<UserState>((set) => ({
   isLoggedIn: false,
   user: {
-    accessToken: null,
     bio: null,
     email: null,
     image: null,
