@@ -4,7 +4,7 @@ import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
-import { cerateError, parseEnv } from 'src/utils/helpers';
+import { cerateError, parseEnv, sanitizeResponse } from 'src/utils/helpers';
 
 const authRouter = Router();
 
@@ -22,8 +22,12 @@ authRouter.post('/register', async (req, res) => {
   try {
     const newUser = await userModel.create({ ...user });
 
-    (newUser.password as any) = undefined;
-    res.send(newUser.toJSON());
+    res.send({
+      ...sanitizeResponse(
+        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
+        newUser.toJSON(),
+      ),
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send(cerateError('Internal server error', error));
@@ -46,10 +50,11 @@ authRouter.post('/login', async (req, res) => {
     if (!(await userFromDb.comparePassword(password)))
       return res.status(400).send(cerateError('Username or password is incorrect!'));
 
-    (userFromDb.password as any) = undefined;
-
     res.send({
-      ...userFromDb.toJSON(),
+      ...sanitizeResponse(
+        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
+        userFromDb.toJSON(),
+      ),
       ...createTokens(userFromDb),
     });
   } catch (error) {
@@ -85,7 +90,10 @@ authRouter.get('/user', auth, async (req, res) => {
     if (!userFromDb) return res.status(404).send(cerateError('User not found !'));
 
     res.send({
-      ...userFromDb.toJSON(),
+      ...sanitizeResponse(
+        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
+        userFromDb.toJSON(),
+      ),
       ...createTokens(userFromDb),
     });
   } catch (error) {
