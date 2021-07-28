@@ -2,6 +2,7 @@ import { User, useUserStore } from 'src/User/store/useUserStore';
 import { api, setApiToken } from 'src/utils/hepers';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { getUserData } from 'src/User/services/auth';
 
 export async function auth() {
   const jtoken = () => localStorage.getItem('__jtoken');
@@ -62,11 +63,8 @@ export function useAuthRedirect() {
     if (!tok) return navigate('/');
     (async () => {
       try {
-        const { data } = await api.get<User>('/user', {
-          headers: {
-            authorization: `Bearer ${tok}`,
-          },
-        });
+        setApiToken(tok);
+        const { data } = await getUserData();
 
         localStorage.setItem('__token', data.refresh);
         setApiToken(data.token as string);

@@ -23,7 +23,7 @@ async function main() {
   app.use(
     cors({
       credentials: true,
-      origin: ['*'],
+      origin: ['http://localhost:4002'],
     }),
   );
 

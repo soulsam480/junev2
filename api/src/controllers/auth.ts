@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { sign } from 'jsonwebtoken';
 import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
+import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
 import { cerateError, parseEnv } from 'src/utils/helpers';
 
@@ -67,10 +68,30 @@ authRouter.get('/google/redirect', authenticate('google'), (req, res) => {
   });
 
   const redirectUrl = !process.env.PROD
-    ? `http://localhost:4000/#/?auth_success=${token}`
+    ? `http://localhost:4002/?auth_success=${token}`
     : `https://june.sambitsahoo.com/?auth_success=${token}`;
 
   res.redirect(redirectUrl);
+});
+
+authRouter.get('/user', auth, async (req, res) => {
+  const { userId } = req;
+
+  try {
+    const userFromDb = await userModel
+      .findOne({ _id: userId })
+      .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
+
+    if (!userFromDb) return res.status(404).send(cerateError('User not found !'));
+
+    res.send({
+      ...userFromDb.toJSON(),
+      ...createTokens(userFromDb),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(cerateError('Internal server error', error));
+  }
 });
 
 export { authRouter };

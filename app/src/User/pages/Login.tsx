@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
+import { googleLogin } from 'src/User/services/auth';
 
 interface Props {}
 
@@ -52,7 +53,7 @@ const Login: React.FC<Props> = () => {
                 <div className="text-base">OR</div>
 
                 <div className="flex items-center justify-center">
-                  <JButton icon="ion:logo-google" size="22px" sm />
+                  <JButton icon="ion:logo-google" size="22px" sm onClick={() => googleLogin()} />
                 </div>
               </div>
             ) : (

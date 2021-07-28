@@ -4,7 +4,7 @@
   "description": "Junev2 api",
   "author": "soulsam480 <soulsam480@hotmail.com>",
   "scripts": {
-    "dev": "ts-node-dev --respawn -- src/index.ts",
+    "dev": "ts-node-dev --respawn --files -- src/index.ts",
     "build": "tsc"
   },
   "license": "MIT",
