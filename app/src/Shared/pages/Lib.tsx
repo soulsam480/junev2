@@ -4,7 +4,7 @@ import JAvatar from 'src/Lib/JAvatar';
 import JMenu from 'src/Lib/JMenu';
 import JIcon from 'src/Lib/JIcon';
 import { useState } from 'react';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 import JCard from 'src/Lib/JCard';
 
 interface Props {}

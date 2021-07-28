@@ -1,31 +1,31 @@
 import { User, useUserStore } from 'src/User/store/useUserStore';
-import { api, setApiToken } from 'src/utils/hepers';
+import { api, setApiToken } from 'src/utils/helpers';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { getUserData } from 'src/User/services/auth';
 
 export async function auth() {
-  const jtoken = () => localStorage.getItem('__jtoken');
+  const jtoken = () => localStorage.getItem('__token');
 
   if (!!jtoken()) {
     try {
       const {
-        data: { token, refresh },
-      } = await api.get('/token', {
+        data: { token },
+      } = await api.get('/auth/token', {
         headers: {
           token: `Bearer ${jtoken()}`,
         },
       });
 
-      localStorage.setItem('__token', refresh);
+      setApiToken(token);
+      const { data } = await getUserData();
 
-      const { data: userData } = await api.get('/user', {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+      localStorage.setItem('__token', data.refresh);
+      setApiToken(data.token as string);
+      delete (data as any).refresh;
+      delete (data as any).access;
 
-      useUserStore.setState({ user: { ...userData }, isLoggedIn: true });
+      useUserStore.setState({ user: { ...data }, isLoggedIn: true });
     } catch (error) {
       console.log(error);
       localStorage.clear();
@@ -36,7 +36,7 @@ export async function auth() {
       try {
         const {
           data: { token, refresh },
-        } = await api.get('/token', {
+        } = await api.get('/auth/token', {
           headers: {
             token: `Bearer ${jtoken()}`,
           },
@@ -46,9 +46,10 @@ export async function auth() {
         setApiToken(token);
       } catch (error) {
         console.log(error);
+        useUserStore.setState({ user: {} as any, isLoggedIn: false });
         localStorage.clear();
       }
-    });
+    }, 840000);
   }
 }
 

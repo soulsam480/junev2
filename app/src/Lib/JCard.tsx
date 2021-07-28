@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 export interface JCardProps {
   className?: string;
   loading?: boolean;

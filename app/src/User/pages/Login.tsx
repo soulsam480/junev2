@@ -1,20 +1,65 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
-import { googleLogin } from 'src/User/services/auth';
+import { googleLogin, login, LoginUserDto, register } from 'src/User/services/auth';
+import { useUserStore } from 'src/User/store/useUserStore';
+import { setApiToken } from 'src/utils/helpers';
 
 interface Props {}
 
-interface LoginUserDto {
-  email?: string;
-  password?: string;
-  username?: string;
-  name?: string;
-}
-
 const Login: React.FC<Props> = () => {
-  const [user, setUser] = useState<LoginUserDto>();
-  const [isLogin, setLogin] = useState(true);
+  const { setUser, setLogin } = useUserStore();
+  const naviagte = useNavigate();
+  const [user, setUSerDto] = useState<LoginUserDto>({
+    email: '',
+    name: '',
+    password: '',
+    username: '',
+  });
+  const [isLogin, setLoginType] = useState(true);
+
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!user.email || !user.password) return;
+
+    try {
+      const { data } = await login(user);
+
+      localStorage.setItem('__token', data.refresh);
+      setApiToken(data.token as string);
+      delete (data as any).refresh;
+      delete (data as any).token;
+
+      setUser({ ...data });
+      setLogin(true);
+      naviagte('/u');
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (Object.values(user).length < 4) return;
+
+    try {
+      const { data } = await register(user);
+
+      localStorage.setItem('__token', data.refresh);
+      setApiToken(data.token as string);
+      delete (data as any).refresh;
+      delete (data as any).token;
+
+      setUser({ ...data });
+      setLogin(true);
+      naviagte('/u');
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="my-30 w-full lg:w-3/4 m-auto h-[475px]">
@@ -33,17 +78,17 @@ const Login: React.FC<Props> = () => {
                   alt=""
                 />
 
-                <form className="flex flex-col space-y-4 ">
+                <form className="flex flex-col space-y-4 " onSubmit={(e) => handleLogin(e)}>
                   {' '}
                   <JInput
                     value={user?.email}
-                    type="email"
-                    onInput={(email) => setUser({ ...user, email })}
+                    type="text"
+                    onInput={(email) => setUSerDto({ ...user, email })}
                     placeholder="Email or username"
                   />
                   <JInput
                     value={user?.password}
-                    onInput={(password) => setUser({ ...user, password })}
+                    onInput={(password) => setUSerDto({ ...user, password })}
                     placeholder="Password"
                     type="password"
                   />
@@ -64,26 +109,26 @@ const Login: React.FC<Props> = () => {
                   className="max-w-full m-auto block sm:hidden w-16"
                   alt=""
                 />
-                <form className="flex flex-col space-y-4">
+                <form className="flex flex-col space-y-4" onSubmit={(e) => handleRegister(e)}>
                   <JInput
                     value={user?.name}
-                    onInput={(email) => setUser({ ...user, email })}
+                    onInput={(name) => setUSerDto({ ...user, name })}
                     placeholder="Name"
                   />
                   <JInput
                     value={user?.username}
-                    onInput={(password) => setUser({ ...user, password })}
+                    onInput={(username) => setUSerDto({ ...user, username })}
                     placeholder="Username"
                   />
                   <JInput
                     value={user?.email}
                     type="email"
-                    onInput={(email) => setUser({ ...user, email })}
+                    onInput={(email) => setUSerDto({ ...user, email })}
                     placeholder="Email"
                   />
                   <JInput
                     value={user?.password}
-                    onInput={(password) => setUser({ ...user, password })}
+                    onInput={(password) => setUSerDto({ ...user, password })}
                     placeholder="Password"
                     type="password"
                   />
@@ -101,7 +146,7 @@ const Login: React.FC<Props> = () => {
                   flat
                   dense
                   className="!inline mx-1 !bg-transparent text-lime-600"
-                  onClick={() => setLogin(false)}
+                  onClick={() => setLoginType(false)}
                 />
               </div>
             ) : (
@@ -112,7 +157,7 @@ const Login: React.FC<Props> = () => {
                   flat
                   dense
                   className="!inline mx-1 !bg-transparent text-lime-600"
-                  onClick={() => setLogin(true)}
+                  onClick={() => setLoginType(true)}
                 />
               </div>
             )}

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 import JIcon from 'src/Lib/JIcon';
 import JAvatar from 'src/Lib/JAvatar';
 import { BaseJButtonProps } from 'src/utils/types';

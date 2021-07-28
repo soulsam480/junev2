@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 
 interface Props {}
 

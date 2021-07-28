@@ -1,5 +1,5 @@
 import React from 'react';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 
 interface Props {
   size?: string;

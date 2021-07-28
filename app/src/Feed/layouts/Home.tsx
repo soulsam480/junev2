@@ -4,7 +4,7 @@ import BottomNav from 'src/Feed/components/BottomNav';
 import LeftNav from 'src/Feed/components/LeftNav';
 import RightNav from 'src/Feed/components/RightNav';
 import 'src/Feed/styles/layouts.scss';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 import { useHideOnScroll } from 'src/utils/hooks';
 
 interface Props {}

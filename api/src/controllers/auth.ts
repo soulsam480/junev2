@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
@@ -27,6 +27,7 @@ authRouter.post('/register', async (req, res) => {
         ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
         newUser.toJSON(),
       ),
+      ...createTokens(newUser.toJSON()),
     });
   } catch (error) {
     console.log(error);
@@ -55,7 +56,7 @@ authRouter.post('/login', async (req, res) => {
         ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
         userFromDb.toJSON(),
       ),
-      ...createTokens(userFromDb),
+      ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
     console.log(error);
@@ -94,7 +95,31 @@ authRouter.get('/user', auth, async (req, res) => {
         ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
         userFromDb.toJSON(),
       ),
-      ...createTokens(userFromDb),
+      ...createTokens(userFromDb.toJSON()),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(cerateError('Internal server error', error));
+  }
+});
+
+authRouter.get('/token', async (req, res) => {
+  let token = req.headers['token'];
+
+  if (!token || typeof token !== 'string')
+    return res.status(401).send(cerateError('Unauthorized !'));
+  if (!token.startsWith('Bearer ')) return res.status(401).send(cerateError('Unauthorized !'));
+
+  token = token.split('Bearer ')[1];
+
+  try {
+    const { userId } = <{ userId: string }>verify(token, parseEnv<string>('REFRESH_TOKEN_SECRET'));
+    const userFromDb = await userModel.findOne({ _id: userId }).select('id');
+
+    if (!userFromDb) return res.status(404).send(cerateError('User not found !'));
+
+    res.send({
+      ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
     console.log(error);

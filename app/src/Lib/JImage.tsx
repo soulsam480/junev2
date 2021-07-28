@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { classNames } from 'src/utils/hepers';
+import { classNames } from 'src/utils/helpers';
 
 interface Props {
   src: string;
