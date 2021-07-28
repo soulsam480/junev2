@@ -28,7 +28,7 @@ export async function auth() {
       useUserStore.setState({ user: { ...data }, isLoggedIn: true });
     } catch (error) {
       console.log(error);
-      localStorage.clear();
+      localStorage.removeItem('__token');
       useUserStore.setState({ user: {} as any, isLoggedIn: false });
     }
 
@@ -47,7 +47,7 @@ export async function auth() {
       } catch (error) {
         console.log(error);
         useUserStore.setState({ user: {} as any, isLoggedIn: false });
-        localStorage.clear();
+        localStorage.removeItem('__token');
       }
     }, 840000);
   }
@@ -81,7 +81,7 @@ export function useAuthRedirect() {
 
         setUser({} as any);
         setLogin(false);
-        localStorage.clear();
+        localStorage.removeItem('__token');
 
         navigate('/');
       }

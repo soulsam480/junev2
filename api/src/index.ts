@@ -3,7 +3,7 @@ import { join } from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: join(__dirname, '../.env') });
 
-import { setLogLevel } from '@typegoose/typegoose';
+import { mongoose, setLogLevel } from '@typegoose/typegoose';
 import express from 'express';
 import cors from 'cors';
 import { createConnection } from 'src/db';
@@ -14,6 +14,7 @@ import { setupOauth } from './oauth';
 const PORT = parseEnv<number>('PORT') || 3000;
 
 setLogLevel('TRACE');
+mongoose.set('debug', true);
 
 async function main() {
   const app = express();
