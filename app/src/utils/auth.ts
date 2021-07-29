@@ -1,4 +1,4 @@
-import { User, useUserStore } from 'src/User/store/useUserStore';
+import { useUserStore } from 'src/User/store/useUserStore';
 import { api, setApiToken } from 'src/utils/helpers';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
