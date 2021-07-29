@@ -80,6 +80,12 @@ authRouter.get('/google/redirect', authenticate('google'), (req, res) => {
   res.redirect(redirectUrl);
 });
 
+/**
+ * @swagger
+ * /user:
+ *    get:
+ *      description: returns the data of the logged in user
+ */
 authRouter.get('/user', auth, async (req, res) => {
   const { userId } = req;
 

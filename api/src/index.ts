@@ -10,6 +10,8 @@ import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
 import { authRouter } from 'src/controllers/auth';
 import { setupOauth } from './oauth';
+import { serve, setup } from 'swagger-ui-express';
+import specs from '../swagger-spec.json';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
@@ -31,6 +33,7 @@ async function main() {
   setupOauth(app);
 
   app.use('/auth', authRouter);
+  app.use('/api-docs', serve, setup(specs));
 
   try {
     await createConnection();

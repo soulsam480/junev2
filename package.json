@@ -14,6 +14,7 @@
     "start:app": "yarn workspace app serve",
     "dev:api": "yarn workspace api dev",
     "build:api": "yarn workspace api build",
+    "build:api:swagger": "yarn workspace api build:swagger",
     "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\"",
     "build": "concurrently --kill-others-on-fail \"yarn build:app\"  \"yarn build:api\""
   },
