@@ -3,28 +3,16 @@ import { Link } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
+import JMenuItem from 'src/Lib/JMenuItem';
 import { classNames } from 'src/utils/helpers';
 
 interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
-  const options = [
-    {
-      label: 'Account',
-      value: 'account',
-      icon: 'ion:ios-contact-outline',
-    },
-    {
-      label: 'Home',
-      value: 'home',
-      icon: 'ion:home-outline',
-    },
-    {
-      label: 'Log out',
-      value: 'logout',
-      icon: 'ion:log-out-outline',
-    },
-  ];
+  function logger() {
+    console.log('fired');
+  }
+
   return (
     <nav
       className={classNames([
@@ -47,27 +35,57 @@ const AppNavbar: React.FC<Props> = () => {
             <JButton noBg icon="ion:chatbubble-ellipses-outline" size="25px" dense sm />
             <div className="hidden sm:block">
               <JMenu
-                options={options}
                 avatarRound
                 avatar="img:https://cdn.quasar.dev/img/avatar.png"
                 size="35px"
-                flat
-                round
                 sm
-                dense
-                iconRight
-                invert
                 noBg
-                optionKey="value"
-                optionSlot={(option, getVal) => (
-                  <div className="w-full flex items-center space-x-2">
-                    <span className="flex-none">
-                      <JIcon icon={getVal(option, 'icon')} />
-                    </span>
-                    <span className="flex-grow"> {getVal(option, 'label')} </span>
-                  </div>
+              >
+                {({ closeMenu: cMenu }) => (
+                  <>
+                    <JMenuItem
+                      className="flex space-x-2 items-center"
+                      closeMenuCallback={cMenu}
+                      onClick={logger}
+                    >
+                      <span className="flex-none">
+                        <JIcon icon="ion:ios-contact-outline" />
+                      </span>
+                      <span className="flex-grow">Account</span>
+                    </JMenuItem>
+
+                    <JMenuItem
+                      className="flex space-x-2 items-center"
+                      closeMenuCallback={cMenu}
+                      onClick={logger}
+                    >
+                      <span className="flex-none">
+                        <JIcon icon="ion:home-outline" />
+                      </span>
+                      <span className="flex-grow">Home</span>
+                    </JMenuItem>
+
+                    <JMenuItem
+                      className="flex space-x-2 items-center"
+                      closeMenuCallback={cMenu}
+                      onClick={logger}
+                    >
+                      <span className="flex-none">
+                        <JIcon icon="ion:log-out-outline" />
+                      </span>
+                      <span className="flex-grow">Log out</span>
+                    </JMenuItem>
+
+                    <JMenuItem
+                      className="flex space-x-2 items-center"
+                      closeMenuCallback={cMenu}
+                      to="/lib"
+                    >
+                      Lib
+                    </JMenuItem>
+                  </>
                 )}
-              />
+              </JMenu>
             </div>
           </div>
         </div>

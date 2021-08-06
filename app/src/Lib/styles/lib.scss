@@ -48,7 +48,7 @@
 
 .j-menu {
   &-enter {
-    @apply opacity-0 scale-90;
+    @apply opacity-0 scale-90 relative;
   }
 
   &-enter-active {
@@ -73,7 +73,19 @@
 
   &__list {
     @apply max-h-56 rounded-md text-base leading-6 shadow focus:outline-none;
-    @apply sm:text-sm overflow-auto sm:leading-5;
+    @apply sm:text-sm overflow-auto sm:leading-5 bg-lime-400;
+
+    .j-menu__list-item {
+      @apply hover:bg-lime-300;
+    }
+
+    &--invert {
+      @apply bg-lime-300;
+
+      .j-menu__list-item {
+        @apply hover:bg-lime-400;
+      }
+    }
 
     &::-webkit-scrollbar {
       width: 3px;

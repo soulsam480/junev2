@@ -6,21 +6,28 @@ import JButton from 'src/Lib/JButton';
 import { BaseJButtonProps } from 'src/utils/types';
 
 export type optionType = string | { [k in 'label' | 'value']: any };
-
+export type optionValMethod = (option: string | Record<string, any>, optionKey?: string) => string;
 interface Props extends BaseJButtonProps {
-  options: optionType[];
+  options?: optionType[];
   optionKey?: 'label' | 'value';
   value?: string;
   listAlign?: 'left' | 'right';
   onInput?: (val: string, e: MouseEvent) => void;
   optionSlot?: (
     option: string | Record<string, any>,
-    getOptionVal: (option: string | Record<string, any>, optionKey?: string) => string,
+    getOptionVal: optionValMethod,
   ) => React.ReactNode;
+  children?: (ctx: {
+    options?: optionType[];
+    optionClasses: (option: string | Record<string, any>, optionKey?: string) => string[];
+    closeMenu(val?: boolean): void;
+    getOptionVal: optionValMethod;
+  }) => React.ReactNode;
 }
 
 const JMenu: React.FC<Props> = (props) => {
-  const { options, optionKey, onInput, value, optionSlot, listAlign, invert, ...rest } = props;
+  const { options, optionKey, onInput, value, optionSlot, listAlign, invert, children, ...rest } =
+    props;
 
   const [isMenu, setMenu] = useState(false);
   const [ref] = useClickoutside<HTMLDivElement>(() => setMenu(false));
@@ -61,7 +68,7 @@ const JMenu: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    <div className="relative j-menu" ref={ref}>
+    <div className="j-menu" ref={ref}>
       <div>
         <JButton {...rest} invert={invert} onClick={() => setMenu(!isMenu)} />
       </div>
@@ -77,33 +84,45 @@ const JMenu: React.FC<Props> = (props) => {
         <div
           className={classNames([
             'j-menu__list__parent',
-            `${listAlign === 'left' ? 'origin-top-left left-0' : 'origin-top-right right-0'}`,
+            listAlign === 'left' ? 'origin-top-left left-0' : 'origin-top-right right-0',
           ])}
         >
-          <ul
+          <div
             tab-index="-1"
             role="listbox"
             aria-labelledby="assigned-to-label"
-            className={classNames(['j-menu__list', invert ? 'bg-lime-300' : 'bg-lime-400'])}
+            className={classNames(['j-menu__list', invert ? 'j-menu__list--invert' : ''])}
           >
-            {options.map((option) => {
-              return (
-                <li
-                  role="option"
-                  key={optionVal(option, optionKey)}
-                  title={optionVal(option, optionKey)}
-                  className={classNames(['j-menu__list-item', ...optionClasses(option, optionKey)])}
-                  onClick={(e) => handleClick(option, e)}
-                >
-                  {!!optionSlot ? (
-                    optionSlot(option, optionVal)
-                  ) : (
-                    <span className="font-normal flex-grow">{getOptionVal(option, 'label')} </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+            {!!children
+              ? children({
+                  options,
+                  optionClasses,
+                  closeMenu: (e = false) => setMenu(e),
+                  getOptionVal: optionVal,
+                })
+              : options?.map((option) => {
+                  return (
+                    <div
+                      role="option"
+                      key={optionVal(option, optionKey)}
+                      title={optionVal(option, optionKey)}
+                      className={classNames([
+                        'j-menu__list-item',
+                        ...optionClasses(option, optionKey),
+                      ])}
+                      onClick={(e) => handleClick(option, e)}
+                    >
+                      {!!optionSlot ? (
+                        optionSlot(option, optionVal)
+                      ) : (
+                        <span className="font-normal flex-grow">
+                          {getOptionVal(option, 'label')}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+          </div>
         </div>
       </CSSTransition>
     </div>
