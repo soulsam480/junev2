@@ -68,7 +68,7 @@ const JMenu: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    <div className="j-menu" ref={ref}>
+    <div className="relative j-menu" ref={ref}>
       <div>
         <JButton {...rest} invert={invert} onClick={() => setMenu(!isMenu)} />
       </div>
