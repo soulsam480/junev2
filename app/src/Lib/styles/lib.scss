@@ -101,9 +101,15 @@
 }
 
 .j-input {
-  @apply outline-none ease-in-out transition-all border-none hover:(ring-lime-200 ring-2);
-  @apply rounded-md focus:(ring-lime-200 ring-2);
-  @apply text-black dark:text-white bg-warm-gray-200;
+  input,
+  textarea {
+    @apply outline-none ease-in-out transition-all border-none hover:(ring-lime-200 ring-2) w-full;
+    @apply rounded-md focus:(ring-lime-200 ring-2);
+    @apply text-black dark:text-white bg-warm-gray-200 h-full;
+  }
+  textarea {
+    @apply px-2 py-3 resize-none;
+  }
 }
 
 .j-image {
