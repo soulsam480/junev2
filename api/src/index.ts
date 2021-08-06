@@ -12,6 +12,7 @@ import { authRouter } from 'src/controllers/auth';
 import { setupOauth } from './oauth';
 import { serve, setup } from 'swagger-ui-express';
 import specs from '../swagger-spec.json';
+import { postRouter } from './controllers/post';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
@@ -33,6 +34,7 @@ async function main() {
   setupOauth(app);
 
   app.use('/auth', authRouter);
+  app.use('/posts', postRouter);
   app.use('/api-docs', serve, setup(specs));
 
   try {

@@ -27,3 +27,9 @@ export function sanitizeResponse(
         {},
       );
 }
+
+export function formatResponse<T>(data: T) {
+  return {
+    data,
+  };
+}
