@@ -4,34 +4,31 @@ import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
-import { cerateError, parseEnv, sanitizeResponse } from 'src/utils/helpers';
+import { createError, parseEnv, sanitizeResponse } from 'src/utils/helpers';
 
 const authRouter = Router();
 
 authRouter.post('/register', async (req, res) => {
   const { user } = req.body as { user: any };
-  if (!user) return res.status(404).send(cerateError('User not found!'));
+  if (!user) return res.status(404).send(createError('User not found!'));
 
   const userFound = await userModel.find({
     $or: [{ email: user.email }, { username: user.username }],
   });
 
   if (userFound.length > 0)
-    return res.status(400).send(cerateError('An user exists with the same credentials!'));
+    return res.status(400).send(createError('An user exists with the same credentials!'));
 
   try {
     const newUser = await userModel.create({ ...user });
 
     res.send({
-      ...sanitizeResponse(
-        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
-        newUser.toJSON(),
-      ),
+      ...sanitizeResponse(newUser.toJSON()),
       ...createTokens(newUser.toJSON()),
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send(cerateError('Internal server error', error));
+    res.status(500).send(createError('Internal server error', error));
   }
 });
 
@@ -39,28 +36,25 @@ authRouter.post('/login', async (req, res) => {
   const { user } = req.body as { user: Record<string, string> };
   const { key, password } = user;
 
-  if (!user) return res.status(404).send(cerateError('User not found!'));
+  if (!user) return res.status(404).send(createError('User not found!'));
 
   try {
     const userFromDb = await userModel
       .findOne(key.includes('@') ? { email: key } : { username: key })
       .select('-followers -followings -liked_posts -commented_posts -liked_comments');
 
-    if (!userFromDb) return res.status(404).send(cerateError('Username or password is incorrect!'));
+    if (!userFromDb) return res.status(404).send(createError('Username or password is incorrect!'));
 
     if (!(await userFromDb.comparePassword(password)))
-      return res.status(400).send(cerateError('Username or password is incorrect!'));
+      return res.status(400).send(createError('Username or password is incorrect!'));
 
     res.send({
-      ...sanitizeResponse(
-        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
-        userFromDb.toJSON(),
-      ),
+      ...sanitizeResponse(userFromDb.toJSON()),
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send(cerateError('Internal server error', error));
+    res.status(500).send(createError('Internal server error', error));
   }
 });
 
@@ -94,18 +88,15 @@ authRouter.get('/user', auth, async (req, res) => {
       .findOne({ _id: userId })
       .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
 
-    if (!userFromDb) return res.status(404).send(cerateError('User not found !'));
+    if (!userFromDb) return res.status(404).send(createError('User not found !'));
 
     res.send({
-      ...sanitizeResponse(
-        ['id', 'bio', 'image', 'email', 'name', 'ga_id', 'username', 'createdAt', 'updatedAt'],
-        userFromDb.toJSON(),
-      ),
+      ...sanitizeResponse(userFromDb.toJSON()),
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send(cerateError('Internal server error', error));
+    res.status(500).send(createError('Internal server error', error));
   }
 });
 
@@ -113,8 +104,8 @@ authRouter.get('/token', async (req, res) => {
   let token = req.headers['token'];
 
   if (!token || typeof token !== 'string')
-    return res.status(401).send(cerateError('Unauthorized !'));
-  if (!token.startsWith('Bearer ')) return res.status(401).send(cerateError('Unauthorized !'));
+    return res.status(401).send(createError('Unauthorized !'));
+  if (!token.startsWith('Bearer ')) return res.status(401).send(createError('Unauthorized !'));
 
   token = token.split('Bearer ')[1];
 
@@ -122,14 +113,14 @@ authRouter.get('/token', async (req, res) => {
     const { userId } = <{ userId: string }>verify(token, parseEnv<string>('REFRESH_TOKEN_SECRET'));
     const userFromDb = await userModel.findOne({ _id: userId }).select('id');
 
-    if (!userFromDb) return res.status(404).send(cerateError('User not found !'));
+    if (!userFromDb) return res.status(404).send(createError('User not found !'));
 
     res.send({
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send(cerateError('Internal server error', error));
+    res.status(500).send(createError('Internal server error', error));
   }
 });
 

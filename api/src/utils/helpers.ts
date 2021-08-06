@@ -2,7 +2,7 @@ export function parseEnv<T extends number | string>(key: string): T {
   return process.env[key] as T;
 }
 
-export function cerateError(message: string, error?: any) {
+export function createError(message: string, error?: any) {
   return {
     message,
     error,
@@ -10,15 +10,20 @@ export function cerateError(message: string, error?: any) {
 }
 
 export function sanitizeResponse(
-  schema: string[],
   data: Record<string, string | number | symbol>,
+  schema?: string[],
 ): { [x: string]: any } {
-  return [
-    ...Object.keys(data).map((key) => {
-      if (schema.includes(key)) return [key, data[key]];
-      return [];
-    }),
-  ]
-    .filter((x) => !!x.length && x)
-    .reduce((o, [key, val]) => ({ ...o, [key]: val }), {});
+  return !!schema
+    ? [
+        ...Object.keys(data).map((key) => {
+          if (schema.includes(key)) return [key, data[key]];
+          return [];
+        }),
+      ]
+        .filter((x) => !!x.length && x)
+        .reduce((o, [key, val]) => ({ ...o, [key]: val }), {})
+    : Object.keys(data).reduce(
+        (o, key) => (key.match(/_/) ? { ...o } : { ...o, [key]: data[key] }),
+        {},
+      );
 }
