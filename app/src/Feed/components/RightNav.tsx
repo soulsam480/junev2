@@ -2,10 +2,12 @@ import React from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
+import { useUserStore } from 'src/User/store/useUserStore';
 
 interface Props {}
 
 const RightNav: React.FC<Props> = () => {
+  const { user } = useUserStore();
   return (
     <div>
       <div className="h-32 relative mb-10">
@@ -22,10 +24,10 @@ const RightNav: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-col pt-2 items-center space-y-2">
-        <div className="text-2xl">Manish Sahu</div>
-        <div className="text-sm bg-warm-gray-300 p-3 w-full rounded"></div>
-        <div className="text-sm bg-warm-gray-300 p-3 w-full rounded"></div>
-        <div className="text-sm bg-warm-gray-300 p-3 w-full rounded"></div>
+        <div className="text-2xl"> {user.name} </div>
+        <div className="text-sm w-full rounded">{user.email}</div>
+        <div className="text-sm w-full rounded">{user.username}</div>
+        <div className="text-sm w-full rounded"></div>
         <div className="flex items-center w-full space-x-2 pt-3">
           <div className="flex-auto">
             <JButton icon="ion:settings-outline" label="Settings" block sm size="16px" />
