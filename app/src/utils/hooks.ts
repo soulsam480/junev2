@@ -1,5 +1,5 @@
 import { AxiosPromise } from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
   const ref = useRef<T>(null);
@@ -87,5 +87,17 @@ export function useQuery<T, K>(baseState: T, fetcher: () => Promise<T>) {
     validate,
     error,
     isLoading,
+  };
+}
+
+export function useDebounce(cb: (...args: any[]) => any, ms?: number) {
+  const memoizedCb = useCallback(cb, []);
+
+  let timeout: NodeJS.Timeout;
+
+  return (...args: []) => {
+    clearTimeout(timeout);
+    //@ts-ignore
+    timeout = setTimeout(() => memoizedCb.apply(this, args), ms || 2000);
   };
 }
