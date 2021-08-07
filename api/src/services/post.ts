@@ -1,5 +1,6 @@
 import { CreateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
+import { User } from 'src/entities/user';
 import { sanitizeResponse } from 'src/utils/helpers';
 
 export async function createPost(post: CreateQuery<Post>) {
@@ -13,7 +14,11 @@ export async function createPost(post: CreateQuery<Post>) {
 
 export async function getAllPosts() {
   try {
-    const allPosts = await postModel.find();
+    const allPosts = await postModel
+      .find()
+      .populate({ path: 'user', model: User, select: ['username', 'id', 'name'] })
+      .exec();
+
     return allPosts.map((post) => ({ ...sanitizeResponse(post.toJSON()) }));
   } catch (error) {
     throw error;

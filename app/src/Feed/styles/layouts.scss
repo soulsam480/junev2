@@ -26,3 +26,9 @@
     }
   }
 }
+
+.post-card {
+  a {
+    @apply text-lime-600 underline;
+  }
+}

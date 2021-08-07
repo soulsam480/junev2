@@ -5,8 +5,9 @@
   "author": "soulsam480 <soulsam480@hotmail.com>",
   "scripts": {
     "dev": "ts-node-dev --respawn --files -- src/index.ts",
-    "build": "tsc",
-    "build:swagger": "node swagger.js"
+    "build": "rm -rf dist && yarn && tsc && tsc-alias",
+    "build:swagger": "node swagger.js",
+    "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./types && tsc-alias"
   },
   "license": "MIT",
   "devDependencies": {
@@ -36,6 +37,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.1.6"
+    "swagger-ui-express": "^4.1.6",
+    "tsc-alias": "^1.3.8"
   }
 }

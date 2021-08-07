@@ -1,7 +1,7 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { User } from 'src/entities/user';
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, toJSON: { virtuals: true } } })
 export class Comment {
   @prop()
   public comment: string;
@@ -16,7 +16,7 @@ export class Comment {
   public replies: Ref<Comment>[];
 }
 
-@modelOptions({ schemaOptions: { timestamps: true } })
+@modelOptions({ schemaOptions: { timestamps: true, toJSON: { virtuals: true } } })
 export class Post {
   @prop({ ref: () => User })
   public user: Ref<User>;

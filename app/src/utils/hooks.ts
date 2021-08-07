@@ -1,4 +1,4 @@
-import { AxiosPromise } from 'axios';
+import { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
@@ -65,7 +65,7 @@ export const useHideOnScroll = () => {
   return isHidden;
 };
 
-export function useQuery<T, K>(baseState: T, fetcher: () => Promise<T>) {
+export function useQuery<T, K>(baseState: T, fetcher: () => Promise<AxiosResponse<T>>) {
   const [data, setData] = useState<T>(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -73,8 +73,8 @@ export function useQuery<T, K>(baseState: T, fetcher: () => Promise<T>) {
   async function validate() {
     try {
       setLoading(true);
-      const res = await fetcher();
-      setData(res);
+      const { data } = await fetcher();
+      setData(data);
     } catch (error) {
       setError(error);
     } finally {

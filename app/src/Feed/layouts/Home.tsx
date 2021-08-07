@@ -7,20 +7,21 @@ import RightNav from 'src/Feed/components/RightNav';
 import 'src/Feed/styles/layouts.scss';
 import { classNames, replaceCaret } from 'src/utils/helpers';
 import { useDebounce, useHideOnScroll } from 'src/utils/hooks';
+import JButton from 'src/Lib/JButton';
+import { createPost } from 'src/Shared/services/post';
 
 interface Props {}
 
 const Authorized: React.FC<Props> = () => {
   const isHidden = useHideOnScroll();
 
-  const data = useRef('some data');
+  const data = useRef('');
   const parsedHTML = useRef('');
   const editorRef = useRef<HTMLDivElement>(null);
   const getEl = () => editorRef.current;
-  const debounced = useDebounce(onChange);
+  const debounced = useDebounce(onChange, 1000);
 
   /**
-   *
    * @borrows https://github.com/lovasoa/react-contenteditable/blob/master/src/react-contenteditable.tsx
    * @license MIT
    */
@@ -41,13 +42,25 @@ const Authorized: React.FC<Props> = () => {
     replaceCaret(el);
   }
 
+  async function savePost() {
+    if (!parsedHTML.current) return;
+    try {
+      const {
+        data: { data },
+      } = await createPost({ content: parsedHTML.current });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="j-layout">
       <aside className="j-layout__leftbar">
         <LeftNav />
       </aside>
       <main className="j-layout__content">
-        <div className="pb-3">
+        <div className="pb-3 flex flex-col space-y-2">
           <div
             className="j-rich"
             contentEditable={true}
@@ -55,6 +68,9 @@ const Authorized: React.FC<Props> = () => {
             onInput={debounced}
             dangerouslySetInnerHTML={{ __html: data.current }}
           />
+          <div className="flex justify-end">
+            <JButton label="Save" onClick={savePost} />
+          </div>
         </div>
         <Outlet />
       </main>
