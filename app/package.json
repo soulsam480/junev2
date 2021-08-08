@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@iconify/iconify": "^2.0.3",
-    "anchorme": "^2.1.2",
     "axios": "^0.21.1",
     "history": "^5.0.0",
     "react": "^17.0.0",
