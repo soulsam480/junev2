@@ -5,6 +5,8 @@ import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
 import { createError, parseEnv, sanitizeResponse } from 'src/utils/helpers';
+// import faker from 'faker';
+// import { CreateQuery } from 'mongoose';
 
 const authRouter = Router();
 
@@ -123,5 +125,29 @@ authRouter.get('/token', async (req, res) => {
     res.status(500).send(createError('Internal server error', error));
   }
 });
+
+/**
+ * @private only for seeding once
+ */
+// authRouter.get('/seed', async (req, res) => {
+//   let timeSeriesData: any[] = [];
+
+//   for (let i = 0; i < 200; i++) {
+//     const name = `${faker.name.firstName()} ${faker.name.lastName()}`;
+//     const newUser: CreateQuery<User> = {
+//       name,
+//       username: name.split(' ').join('_'),
+//       email: faker.internet.email(),
+//       password: faker.datatype.uuid(),
+//       ga_id: faker.datatype.uuid(),
+//     };
+
+//     timeSeriesData.push(newUser);
+//   }
+
+//   await userModel.insertMany(timeSeriesData);
+
+//   res.send('OK');
+// });
 
 export { authRouter };

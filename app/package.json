@@ -10,9 +10,11 @@
   "dependencies": {
     "@iconify/iconify": "^2.0.3",
     "axios": "^0.21.1",
+    "faker": "^5.5.3",
     "history": "^5.0.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
+    "react-input-trigger": "^1.1.2",
     "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "6.0.0-beta.0",
     "react-transition-group": "^4.4.2",
@@ -20,6 +22,7 @@
   },
   "devDependencies": {
     "@iconify/json": "1.1.384",
+    "@types/faker": "^5.5.7",
     "@types/node": "15.14.7",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",

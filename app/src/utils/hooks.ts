@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { PaginationParams, ResponseSchema } from 'src/Shared/services/post';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
   const ref = useRef<T>(null);
@@ -65,7 +66,10 @@ export const useHideOnScroll = () => {
   return isHidden;
 };
 
-export function useQuery<T, K>(baseState: T, fetcher: () => Promise<AxiosResponse<T>>) {
+export function useQuery<T, K>(
+  baseState: T,
+  fetcher: (...args: any[]) => Promise<AxiosResponse<T>>,
+) {
   const [data, setData] = useState<T>(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -85,6 +89,46 @@ export function useQuery<T, K>(baseState: T, fetcher: () => Promise<AxiosRespons
   return {
     data,
     validate,
+    error,
+    isLoading,
+  };
+}
+
+export function usePaginatedQuery<T, K>(
+  baseState: T[],
+  fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<T[]>>>,
+  opts?: {
+    initialPage?: number;
+    limit?: number;
+  },
+) {
+  const [page, setPage] = useState(opts?.initialPage || 0);
+  const [data, setData] = useState(baseState);
+  const [error, setError] = useState<K | null>(null);
+  const [isLoading, setLoading] = useState(false);
+
+  const getPageArgs = (page: number, limit = 10): PaginationParams => ({ page, limit });
+
+  async function validate() {
+    try {
+      setLoading(true);
+      const {
+        data: { data: apiData },
+      } = await fetcher(getPageArgs(page, opts?.limit));
+
+      setPage(page + 1);
+
+      setData([...data, ...apiData]);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return {
+    data,
+    validate: useCallback(validate, [page, data]),
     error,
     isLoading,
   };
