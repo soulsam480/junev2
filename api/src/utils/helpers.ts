@@ -80,9 +80,10 @@ export async function filterFromQuery<T extends Class<any>>(
   if (!Object.keys(query).every((key) => schema.includes(key)))
     return Promise.reject('filter key not in model schema !');
 
-  if (!Object.keys(query).length) return await model.find().select('id name username');
+  if (!Object.keys(query).length || Object.values(query).every((el) => !el))
+    return formatResponse([]);
 
   //@ts-ignore
   const results = await model.find({ ...constructModelQuery(query) }).select('id name username');
-  return results.map((val) => sanitizeResponse(val.toJSON()));
+  return formatResponse(results.map((val) => sanitizeResponse(val.toJSON())));
 }

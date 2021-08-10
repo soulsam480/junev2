@@ -51,3 +51,36 @@ export interface Post {
   likes?: User[];
   comments?: Comment[];
 }
+
+export interface Trigger {
+  keyCode?: number | null;
+  shiftKey?: boolean;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+}
+
+export interface Result {
+  hookType: hookType;
+  cursor: {
+    selectionStart: number;
+    selectionEnd: number;
+    top: number;
+    left: number;
+    height: number;
+  };
+  text?: string;
+}
+
+export type hookType = 'start' | 'cancel' | 'typing';
+
+export interface ResponseSchema<T = any> {
+  data: T;
+  current_page?: number;
+  total_count?: number;
+  total_pages?: number;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit?: number;
+}

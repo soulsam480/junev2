@@ -4,6 +4,7 @@ import BottomNav from 'src/Feed/components/BottomNav';
 import LeftNav from 'src/Feed/components/LeftNav';
 import RightNav from 'src/Feed/components/RightNav';
 import 'src/Feed/styles/layouts.scss';
+import AppPostEditor from 'src/Shared/components/AppPostEditor';
 import { classNames } from 'src/utils/helpers';
 import { useHideOnScroll } from 'src/utils/hooks';
 // import JButton from 'src/Lib/JButton';
@@ -33,6 +34,7 @@ const Authorized: React.FC<Props> = () => {
       <main className="j-layout__content">
         <div className="pb-3 flex flex-col space-y-2">
           <div className="flex justify-end">
+            <AppPostEditor className="w-full h-full" />
             {/* <JButton label="Save" onClick={savePost} /> */}
           </div>
         </div>

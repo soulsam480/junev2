@@ -580,6 +580,11 @@
     "@types/express" "*"
     "@types/serve-static" "*"
 
+"@types/textarea-caret@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/textarea-caret/-/textarea-caret-3.0.1.tgz#5afd4b1c1b3bacb001d76a1e6ef192c710709a86"
+  integrity sha512-JjrXYzk4t6dM/5nz1hHkZXmd3xSdJM6mOIDSBUrpg4xThwKNryiu4CqHx81LwUJHxEEoQWHTu4fMV4em+c5bXg==
+
 "@types/throttle-debounce@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@types/throttle-debounce/-/throttle-debounce-2.1.0.tgz#1c3df624bfc4b62f992d3012b84c56d41eab3776"
@@ -2251,13 +2256,6 @@ react-dom@^17.0.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
-
-react-input-trigger@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-input-trigger/-/react-input-trigger-1.1.2.tgz#752b9266debcb49a86c83bff1843b5e652e8e471"
-  integrity sha512-fz/uT7YxpKPUCt1SIBXDh2K1qvQFwBan7VwtxDU9ZMPpnit1YMVGc2Aw+aCVcjxb+hLslb2pZJxOCwVjID5OrQ==
-  dependencies:
-    textarea-caret "^3.1.0"
 
 react-is@^16.8.1:
   version "16.13.1"
