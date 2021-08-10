@@ -88,7 +88,7 @@ export function useQuery<T, K>(
 
   return {
     data,
-    validate,
+    validate: useCallback(validate, [data]),
     error,
     isLoading,
   };

@@ -1,10 +1,6 @@
-import {
-  AnyParamConstructor,
-  BeAnObject,
-  DocumentType,
-  ReturnModelType,
-} from '@typegoose/typegoose/lib/types';
+import { BeAnObject, DocumentType, ReturnModelType } from '@typegoose/typegoose/lib/types';
 import { DocumentQuery } from 'mongoose';
+import { ParsedQs } from './types';
 
 export function parseEnv<T extends number | string>(key: string): T {
   return process.env[key] as T;
@@ -66,4 +62,27 @@ export async function paginateResponse<T = Class<any>>(
   } catch (error) {
     throw error;
   }
+}
+
+function constructModelQuery(query: ParsedQs) {
+  return Object.keys(query)
+    .map((key) => {
+      return { [key]: { $regex: RegExp(`^${query[key]}`) } };
+    })
+    .reduce((o, val) => ({ ...o, ...val }), {});
+}
+
+export async function filterFromQuery<T extends Class<any>>(
+  query: ParsedQs,
+  model: ReturnModelType<T, BeAnObject>,
+  schema: string[],
+) {
+  if (!Object.keys(query).every((key) => schema.includes(key)))
+    return Promise.reject('filter key not in model schema !');
+
+  if (!Object.keys(query).length) return await model.find().select('id name username');
+
+  //@ts-ignore
+  const results = await model.find({ ...constructModelQuery(query) }).select('id name username');
+  return results.map((val) => sanitizeResponse(val.toJSON()));
 }
