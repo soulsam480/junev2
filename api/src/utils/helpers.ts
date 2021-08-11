@@ -67,7 +67,9 @@ export async function paginateResponse<T = Class<any>>(
 function constructModelQuery(query: ParsedQs) {
   return Object.keys(query)
     .map((key) => {
-      return { [key]: { $regex: RegExp(`^${query[key]}`) } };
+      return {
+        [key]: { $regex: RegExp(`^${(query[key] as string).replace(/[.<>*()?]/g, '\\$&')}`, 'i') },
+      };
     })
     .reduce((o, val) => ({ ...o, ...val }), {});
 }
@@ -76,14 +78,21 @@ export async function filterFromQuery<T extends Class<any>>(
   query: ParsedQs,
   model: ReturnModelType<T, BeAnObject>,
   schema: string[],
+  config?: { select?: string },
 ) {
-  if (!Object.keys(query).every((key) => schema.includes(key)))
-    return Promise.reject('filter key not in model schema !');
+  const mappedQueries = Object.keys(query)
+    .map((key) => (schema.includes(key) ? key : undefined))
+    .filter((x) => !!x)
+    .reduce((o, key) => ({ ...o, [key as string]: query[key as string] }), {});
 
-  if (!Object.keys(query).length || Object.values(query).every((el) => !el))
+  if (!Object.keys(mappedQueries).length || Object.values(mappedQueries).every((el) => !el))
     return formatResponse([]);
 
-  //@ts-ignore
-  const results = await model.find({ ...constructModelQuery(query) }).select('id name username');
+  const results = await model
+    //@ts-ignore
+    .find({ ...constructModelQuery(mappedQueries) })
+    .select(config?.select)
+    .limit(parseInt(query.limit as string) || 5);
+
   return formatResponse(results.map((val) => sanitizeResponse(val.toJSON())));
 }

@@ -15,7 +15,10 @@ export async function createPost(post: CreateQuery<Post>) {
 export async function getAllPosts(page: number, limit: number) {
   try {
     return await paginateResponse(
-      postModel.find().populate({ path: 'user', model: User, select: ['username', 'id', 'name'] }),
+      postModel
+        .find()
+        .populate({ path: 'user', model: User, select: ['username', 'id', 'name'] })
+        .sort({ updatedAt: 'desc' }),
       page,
       limit,
       await postModel.estimatedDocumentCount(),
