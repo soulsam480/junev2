@@ -1,36 +1,49 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { classNames } from 'src/utils/helpers';
 import AppInputTrigger from './AppInputTrigger';
 import { Result } from 'src/utils/types';
-import { useDebounce } from 'src/utils/hooks';
+import { useDebounceCallback } from 'src/utils/hooks';
 import { SearchUserResponse, searchUserWithFilters } from 'src/User/services/users';
 
 interface Props {
   className?: string;
+  value: string;
+  setValue(val: string): void;
+  placeholder?: string;
 }
 
-const AppPostEditor: React.FC<Props> = ({ className }) => {
+const AppPostEditor: React.FC<Props> = ({ className, value, setValue, ...rest }) => {
   const [isSuggestor, setSuggestor] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchUserResponse[]>([]);
-  const [coords, setCoords] = useState({
-    top: 0,
-    left: 0,
+  const [coords, setCoords] = useState<{
+    top: number;
+    left: number;
+    selection: number;
+  }>({
+    top: null as any,
+    left: null as any,
+    selection: null as any,
   });
-  const [keySelection, setKeySelection] = useState(0);
-
+  const [keySelection, setKeySelection] = useState<number>(null as any);
   const [searchQuery, setSearchQuery] = useState('');
+  const endTrigger = useRef<() => void | undefined>();
+  const timeout = useRef<number>();
 
   function toggleSuggestor(metaInformation: Result) {
     const { hookType, cursor } = metaInformation;
 
     if (hookType === 'start') {
-      setSuggestor(true);
       setCoords({
         left: cursor.left,
         top: cursor.top + 10,
+        selection: cursor.selectionStart,
       });
+
+      setSuggestor(true);
+      setSuggestions([]);
     }
+
     if (hookType === 'cancel') {
       resetSuggestor();
     }
@@ -38,48 +51,77 @@ const AppPostEditor: React.FC<Props> = ({ className }) => {
 
   function resetSuggestor() {
     setSuggestor(false);
-    setCoords({
-      left: 0,
-      top: 0,
-    });
+
     setSearchQuery('');
     setSuggestions([]);
+    setKeySelection(null as any);
+
+    timeout.current = setTimeout(() => {
+      setCoords({
+        left: null as any,
+        top: null as any,
+        selection: null as any,
+      });
+    }, 110);
   }
 
-  const handleInput = useCallback(
-    (meta: Result) => {
-      setSearchQuery(meta.text || '');
-    },
-    [searchQuery],
-  );
-
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (!isSuggestor) return;
     const { which } = event;
 
     if (which === 40) {
-      // 40 is the character code of the down arrow
       event.preventDefault();
 
       setKeySelection((keySelection + 1) % suggestions.length);
     }
-  }
-
-  function handleKeyUp(event: React.KeyboardEvent<HTMLDivElement>) {
-    const { which } = event;
 
     if (which === 38) {
-      // 40 is the character code of the down arrow
       event.preventDefault();
 
-      setKeySelection((keySelection - 1) % suggestions.length);
+      setKeySelection(keySelection > 0 ? keySelection - 1 : suggestions.length - 1);
+    }
+
+    if (which === 13) {
+      event.preventDefault();
+      insertUser(keySelection);
+    }
+
+    if (which === 27) {
+      event.preventDefault();
+
+      resetSuggestor();
+
+      if (!!endTrigger.current) {
+        endTrigger.current();
+      }
+    }
+  }
+
+  function insertUser(idx: number) {
+    const { selection } = coords;
+    const user = suggestions[idx];
+
+    const newText = `${value.slice(0, selection - 1)}@${user.username}${value.slice(
+      selection + user.username.length,
+      value.length,
+    )}`;
+
+    setValue(newText);
+
+    resetSuggestor();
+
+    if (!!endTrigger.current) {
+      endTrigger.current();
     }
   }
 
   async function findUserByUsername() {
+    if (!searchQuery) return setSuggestions([]);
+
     try {
       const {
         data: { data },
-      } = await searchUserWithFilters({ username: searchQuery });
+      } = await searchUserWithFilters({ username: searchQuery, limit: 5 });
 
       setSuggestions([...data]);
     } catch (error) {
@@ -87,12 +129,18 @@ const AppPostEditor: React.FC<Props> = ({ className }) => {
     }
   }
 
+  const debounced = useDebounceCallback(findUserByUsername, 500);
+
   useEffect(() => {
-    findUserByUsername();
+    debounced();
   }, [searchQuery]);
 
+  useEffect(() => {
+    () => clearTimeout(timeout.current);
+  }, [timeout.current]);
+
   return (
-    <div className="relative w-full h-full" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}>
+    <div className="relative w-full h-full" onKeyDown={handleKeyDown}>
       <AppInputTrigger
         trigger={{
           keyCode: 50,
@@ -100,23 +148,29 @@ const AppPostEditor: React.FC<Props> = ({ className }) => {
         }}
         onStart={toggleSuggestor}
         onCancel={toggleSuggestor}
-        onType={useDebounce(handleInput, 500)}
+        onType={(meta) => setSearchQuery(meta.text || '')}
+        endTrigger={(trigger) => (endTrigger.current = trigger)}
       >
-        <textarea className={classNames([className || '', 'j-rich'])}></textarea>
+        <textarea
+          className={classNames([className || '', 'j-rich'])}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          {...rest}
+        ></textarea>
       </AppInputTrigger>
 
       <div className="j-menu z-1000">
         <CSSTransition
           in={isSuggestor}
           timeout={{
-            enter: 300,
-            exit: 300,
+            enter: 100,
+            exit: 100,
           }}
           classNames="j-menu"
           unmountOnExit
         >
           <div
-            className={classNames(['j-menu__list__parent origin-top-left'])}
+            className={classNames(['j-menu__list__parent origin-top-right'])}
             style={{
               top: coords.top,
               left: coords.left,
@@ -136,12 +190,13 @@ const AppPostEditor: React.FC<Props> = ({ className }) => {
                       'j-menu__list-item',
                       { 'bg-lime-300': idx === keySelection },
                     ])}
+                    onClick={() => insertUser(idx)}
                   >
                     {el.username}
                   </div>
                 ))
               ) : (
-                <div className="j-menu__list-item">search an user</div>
+                <div className="j-menu__list-item !cursor-default">search an user</div>
               )}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import BottomNav from 'src/Feed/components/BottomNav';
 import LeftNav from 'src/Feed/components/LeftNav';
@@ -7,24 +7,26 @@ import 'src/Feed/styles/layouts.scss';
 import AppPostEditor from 'src/Shared/components/AppPostEditor';
 import { classNames } from 'src/utils/helpers';
 import { useHideOnScroll } from 'src/utils/hooks';
-// import JButton from 'src/Lib/JButton';
-// import { createPost } from 'src/Shared/services/post';
+import JButton from 'src/Lib/JButton';
+import { createPost } from 'src/Shared/services/post';
 
 interface Props {}
 
 const Authorized: React.FC<Props> = () => {
   const isHidden = useHideOnScroll();
 
-  // async function savePost() {
-  //   try {
-  //     const {
-  //       data: { data },
-  //     } = await createPost({ content: parsedHTML.current });
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  const [editorData, setEditorData] = useState('');
+
+  async function savePost() {
+    try {
+      const {
+        data: { data },
+      } = await createPost({ content: editorData });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="j-layout">
@@ -33,9 +35,14 @@ const Authorized: React.FC<Props> = () => {
       </aside>
       <main className="j-layout__content">
         <div className="pb-3 flex flex-col space-y-2">
-          <div className="flex justify-end">
-            <AppPostEditor className="w-full h-full" />
-            {/* <JButton label="Save" onClick={savePost} /> */}
+          <div className="flex justify-end flex-col items-end space-y-2">
+            <AppPostEditor
+              value={editorData}
+              setValue={setEditorData}
+              placeholder="Create a post"
+              className="w-full h-full"
+            />
+            <JButton label="Save" onClick={savePost} />
           </div>
         </div>
         <Outlet />

@@ -1,13 +1,15 @@
 import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { PaginationParams, ResponseSchema } from 'src/Shared/services/post';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { PaginationParams, ResponseSchema } from 'src/utils/types';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
   const ref = useRef<T>(null);
+  const memoCb = useCallback(cb, []);
+
   useEffect(() => {
     function handleClickOutside(event: any) {
       if (ref.current && !ref.current.contains(event.target)) {
-        cb();
+        memoCb();
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -15,6 +17,7 @@ export function useClickoutside<T extends HTMLElement>(cb: () => any) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [ref]);
+
   return [ref];
 }
 
@@ -134,14 +137,56 @@ export function usePaginatedQuery<T, K>(
   };
 }
 
-export function useDebounce(cb: (...args: any[]) => any, ms?: number) {
-  const memoizedCb = useCallback(cb, []);
+/**
+ * @borrows https://github.com/jaredLunde/react-hook/blob/master/packages/debounce/src/index.tsx
+ * @borrows https://github.com/jaredLunde/react-hook/blob/master/packages/latest/src/index.tsx
+ */
 
-  let timeout: NodeJS.Timeout;
+const useLatest = <T extends any>(current: T) => {
+  const storedValue = useRef(current);
+  useEffect(() => {
+    storedValue.current = current;
+  });
+  return storedValue;
+};
 
-  return (...args: []) => {
-    clearTimeout(timeout);
-    //@ts-ignore
-    timeout = setTimeout(() => memoizedCb.apply(this, args), ms || 2000);
-  };
-}
+export const useDebounceCallback = <CallbackArgs extends any[]>(
+  callback: (...args: CallbackArgs) => void,
+  wait = 100,
+  leading = false,
+): ((...args: CallbackArgs) => void) => {
+  const storedCallback = useLatest(callback);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const deps = [wait, leading, storedCallback];
+
+  // Cleans up pending timeouts when the deps change
+  useEffect(
+    () => () => {
+      timeout.current && clearTimeout(timeout.current);
+      timeout.current = void 0;
+    },
+    deps,
+  );
+
+  return useCallback(function () {
+    // eslint-disable-next-line prefer-rest-params
+    const args = arguments;
+    const { current } = timeout;
+    // Calls on leading edge
+    if (current === void 0 && leading) {
+      timeout.current = setTimeout(() => {
+        timeout.current = void 0;
+      }, wait);
+      return storedCallback.current.apply(null, args as any);
+    }
+
+    // Clear the timeout every call and start waiting again
+    current && clearTimeout(current);
+
+    // Waits for `wait` before invoking the callback
+    timeout.current = setTimeout(() => {
+      timeout.current = void 0;
+      storedCallback.current.apply(null, args as any);
+    }, wait);
+  }, deps);
+};
