@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import PostCard from 'src/Feed/components/PostCard';
 import JButton from 'src/Lib/JButton';
 import { getAllPosts } from 'src/Shared/services/post';
-// import { searchUserWithFilters } from 'src/User/services/users';
 import { usePaginatedQuery } from 'src/utils/hooks';
 import { Post } from 'src/utils/types';
 
@@ -15,15 +14,6 @@ const Test: React.FC<Props> = () => {
     initialPage: 0,
     limit: 5,
   });
-
-  // async function searchUser() {
-  //   try {
-  //     const { data } = await searchUserWithFilters({ username: 'sambitsaho', name: 'sambit' });
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   useEffect(() => {
     (async () => await validate())();

@@ -4,14 +4,13 @@ import JButton from 'src/Lib/JButton';
 import JCard from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import JMenu from 'src/Lib/JMenu';
-import Linkify from 'react-linkify';
 import { Post } from 'src/utils/types';
+import AppLinkifier from 'src/Shared/components/AppLinkifier';
 interface Props {
-  imgSrc?: string;
   post: Post;
 }
 
-const PostCard: React.FC<Props> = ({ imgSrc, post }) => {
+const PostCard: React.FC<Props> = ({ post }) => {
   const [val, setVal] = useState('');
   const options = [
     {
@@ -74,21 +73,16 @@ const PostCard: React.FC<Props> = ({ imgSrc, post }) => {
       }
       contentSlot={
         <>
-          <div className="p-2 break-words">
-            <Linkify
-              componentDecorator={(h, t, k) => (
-                <a
-                  href={h}
-                  key={k}
-                  className="text-lime-600 font-thin hover:(underline underline-lime-600) transition-all ease-in-out duration-300"
-                >
-                  {' '}
-                  {t}{' '}
+          <div className="p-2">
+            <AppLinkifier
+              linkEl={({ match, key, href }) => (
+                <a href={href} target="_blank" key={key} rel="noopener noreferrer nofollow">
+                  {match}
                 </a>
               )}
             >
               {post.content}
-            </Linkify>
+            </AppLinkifier>
           </div>
           {!!post.url && <JImage src={post.url || ''} loading="lazy" minHeight="300px" />}
         </>

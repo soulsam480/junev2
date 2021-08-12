@@ -9,12 +9,11 @@
   },
   "dependencies": {
     "@iconify/iconify": "^2.0.3",
+    "autolinker": "^3.14.3",
     "axios": "^0.21.1",
-    "faker": "^5.5.3",
     "history": "^5.0.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "6.0.0-beta.0",
     "react-transition-group": "^4.4.2",
     "textarea-caret": "^3.1.0",
