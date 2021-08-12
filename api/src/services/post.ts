@@ -1,7 +1,7 @@
 import { CreateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
 import { User } from 'src/entities/user';
-import { paginateResponse, sanitizeResponse } from 'src/utils/helpers';
+import { cursorPaginateResponse, sanitizeResponse } from 'src/utils/helpers';
 
 export async function createPost(post: CreateQuery<Post>) {
   try {
@@ -12,14 +12,11 @@ export async function createPost(post: CreateQuery<Post>) {
   }
 }
 
-export async function getAllPosts(page: number, limit: number) {
+export async function getAllPosts(cursor: number, limit: number) {
   try {
-    return await paginateResponse(
-      postModel
-        .find()
-        .populate({ path: 'user', model: User, select: ['username', 'id', 'name'] })
-        .sort({ updatedAt: 'desc' }),
-      page,
+    return await cursorPaginateResponse(
+      postModel.find().populate({ path: 'user', model: User, select: ['username', 'id', 'name'] }),
+      cursor,
       limit,
       await postModel.estimatedDocumentCount(),
     );

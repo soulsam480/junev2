@@ -9,10 +9,10 @@ postRouter.use(auth);
 
 postRouter.get('/', async (req, res) => {
   try {
+    const cursor: number = parseInt(req.query.cursor as string);
     const limit: number = parseInt(req.query.limit as string) || 10;
-    const page: number = parseInt(req.query.page as string) || 0;
 
-    const data = await getAllPosts(page, limit);
+    const data = await getAllPosts(cursor, limit);
 
     res.json({
       ...data,

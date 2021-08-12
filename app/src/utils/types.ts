@@ -75,12 +75,12 @@ export type hookType = 'start' | 'cancel' | 'typing';
 
 export interface ResponseSchema<T = any> {
   data: T;
-  current_page?: number;
   total_count?: number;
-  total_pages?: number;
+  has_more?: boolean;
+  next_cursor: number | null;
 }
 
 export interface PaginationParams {
-  page: number;
+  cursor: number | null;
   limit?: number;
 }

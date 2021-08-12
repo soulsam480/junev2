@@ -1,4 +1,5 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from 'src/entities/user';
 
 @modelOptions({ schemaOptions: { timestamps: true, toJSON: { virtuals: true } } })
@@ -17,7 +18,7 @@ export class Comment {
 }
 
 @modelOptions({ schemaOptions: { timestamps: true, toJSON: { virtuals: true } } })
-export class Post {
+export class Post extends TimeStamps {
   @prop({ ref: () => User })
   public user: Ref<User>;
 

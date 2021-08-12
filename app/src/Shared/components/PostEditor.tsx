@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { classNames } from 'src/utils/helpers';
 import AppInputTrigger from './InputTrigger';
@@ -131,6 +131,17 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ..
     }
   }
 
+  const handleCtrlEnter = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      const { which, ctrlKey } = e;
+      if (which === 13 && ctrlKey) {
+        e.preventDefault();
+        onPost();
+      }
+    },
+    [onPost],
+  );
+
   const debounced = useDebounceCallback(findUserByUsername, 500);
 
   useEffect(() => {
@@ -157,6 +168,7 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ..
           className={classNames([className || '', 'j-rich__editor'])}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyUp={handleCtrlEnter}
           {...rest}
         ></textarea>
       </AppInputTrigger>

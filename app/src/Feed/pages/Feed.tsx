@@ -12,8 +12,7 @@ interface Props {}
 const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
-  const { data, validate } = usePaginatedQuery<Post, any>([], getAllPosts, {
-    initialPage: 0,
+  const { data, validate, isEnd } = usePaginatedQuery<Post, any>([], getAllPosts, {
     limit: 5,
   });
 
@@ -25,6 +24,7 @@ const Test: React.FC<Props> = () => {
         data: { data },
       } = await createPost({ content: editorData });
       console.log(data);
+      setEditorData('');
     } catch (error) {
       console.log(error);
     }
@@ -51,7 +51,7 @@ const Test: React.FC<Props> = () => {
           <MemoizedPostCard key={post.id} post={post} />
         ))}
         <div className="flex justify-center w-full">
-          <JButton label="Load more" onClick={validate} flat />
+          <JButton label="Load more" onClick={validate} flat disabled={isEnd} />
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PaginationParams, ResponseSchema } from 'src/utils/types';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
@@ -101,27 +101,28 @@ export function usePaginatedQuery<T, K>(
   baseState: T[],
   fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<T[]>>>,
   opts?: {
-    initialPage?: number;
     limit?: number;
   },
 ) {
-  const [page, setPage] = useState(opts?.initialPage || 0);
+  const [cursor, setCursor] = useState<number | null>(null);
   const [data, setData] = useState(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
+  const [isEnd, setEnd] = useState(false);
 
-  const getPageArgs = (page: number, limit = 10): PaginationParams => ({ page, limit });
+  const getPageArgs = (cursor: number | null, limit = 10): PaginationParams => ({ cursor, limit });
 
   async function validate() {
+    if (isEnd) return;
     try {
       setLoading(true);
       const {
-        data: { data: apiData },
-      } = await fetcher(getPageArgs(page, opts?.limit));
+        data: { data: apiData, next_cursor, has_more },
+      } = await fetcher(getPageArgs(cursor, opts?.limit));
 
-      setPage(page + 1);
-
+      setCursor(next_cursor);
       setData([...data, ...apiData]);
+      if (!has_more) setEnd(true);
     } catch (error) {
       setError(error);
     } finally {
@@ -131,9 +132,10 @@ export function usePaginatedQuery<T, K>(
 
   return {
     data,
-    validate: useCallback(validate, [page, data]),
+    validate: useCallback(validate, [cursor, data]),
     error,
     isLoading,
+    isEnd,
   };
 }
 

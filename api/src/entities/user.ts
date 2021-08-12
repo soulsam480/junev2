@@ -2,6 +2,7 @@ import { getModelForClass, modelOptions, pre, prop, Ref } from '@typegoose/typeg
 import { compare, hash } from 'bcrypt';
 import { parseEnv } from 'src/utils/helpers';
 import { Comment, Post } from 'src/entities/post';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({
   schemaOptions: { timestamps: true, toJSON: { virtuals: true } },
@@ -15,7 +16,7 @@ import { Comment, Post } from 'src/entities/post';
     next(error);
   }
 })
-export class User {
+export class User extends TimeStamps {
   @prop({ required: true })
   public name!: string;
 

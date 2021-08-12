@@ -1,6 +1,12 @@
-import { BeAnObject, DocumentType, ReturnModelType } from '@typegoose/typegoose/lib/types';
-import { DocumentQuery } from 'mongoose';
+import {
+  AnyParamConstructor,
+  BeAnObject,
+  DocumentType,
+  ReturnModelType,
+} from '@typegoose/typegoose/lib/types';
+import { Query } from 'mongoose';
 import { ParsedQs } from './types';
+import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 export function parseEnv<T extends number | string>(key: string): T {
   return process.env[key] as T;
@@ -38,10 +44,8 @@ export function formatResponse<T>(data: T) {
   };
 }
 
-declare type Class<T = any> = new (...args: any[]) => T;
-
-export async function paginateResponse<T = Class<any>>(
-  model: DocumentQuery<DocumentType<T>[], DocumentType<T>, BeAnObject> & BeAnObject,
+export async function offsetPaginateResponse<T extends TimeStamps>(
+  model: Query<DocumentType<T>[]> & TimeStamps,
   page: number,
   limit: number,
   total_count: number,
@@ -60,7 +64,55 @@ export async function paginateResponse<T = Class<any>>(
       current_page: page,
     };
   } catch (error) {
-    throw error;
+    Promise.reject(error);
+  }
+}
+
+export async function cursorPaginateResponse<T extends TimeStamps>(
+  model: Query<DocumentType<T>[]> & TimeStamps,
+  cursor: number,
+  limit: number,
+  total_count: number,
+) {
+  try {
+    let data;
+    if (cursor) {
+      let decrypedDate = new Date(cursor * 1000);
+
+      data = await model
+        .find({
+          updatedAt: {
+            $lt: new Date(decrypedDate),
+          },
+        })
+        .sort({ updatedAt: -1 })
+        .limit(limit + 1)
+        .exec();
+    } else {
+      data = await model
+        .find({})
+        .sort({ updatedAt: -1 })
+        .limit(limit + 1);
+    }
+
+    const has_more = data.length === limit + 1;
+    let next_cursor = null;
+
+    if (has_more) {
+      const nextCursorRecord = data[limit];
+      var unixTimestamp = Math.floor(nextCursorRecord.updatedAt.getTime() / 1000);
+      next_cursor = unixTimestamp.toString();
+      data.pop();
+    }
+
+    return {
+      data: data.map((entity) => ({ ...sanitizeResponse(entity.toJSON()) })),
+      total_count,
+      has_more,
+      next_cursor,
+    };
+  } catch (error) {
+    Promise.reject(error);
   }
 }
 
@@ -74,7 +126,7 @@ function constructModelQuery(query: ParsedQs) {
     .reduce((o, val) => ({ ...o, ...val }), {});
 }
 
-export async function filterFromQuery<T extends Class<any>>(
+export async function filterFromQuery<T extends AnyParamConstructor<any>>(
   query: ParsedQs,
   model: ReturnModelType<T, BeAnObject>,
   schema: string[],
