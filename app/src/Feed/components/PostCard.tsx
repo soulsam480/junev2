@@ -5,7 +5,7 @@ import JCard from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import JMenu from 'src/Lib/JMenu';
 import { Post } from 'src/utils/types';
-import AppLinkifier from 'src/Shared/components/AppLinkifier';
+import AppLinkifier from 'src/Shared/components/Linkifier';
 interface Props {
   post: Post;
 }
@@ -76,7 +76,13 @@ const PostCard: React.FC<Props> = ({ post }) => {
           <div className="p-2">
             <AppLinkifier
               linkEl={({ match, key, href }) => (
-                <a href={href} target="_blank" key={key} rel="noopener noreferrer nofollow">
+                <a
+                  href={href}
+                  target="_blank"
+                  key={key}
+                  className="j-link"
+                  rel="noopener noreferrer nofollow"
+                >
                   {match}
                 </a>
               )}

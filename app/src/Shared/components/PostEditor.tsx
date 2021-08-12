@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { classNames } from 'src/utils/helpers';
-import AppInputTrigger from './AppInputTrigger';
+import AppInputTrigger from './InputTrigger';
 import { Result } from 'src/utils/types';
 import { useDebounceCallback } from 'src/utils/hooks';
 import { SearchUserResponse, searchUserWithFilters } from 'src/User/services/users';
+import JButton from 'src/Lib/JButton';
 
 interface Props {
   className?: string;
   value: string;
   setValue(val: string): void;
   placeholder?: string;
+  onPost: () => void;
 }
 
-const AppPostEditor: React.FC<Props> = ({ className, value, setValue, ...rest }) => {
+const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ...rest }) => {
   const [isSuggestor, setSuggestor] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchUserResponse[]>([]);
   const [coords, setCoords] = useState<{
@@ -140,7 +142,7 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, ...rest })
   }, [timeout.current]);
 
   return (
-    <div className="relative w-full h-full" onKeyDown={handleKeyDown}>
+    <div className="j-rich" onKeyDown={handleKeyDown}>
       <AppInputTrigger
         trigger={{
           keyCode: 50,
@@ -152,13 +154,13 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, ...rest })
         endTrigger={(trigger) => (endTrigger.current = trigger)}
       >
         <textarea
-          className={classNames([className || '', 'j-rich'])}
+          className={classNames([className || '', 'j-rich__editor'])}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           {...rest}
         ></textarea>
       </AppInputTrigger>
-
+      <EditorToolbar onPost={onPost} disabled={!value} />
       <div className="j-menu z-1000">
         <CSSTransition
           in={isSuggestor}
@@ -205,5 +207,19 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, ...rest })
     </div>
   );
 };
+
+interface EditorToolbarProps {
+  onPost: () => void;
+  disabled?: boolean;
+}
+
+function EditorToolbar({ onPost, disabled }: EditorToolbarProps) {
+  return (
+    <div className="j-rich__toolbar">
+      <JButton icon="ion:file-tray-outline" size="16px" sm flat title="Upload image" />
+      <JButton label="Post" sm flat title="Create post" onClick={onPost} disabled={disabled} />
+    </div>
+  );
+}
 
 export default AppPostEditor;

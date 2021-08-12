@@ -39,9 +39,10 @@ const Lib: React.FC<Props> = () => {
         <div className="flex space-y-5 flex-col">
           <div className="text-lg">Buttons</div>
           <div className="flex space-x-3 items-center flex-wrap">
-            <JButton label="Manish" icon="ion:person" outline />
-            <JButton label="Manish" icon="ion:person" flat />
-            <JButton label="Manish" icon="ion:person" invert loading />
+            <JButton label="Manish" icon="ion:person" disabled />
+            <JButton label="Manish" icon="ion:person" flat disabled />
+            <JButton label="Manish" icon="ion:person" invert disabled />
+            <JButton label="Manish" icon="ion:person" outline disabled />
           </div>
           <div className="flex space-x-3 items-center flex-wrap">
             <JButton label="Manish" outline />

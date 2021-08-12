@@ -5,7 +5,6 @@ import JAvatar from 'src/Lib/JAvatar';
 import { BaseJButtonProps } from 'src/utils/types';
 
 export interface JButtonProps extends BaseJButtonProps {
-  className?: string;
   loading?: boolean;
   labelSlot?: React.ReactNode;
   type?: 'button' | 'submit' | 'reset';
@@ -74,7 +73,7 @@ const JButton: React.FC<JButtonProps> = ({
     <button
       className={classNames(['j-button', ...buttonClasses])}
       type={type || 'button'}
-      onClick={rest.onClick}
+      {...rest}
     >
       <span className={classNames(['j-button__content', ...buttonContentClasses])}>
         <>

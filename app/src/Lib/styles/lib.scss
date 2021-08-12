@@ -16,7 +16,7 @@
 }
 
 .j-button {
-  @apply focus:outline-none disabled:(cursor-not-allowed hover:bg-red-100) px-3 py-2;
+  @apply focus:outline-none disabled:(cursor-not-allowed filter saturate-50) px-3 py-2;
   @apply relative transition-colors duration-300 ease-in-out justify-center flex items-center;
 
   &__content {
@@ -125,18 +125,26 @@
 }
 
 .j-rich {
-  @apply outline-none ease-in-out transition-all border-none hover:(ring-lime-200 ring-2) w-full;
-  @apply rounded-md focus:(ring-lime-200 ring-2) p-3;
-  @apply text-black dark:text-white bg-warm-gray-200 min-h-40 resize-none;
+  @apply relative w-full h-full;
+  &__editor {
+    @apply outline-none ease-in-out transition-all border-none w-full;
+    @apply rounded-md focus:(ring-lime-200 ring-2) p-3;
+    @apply text-black dark:text-white bg-warm-gray-200 min-h-52 resize-none;
 
-  &::-webkit-scrollbar {
-    width: 3px;
-    @apply bg-transparent rounded-md;
+    &::-webkit-scrollbar {
+      width: 3px;
+      @apply bg-transparent rounded-md;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-cool-gray-400 rounded-md;
+    }
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent rounded-md;
+    }
   }
-  &::-webkit-scrollbar-thumb {
-    @apply bg-cool-gray-400 rounded-md;
-  }
-  &::-webkit-scrollbar-track {
-    @apply bg-transparent rounded-md;
+
+  &__toolbar {
+    @apply absolute bottom-0 left-0 right-0 flex items-center justify-end space-x-1;
+    @apply p-1 bg-lime-300 rounded-b-md;
   }
 }
