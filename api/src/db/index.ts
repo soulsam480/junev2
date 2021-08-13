@@ -12,6 +12,6 @@ export async function createConnection() {
     console.log('DB connected !');
   } catch (err) {
     console.log(err);
-    process.exit(1);
+    Promise.reject(err);
   }
 }

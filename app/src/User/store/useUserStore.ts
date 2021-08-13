@@ -1,12 +1,13 @@
 import create, { State } from 'zustand';
 
 export interface User {
-  name: string | null;
-  username: string | null;
-  email: string | null;
-  bio: string | null;
-  image: string | null;
-  token: string | null;
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio: string;
+  image: string;
+  token: string;
   refresh: string;
 }
 
@@ -20,11 +21,12 @@ export interface UserState extends State {
 export const useUserStore = create<UserState>((set) => ({
   isLoggedIn: false,
   user: {
-    bio: null,
-    email: null,
-    image: null,
-    name: null,
-    username: null,
+    id: null as any,
+    bio: null as any,
+    email: null as any,
+    image: null as any,
+    name: null as any,
+    username: null as any,
   },
   setLogin: (val) => set(() => ({ isLoggedIn: val })),
   setUser: (val) => set(() => ({ user: { ...val } })),

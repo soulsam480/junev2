@@ -30,12 +30,13 @@ const JButton: React.FC<JButtonProps> = ({
   avatarRound,
   type,
   noBg,
+  className,
   ...rest
 }) => {
   const buttonClasses = useMemo(
     () => [
       noBg
-        ? 'bg-transparent hover:(bg-transparent text-lime-600)'
+        ? 'bg-transparent hover:bg-transparent'
         : invert
         ? 'bg-lime-300 hover:bg-lime-400'
         : flat
@@ -51,12 +52,12 @@ const JButton: React.FC<JButtonProps> = ({
         ? '!px-3 !py-3'
         : '',
       `${round ? 'rounded-full' : 'rounded-md'}`,
-      `${rest.className ?? ''}`,
+      `${className || ''}`,
       {
         'w-full': !!block,
       },
     ],
-    [noBg, invert, flat, outline, dense, sm, round, rest.className, block],
+    [noBg, invert, flat, outline, dense, sm, round, className, block],
   );
 
   const buttonContentClasses = useMemo(

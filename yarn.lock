@@ -422,7 +422,7 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@*", "@types/express@^4.17.13":
+"@types/express@*", "@types/express@^4.17.12", "@types/express@^4.17.13":
   version "4.17.13"
   resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.13.tgz#a76e2995728999bab51a33fabce1d705a3709034"
   integrity sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA==
@@ -1052,6 +1052,14 @@ csstype@^3.0.2:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
+
+dango-core@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/dango-core/-/dango-core-1.2.0.tgz#51054d07c07f76405d354c0c86a13cf76f346307"
+  integrity sha512-Io62BHAtJtvjMLhKweUsj5Rx54HfCRH3Nq5ZV5+xrRsRl2aXvpbYUyEvipl/0xOwPh7LH23QKYpaVWjmitJ4LA==
+  dependencies:
+    "@types/express" "^4.17.12"
+    fast-glob "^3.2.5"
 
 date-fns@^2.16.1:
   version "2.23.0"

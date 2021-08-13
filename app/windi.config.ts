@@ -12,7 +12,8 @@ import formsPlugin from 'windicss/plugin/forms';
 
 export default defineConfig({
   darkMode: 'class',
-  //   safelist: [...generateSafeList(COLORS)],
+  // safelist: [...generateSafeList(COLORS)],
+  safelist: 'fill-current text-red-700',
   theme: {
     extend: {},
     shortcuts: {},

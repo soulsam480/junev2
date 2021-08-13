@@ -69,7 +69,7 @@ export const useHideOnScroll = () => {
   return isHidden;
 };
 
-export function useQuery<T, K>(
+export function useQuery<T, K = any>(
   baseState: T,
   fetcher: (...args: any[]) => Promise<AxiosResponse<T>>,
 ) {
@@ -94,6 +94,7 @@ export function useQuery<T, K>(
     validate: useCallback(validate, [data]),
     error,
     isLoading,
+    forceValidate: setData,
   };
 }
 
@@ -136,6 +137,7 @@ export function usePaginatedQuery<T, K>(
     error,
     isLoading,
     isEnd,
+    forceValidate: setData,
   };
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PostCard from 'src/Feed/components/PostCard';
 import JButton from 'src/Lib/JButton';
 import { getAllPosts } from 'src/Shared/services/post';
@@ -12,7 +12,7 @@ interface Props {}
 const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
-  const { data, validate, isEnd } = usePaginatedQuery<Post, any>([], getAllPosts, {
+  const { data, validate, isEnd, forceValidate } = usePaginatedQuery<Post, any>([], getAllPosts, {
     limit: 5,
   });
 
@@ -23,12 +23,25 @@ const Test: React.FC<Props> = () => {
       const {
         data: { data },
       } = await createPost({ content: editorData });
+
       console.log(data);
       setEditorData('');
     } catch (error) {
       console.log(error);
     }
   }
+
+  //TODO: usecallback skips first data change
+  const updatePostReaction = useCallback((post: Post) => {
+    forceValidate((data) => {
+      const idx = data.findIndex((el) => el.id === post.id);
+      if (idx === -1) return data;
+      let changed = [...data];
+      changed[idx] = post;
+      return changed;
+    });
+  }, []);
+
   useEffect(() => {
     (async () => await validate())();
   }, []);
@@ -48,7 +61,7 @@ const Test: React.FC<Props> = () => {
       </div>
       <div className="flex flex-col items-start space-y-3 pb-15">
         {data?.map((post) => (
-          <MemoizedPostCard key={post.id} post={post} />
+          <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
         ))}
         <div className="flex justify-center w-full">
           <JButton label="Load more" onClick={validate} flat disabled={isEnd} />

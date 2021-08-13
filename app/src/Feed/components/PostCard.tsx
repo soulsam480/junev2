@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JCard from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import JMenu from 'src/Lib/JMenu';
-import { Post } from 'src/utils/types';
+import { Post, ResponseSchema } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
+import { likePost } from 'src/Shared/services/post';
+import { useQuery } from 'src/utils/hooks';
+import { classNames } from 'src/utils/helpers';
+import { useUserStore } from 'src/User/store/useUserStore';
 interface Props {
   post: Post;
+  updatePostReaction: (post: Post) => void;
 }
 
-const PostCard: React.FC<Props> = ({ post }) => {
+const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
   const [val, setVal] = useState('');
+
+  const {
+    user: { id },
+  } = useUserStore();
+
+  const {
+    isLoading,
+    validate,
+    error,
+    data: { data },
+  } = useQuery<ResponseSchema<Post>>({ data: {} as any } as any, () => likePost(post.id as string));
+
   const options = [
     {
       label: 'Account',
@@ -29,6 +46,17 @@ const PostCard: React.FC<Props> = ({ post }) => {
       icon: 'ion:log-out-outline',
     },
   ];
+
+  async function reactPost() {
+    await validate();
+    updatePostReaction(data);
+  }
+
+  useEffect(() => {
+    if (!!error) {
+      console.log('some error');
+    }
+  }, [error]);
 
   return (
     <JCard
@@ -64,7 +92,16 @@ const PostCard: React.FC<Props> = ({ post }) => {
       footerSlot={
         <div className="flex px-2 py-4 justify-between items-center">
           <div className="flex space-x-2">
-            <JButton noBg icon="ion:heart-outline" size="25px" sm dense />
+            <JButton
+              noBg
+              icon="ion:heart"
+              size="25px"
+              sm
+              dense
+              onClick={reactPost}
+              loading={isLoading}
+              className={classNames([{ 'fill-current text-red-700': post.likes?.includes(id) }])}
+            />
             <JButton noBg icon="ion:chatbubble-outline" size="25px" sm dense />
           </div>
 

@@ -48,7 +48,7 @@ export interface Post {
   user: User;
   content: string;
   url?: string;
-  likes?: User[];
+  likes?: string[];
   comments?: Comment[];
 }
 

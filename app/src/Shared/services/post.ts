@@ -8,3 +8,7 @@ export async function createPost(params: { content: string }) {
 export function getAllPosts(opts: PaginationParams) {
   return api.get<ResponseSchema<Post[]>>('/posts', { params: { ...opts } });
 }
+
+export function likePost(id: string) {
+  return api.post<ResponseSchema<Post>>(`/posts/${id}/react`);
+}
