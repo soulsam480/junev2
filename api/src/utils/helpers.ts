@@ -7,6 +7,7 @@ import {
 import { Query } from 'mongoose';
 import { ParsedQs } from './types';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { mongoose } from '@typegoose/typegoose';
 
 export function parseEnv<T extends number | string>(key: string): T {
   return process.env[key] as T;
@@ -147,4 +148,8 @@ export async function filterFromQuery<T extends AnyParamConstructor<any>>(
     .limit(parseInt(query.limit as string) || 5);
 
   return formatResponse(results.map((val) => sanitizeResponse(val.toJSON())));
+}
+
+export function getObjectId(val: string) {
+  return new mongoose.Types.ObjectId(val);
 }

@@ -1,8 +1,8 @@
 import { mongoose } from '@typegoose/typegoose';
 import { CreateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
-import { User } from 'src/entities/user';
-import { cursorPaginateResponse, sanitizeResponse } from 'src/utils/helpers';
+import { User, userModel } from 'src/entities/user';
+import { cursorPaginateResponse, getObjectId, sanitizeResponse } from 'src/utils/helpers';
 
 export async function createPost(post: CreateQuery<Post>) {
   try {
@@ -39,18 +39,20 @@ export async function reactPost(id: string, userId: string) {
   try {
     const isLiked = await postModel.find({
       _id: id,
-      likes: { $in: [new mongoose.Types.ObjectId(userId)] },
+      likes: { $in: [getObjectId(userId)] },
     });
 
     if (!isLiked.length) {
-      await postModel.updateOne(
-        { _id: id },
-        { $push: { likes: new mongoose.Types.ObjectId(userId) } },
+      await postModel.findOneAndUpdate({ _id: id }, { $push: { likes: getObjectId(userId) } });
+      await userModel.findOneAndUpdate(
+        { _id: userId },
+        { $push: { liked_posts: getObjectId(id) } },
       );
     } else {
-      await postModel.updateOne(
-        { _id: id },
-        { $pull: { likes: new mongoose.Types.ObjectId(userId) } },
+      await postModel.findOneAndUpdate({ _id: id }, { $pull: { likes: getObjectId(userId) } });
+      await userModel.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { liked_posts: getObjectId(id) } },
       );
     }
 

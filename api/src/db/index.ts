@@ -7,6 +7,7 @@ export async function createConnection() {
       useUnifiedTopology: true,
       useCreateIndex: true,
       useNewUrlParser: true,
+      useFindAndModify: true,
     });
 
     console.log('DB connected !');

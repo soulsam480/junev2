@@ -33,13 +33,7 @@ const Test: React.FC<Props> = () => {
 
   //TODO: usecallback skips first data change
   const updatePostReaction = useCallback((post: Post) => {
-    forceValidate((data) => {
-      const idx = data.findIndex((el) => el.id === post.id);
-      if (idx === -1) return data;
-      let changed = [...data];
-      changed[idx] = post;
-      return changed;
-    });
+    forceValidate((prev) => prev.map((el) => (el.id !== post.id ? el : post)));
   }, []);
 
   useEffect(() => {
