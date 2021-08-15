@@ -1,4 +1,3 @@
-import { mongoose } from '@typegoose/typegoose';
 import { CreateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';

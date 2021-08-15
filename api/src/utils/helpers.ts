@@ -9,6 +9,8 @@ import { ParsedQs } from './types';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { mongoose } from '@typegoose/typegoose';
 
+const toString = Object.prototype.toString;
+
 export function parseEnv<T extends number | string>(key: string): T {
   return process.env[key] as T;
 }
@@ -20,23 +22,54 @@ export function createError(message: string, error?: any) {
   };
 }
 
-export function sanitizeResponse(
-  data: Record<string, string | number | symbol>,
-  schema?: string[],
-): { [x: string]: any } {
-  return !!schema
-    ? [
-        ...Object.keys(data).map((key) => {
-          if (schema.includes(key)) return [key, data[key]];
-          return [];
-        }),
-      ]
-        .filter((x) => !!x.length && x)
-        .reduce((o, [key, val]) => ({ ...o, [key]: val }), {})
-    : Object.keys(data).reduce(
-        (o, key) => (key.match(/_/) ? { ...o } : { ...o, [key]: data[key] }),
-        {},
-      );
+type MaybeObjArrStrNum =
+  | { [x: string]: MaybeObjArrStrNum }
+  | (MaybeObjArrStrNum | string | number)[]
+  | string
+  | number;
+
+export function sanitizeResponse(data: {
+  [x: string]: MaybeObjArrStrNum;
+}): { [x: string]: any } | { [x: string]: any }[] {
+  function sanitizeObject(data: { [x: string]: string | number }) {
+    return Object.keys(data).reduce(
+      (o, key) => (key.startsWith('_') ? { ...o } : { ...o, [key]: data[key] }),
+      {},
+    );
+  }
+
+  function sanitizeArray(dat: (MaybeObjArrStrNum | string | number)[]): any[] {
+    return dat.map((el) => {
+      if (Array.isArray(el)) return sanitizeArray(el);
+      if (el.toString() === '[object Object]') return sanitizeResponse(el as any);
+      return el;
+    });
+  }
+
+  return Object.keys(data).reduce<{ [x: string]: any }>((o, key) => {
+    if (!key.startsWith('_')) {
+      if (
+        toString.call(data[key]) === '[object Object]' &&
+        Object.values(data[key]).every(
+          (value) => !['[object Object]', '[object Array]'].includes(toString.call(value)),
+        )
+      ) {
+        o[key] = sanitizeObject(data[key] as any);
+      } else if (
+        toString.call(data[key]) === '[object String]' ||
+        toString.call(data[key]) === '[object Number]'
+      ) {
+        o[key] = data[key];
+      } else if (Array.isArray(data[key])) {
+        o[key] = sanitizeArray(data[key] as any[]);
+      } else if (toString.call(data[key]) === '[object Object]') {
+        o[key] = sanitizeResponse(data[key] as any);
+      } else {
+        o[key] = data[key];
+      }
+    }
+    return o;
+  }, {});
 }
 
 export function formatResponse<T>(data: T) {
