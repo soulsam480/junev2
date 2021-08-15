@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JCard from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import JMenu from 'src/Lib/JMenu';
-import { Post, ResponseSchema } from 'src/utils/types';
+import { Post } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
-import { likePost } from 'src/Shared/services/post';
-import { useQuery } from 'src/utils/hooks';
-import { classNames } from 'src/utils/helpers';
 import { useUserStore } from 'src/User/store/useUserStore';
+import PostReact from 'src/Feed/components/postCard/PostReact';
 interface Props {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -21,11 +19,6 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
   const {
     user: { id },
   } = useUserStore();
-
-  const { isLoading, validate, error } = useQuery<ResponseSchema<Post>>(
-    { data: {} as any } as any,
-    () => likePost(post.id as string),
-  );
 
   const options = [
     {
@@ -44,17 +37,6 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
       icon: 'ion:log-out-outline',
     },
   ];
-
-  async function reactPost() {
-    const { data: res } = await validate();
-    updatePostReaction(res);
-  }
-
-  useEffect(() => {
-    if (!!error) {
-      console.log('some error');
-    }
-  }, [error]);
 
   return (
     <JCard
@@ -90,16 +72,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
       footerSlot={
         <div className="flex px-2 py-4 justify-between items-center">
           <div className="flex space-x-2">
-            <JButton
-              noBg
-              icon="ion:heart"
-              size="25px"
-              sm
-              dense
-              onClick={reactPost}
-              loading={isLoading}
-              className={classNames([{ 'fill-current text-red-700': post.likes?.includes(id) }])}
-            />
+            <PostReact updatePostReaction={updatePostReaction} post={post} uid={id} />
             <JButton noBg icon="ion:chatbubble-outline" size="25px" sm dense />
           </div>
 

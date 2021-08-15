@@ -44,12 +44,12 @@ export interface Comment {
   replies: Comment[];
 }
 export interface Post {
-  id?: string;
+  id: string;
   user: User;
   content: string;
   url?: string;
-  likes?: string[];
-  comments?: Comment[];
+  likes: string[];
+  comments: Comment[];
 }
 
 export interface Trigger {

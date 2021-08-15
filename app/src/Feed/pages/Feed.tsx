@@ -31,7 +31,7 @@ const Test: React.FC<Props> = () => {
   }
 
   const updatePostReaction = useCallback((post: Post) => {
-    forceValidate((prev) => prev.map((el) => (el.id !== post.id ? el : post)));
+    forceValidate((prev) => prev.map((el) => (el.id !== post.id ? el : { ...post })));
   }, []);
 
   useEffect(() => {
