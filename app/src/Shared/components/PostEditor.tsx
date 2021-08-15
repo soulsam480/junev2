@@ -13,9 +13,17 @@ interface Props {
   setValue(val: string): void;
   placeholder?: string;
   onPost: () => void;
+  isLoading: boolean;
 }
 
-const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ...rest }) => {
+const AppPostEditor: React.FC<Props> = ({
+  className,
+  value,
+  setValue,
+  onPost,
+  isLoading,
+  ...rest
+}) => {
   const [isSuggestor, setSuggestor] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchUserResponse[]>([]);
   const [coords, setCoords] = useState<{
@@ -172,7 +180,7 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ..
           {...rest}
         ></textarea>
       </AppInputTrigger>
-      <EditorToolbar onPost={onPost} disabled={!value} />
+      <EditorToolbar onPost={onPost} disabled={!value || isLoading} isLoading={isLoading} />
       <div className="j-menu z-1000">
         <CSSTransition
           in={isSuggestor}
@@ -223,13 +231,22 @@ const AppPostEditor: React.FC<Props> = ({ className, value, setValue, onPost, ..
 interface EditorToolbarProps {
   onPost: () => void;
   disabled?: boolean;
+  isLoading: boolean;
 }
 
-function EditorToolbar({ onPost, disabled }: EditorToolbarProps) {
+function EditorToolbar({ onPost, disabled, isLoading }: EditorToolbarProps) {
   return (
     <div className="j-rich__toolbar">
-      <JButton icon="ion:file-tray-outline" size="16px" sm flat title="Upload image" />
-      <JButton label="Post" sm flat title="Create post" onClick={onPost} disabled={disabled} />
+      <JButton icon="ion:file-tray-outline" size="16px" sm invert title="Upload image" />
+      <JButton
+        label="Post"
+        sm
+        invert
+        title="Create post"
+        onClick={onPost}
+        disabled={disabled}
+        loading={isLoading}
+      />
     </div>
   );
 }

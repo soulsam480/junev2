@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PostCard from 'src/Feed/components/PostCard';
 import JButton from 'src/Lib/JButton';
 import { getAllPosts } from 'src/Shared/services/post';
-import { usePaginatedQuery } from 'src/utils/hooks';
-import { Post } from 'src/utils/types';
+import { usePaginatedQuery, useQuery } from 'src/utils/hooks';
+import { Post, ResponseSchema } from 'src/utils/types';
 import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
 
@@ -21,11 +21,15 @@ const Test: React.FC<Props> = () => {
     },
   );
 
+  const { validate: create, isLoading: createLoading } = useQuery<ResponseSchema<Post>>(
+    { data: {} as any } as any,
+    () => createPost({ content: editorData }),
+  );
+
   async function savePost() {
+    if (isLoading) return;
     try {
-      const {
-        data: { data },
-      } = await createPost({ content: editorData });
+      const { data } = await create();
 
       console.log(data);
       setEditorData('');
@@ -54,6 +58,7 @@ const Test: React.FC<Props> = () => {
             placeholder="Create a post"
             className="w-full h-full"
             onPost={savePost}
+            isLoading={createLoading}
           />
         </div>
       </div>
