@@ -29,7 +29,7 @@ async function main() {
   app.use(
     cors({
       credentials: true,
-      origin: ['http://localhost:4002'],
+      origin: ['http://localhost:4002', 'https://june.sambitsahoo.com'],
     }),
   );
 
