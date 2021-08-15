@@ -5,6 +5,7 @@ import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
 import { classNames } from 'src/utils/helpers';
+import { logout } from 'src/utils/hooks';
 
 interface Props {}
 
@@ -68,7 +69,7 @@ const AppNavbar: React.FC<Props> = () => {
                     <JMenuItem
                       className="flex space-x-2 items-center"
                       closeMenuCallback={cMenu}
-                      onClick={logger}
+                      onClick={logout}
                     >
                       <span className="flex-none">
                         <JIcon icon="ion:log-out-outline" />

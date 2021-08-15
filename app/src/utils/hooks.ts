@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useUserStore } from 'src/User/store/useUserStore';
 import { PaginationParams, ResponseSchema } from 'src/utils/types';
 
 export function useClickoutside<T extends HTMLElement>(cb: () => any) {
@@ -216,3 +217,10 @@ export const useDebounceCallback = <CallbackArgs extends any[]>(
     }, wait);
   }, deps);
 };
+
+export function logout() {
+  if (useUserStore.getState().isLoggedIn) {
+    useUserStore.setState({ user: {} as any, isLoggedIn: false });
+    localStorage.removeItem('__token');
+  }
+}
