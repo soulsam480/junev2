@@ -13,9 +13,13 @@ const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
   const [editorData, setEditorData] = useState('');
-  const { data, validate, isEnd, forceValidate } = usePaginatedQuery<Post, any>([], getAllPosts, {
-    limit: 5,
-  });
+  const { data, validate, isEnd, forceValidate, isLoading } = usePaginatedQuery<Post, any>(
+    [],
+    getAllPosts,
+    {
+      limit: 5,
+    },
+  );
 
   async function savePost() {
     try {
@@ -31,7 +35,9 @@ const Test: React.FC<Props> = () => {
   }
 
   const updatePostReaction = useCallback((post: Post) => {
-    forceValidate((prev) => prev.map((el) => (el.id !== post.id ? el : { ...post })));
+    forceValidate((prev) =>
+      prev.map((el) => (el.id !== post.id ? el : { ...el, likes: post.likes })),
+    );
   }, []);
 
   useEffect(() => {
@@ -55,9 +61,17 @@ const Test: React.FC<Props> = () => {
         {data?.map((post) => (
           <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
         ))}
-        <div className="flex justify-center w-full">
-          <JButton label="Load more" onClick={validate} flat disabled={isEnd} />
-        </div>
+        {!!data.length && (
+          <div className="flex justify-center w-full">
+            <JButton
+              label="Load more"
+              onClick={validate}
+              flat
+              disabled={isEnd}
+              loading={isLoading}
+            />
+          </div>
+        )}
       </div>
     </>
   );

@@ -109,7 +109,7 @@ const JButton: React.FC<JButtonProps> = ({
           <span
             className={classNames([
               'j-button__loading',
-              `j-button__loading${flat || outline ? '--invert' : '--normal'}`,
+              `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
             ])}
             style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
           ></span>
