@@ -12,11 +12,10 @@ interface Props {}
 const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
+  const [editorData, setEditorData] = useState('');
   const { data, validate, isEnd, forceValidate } = usePaginatedQuery<Post, any>([], getAllPosts, {
     limit: 5,
   });
-
-  const [editorData, setEditorData] = useState('');
 
   async function savePost() {
     try {
@@ -31,7 +30,6 @@ const Test: React.FC<Props> = () => {
     }
   }
 
-  //TODO: usecallback skips first data change
   const updatePostReaction = useCallback((post: Post) => {
     forceValidate((prev) => prev.map((el) => (el.id !== post.id ? el : post)));
   }, []);

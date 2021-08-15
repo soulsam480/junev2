@@ -22,12 +22,10 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
     user: { id },
   } = useUserStore();
 
-  const {
-    isLoading,
-    validate,
-    error,
-    data: { data },
-  } = useQuery<ResponseSchema<Post>>({ data: {} as any } as any, () => likePost(post.id as string));
+  const { isLoading, validate, error } = useQuery<ResponseSchema<Post>>(
+    { data: {} as any } as any,
+    () => likePost(post.id as string),
+  );
 
   const options = [
     {
@@ -48,8 +46,8 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
   ];
 
   async function reactPost() {
-    await validate();
-    updatePostReaction(data);
+    const { data: res } = await validate();
+    updatePostReaction(res);
   }
 
   useEffect(() => {

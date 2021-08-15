@@ -77,16 +77,27 @@ export function useQuery<T, K = any>(
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
 
-  async function validate() {
-    try {
-      setLoading(true);
-      const { data } = await fetcher();
-      setData(data);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
+  function reset() {
+    setLoading(false);
+    setError(null);
+  }
+
+  async function validate(): Promise<T> {
+    reset();
+    return new Promise(async (resolve, reject) => {
+      try {
+        setLoading(true);
+        const { data: apiData } = await fetcher();
+
+        setData(apiData);
+        resolve(apiData);
+      } catch (error) {
+        setError(error);
+        reject(error);
+      } finally {
+        setLoading(false);
+      }
+    });
   }
 
   return {
@@ -98,7 +109,7 @@ export function useQuery<T, K = any>(
   };
 }
 
-export function usePaginatedQuery<T, K>(
+export function usePaginatedQuery<T, K = any>(
   baseState: T[],
   fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<T[]>>>,
   opts?: {
@@ -113,22 +124,33 @@ export function usePaginatedQuery<T, K>(
 
   const getPageArgs = (cursor: number | null, limit = 10): PaginationParams => ({ cursor, limit });
 
-  async function validate() {
-    if (isEnd) return;
-    try {
-      setLoading(true);
-      const {
-        data: { data: apiData, next_cursor, has_more },
-      } = await fetcher(getPageArgs(cursor, opts?.limit));
+  function reset() {
+    setLoading(false);
+    setError(null);
+  }
 
-      setCursor(next_cursor);
-      setData([...data, ...apiData]);
-      if (!has_more) setEnd(true);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
+  async function validate(): Promise<T[]> {
+    reset();
+    return new Promise(async (resolve, reject) => {
+      if (isEnd) return;
+      try {
+        setLoading(true);
+        const {
+          data: { data: apiData, next_cursor, has_more },
+        } = await fetcher(getPageArgs(cursor, opts?.limit));
+
+        setCursor(next_cursor);
+        setData((data) => [...data, ...apiData]);
+        resolve(apiData);
+
+        if (!has_more) setEnd(true);
+      } catch (error) {
+        setError(error);
+        reject(error);
+      } finally {
+        setLoading(false);
+      }
+    });
   }
 
   return {
