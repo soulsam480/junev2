@@ -10,8 +10,8 @@ import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
 import { authRouter } from 'src/controllers/auth';
 import { setupOauth } from './oauth';
-import { serve, setup } from 'swagger-ui-express';
-import specs from '../swagger-spec.json';
+// import { serve, setup } from 'swagger-ui-express';
+// import specs from '../swagger-spec.json';
 import { userRouter } from './controllers/user';
 import { createExpressServer } from 'dango-core';
 import { postController } from './controllers/post';
@@ -38,7 +38,7 @@ async function main() {
   app.use('/auth', authRouter);
   app.use('/users', userRouter);
 
-  app.use('/api-docs', serve, setup(specs));
+  // app.use('/api-docs', serve, setup(specs));
 
   createExpressServer(app, {
     controllers: [postController],
