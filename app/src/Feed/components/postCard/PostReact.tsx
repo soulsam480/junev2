@@ -12,13 +12,13 @@ interface Props {
 }
 
 const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
-  const { isLoading, validate, error } = useQuery<ResponseSchema<Post>>(
+  const { isLoading, validate, error } = useQuery<ResponseSchema<Post>, [string]>(
     { data: {} as any } as any,
-    () => likePost(post.id),
+    (args) => likePost(args[0]),
   );
 
   async function handleReaction() {
-    const { data: res } = await validate();
+    const { data: res } = await validate(post.id);
     updatePostReaction(res);
   }
 

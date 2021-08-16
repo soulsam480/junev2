@@ -70,10 +70,18 @@ export const useHideOnScroll = () => {
   return isHidden;
 };
 
-export function useQuery<T, K = any>(
+type QueryInstance<T, P extends any[], K> = {
+  data: T;
+  validate: (...args: P) => Promise<T>;
+  error: K | null;
+  isLoading: boolean;
+  forceValidate: React.Dispatch<React.SetStateAction<T>>;
+};
+
+export function useQuery<T, P extends any[] = [], K = any>(
   baseState: T,
-  fetcher: (...args: any[]) => Promise<AxiosResponse<T>>,
-) {
+  fetcher: (...args: P[]) => Promise<AxiosResponse<T>>,
+): QueryInstance<T, P, K> {
   const [data, setData] = useState<T>(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -83,12 +91,12 @@ export function useQuery<T, K = any>(
     setError(null);
   }
 
-  async function validate(): Promise<T> {
+  async function validate(...args: P): Promise<T> {
     reset();
     return new Promise(async (resolve, reject) => {
       try {
         setLoading(true);
-        const { data: apiData } = await fetcher();
+        const { data: apiData } = await fetcher.call(null, args);
 
         setData(apiData);
         resolve(apiData);
@@ -110,13 +118,29 @@ export function useQuery<T, K = any>(
   };
 }
 
+type PaginatedQueryInstance<T, K> = {
+  data: T[];
+  validate: () => Promise<T[]>;
+  error: K | null;
+  isLoading: boolean;
+  isEnd: boolean;
+  forceValidate: React.Dispatch<React.SetStateAction<T[]>>;
+};
+
+/**
+ * Cursor based query hook for listing API calls
+ * @param baseState  base hook state
+ * @param fetcher fetcher that return a promise
+ * @param opts hook options
+ * @returns hook instance with an array of results
+ */
 export function usePaginatedQuery<T, K = any>(
   baseState: T[],
   fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<T[]>>>,
   opts?: {
     limit?: number;
   },
-) {
+): PaginatedQueryInstance<T, K> {
   const [cursor, setCursor] = useState<number | null>(null);
   const [data, setData] = useState(baseState);
   const [error, setError] = useState<K | null>(null);
