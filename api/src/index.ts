@@ -18,8 +18,10 @@ import { postController } from './controllers/post';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
-setLogLevel('TRACE');
-mongoose.set('debug', true);
+if (!parseEnv<boolean>('PROD')) {
+  setLogLevel('TRACE');
+  mongoose.set('debug', true);
+}
 
 async function main() {
   const app = express();

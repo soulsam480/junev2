@@ -11,7 +11,7 @@ import { mongoose } from '@typegoose/typegoose';
 
 const toString = Object.prototype.toString;
 
-export function parseEnv<T extends number | string>(key: string): T {
+export function parseEnv<T extends number | string | boolean>(key: string): T {
   return process.env[key] as T;
 }
 

@@ -14,13 +14,7 @@ export function setupGoogleOauth(passportInstance: PassportStatic) {
           : parseEnv('GAUTH_REDIRECT'),
         passReqToCallback: true,
       },
-      async (
-        request: any,
-        accessToken: any,
-        refreshToken: any,
-        profile: Record<string, string>,
-        done: any,
-      ) => {
+      async (_: any, __: any, ___: any, profile: Record<string, string>, done: any) => {
         const user = await userModel.findOne({
           $or: [{ email: profile.email }, { ga_id: profile.id }],
         });
@@ -37,7 +31,8 @@ export function setupGoogleOauth(passportInstance: PassportStatic) {
           return;
         }
 
-        if (!user.ga_id) await userModel.update({ email: user.email }, { ga_id: profile.id });
+        if (!user.ga_id)
+          await userModel.findOneAndUpdate({ email: user.email }, { ga_id: profile.id });
 
         done(null, user.toJSON());
       },
