@@ -6,6 +6,9 @@ dotenv.config({ path: join(__dirname, '../.env') });
 import { mongoose, setLogLevel } from '@typegoose/typegoose';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import { createExpressServer } from 'dango-core';
+
 import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
 import { authRouter } from 'src/controllers/auth';
@@ -13,8 +16,8 @@ import { setupOauth } from './oauth';
 // import { serve, setup } from 'swagger-ui-express';
 // import specs from '../swagger-spec.json';
 import { userRouter } from './controllers/user';
-import { createExpressServer } from 'dango-core';
 import { postController } from './controllers/post';
+import { auth } from './middlewares/auth';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
@@ -34,6 +37,7 @@ async function main() {
       origin: ['http://localhost:4002', 'https://june.sambitsahoo.com'],
     }),
   );
+  app.use(helmet());
 
   setupOauth(app);
 
@@ -44,6 +48,7 @@ async function main() {
 
   createExpressServer(app, {
     controllers: [postController],
+    middlewares: [auth],
   });
 
   try {

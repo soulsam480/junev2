@@ -3,16 +3,19 @@ import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from 'src/entities/user';
 
 @modelOptions({
-  schemaOptions: { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
+  schemaOptions: {
+    timestamps: true,
+    toJSON: { virtuals: true, versionKey: false },
+  },
 })
 export class Comment extends TimeStamps {
   @prop()
   public comment: string;
 
-  @prop({ ref: () => User })
+  @prop({ ref: 'User' })
   public user: Ref<User>;
 
-  @prop({ ref: () => User })
+  @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
   @prop({ ref: () => Comment })
@@ -28,10 +31,13 @@ export class Comment extends TimeStamps {
 }
 
 @modelOptions({
-  schemaOptions: { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
+  schemaOptions: {
+    timestamps: true,
+    toJSON: { virtuals: true, versionKey: false },
+  },
 })
 export class Post extends TimeStamps {
-  @prop({ ref: () => User })
+  @prop({ ref: 'User' })
   public user: Ref<User>;
 
   @prop({ default: '' })
@@ -40,7 +46,7 @@ export class Post extends TimeStamps {
   @prop({ default: '' })
   public url?: string;
 
-  @prop({ ref: () => User })
+  @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
   @prop({ type: () => Comment })

@@ -6,7 +6,7 @@ import { useQuery } from 'src/utils/hooks';
 import { Post, ResponseSchema } from 'src/utils/types';
 
 interface Props {
-  updatePostReaction: (post: Post) => void;
+  updatePostReaction(post: Post): void;
   uid: string;
   post: Post;
 }
@@ -18,6 +18,17 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
   );
 
   async function handleReaction() {
+    // change first
+    if (post.likes.includes(uid)) {
+      updatePostReaction({ id: post.id, likes: post.likes.filter((el) => el !== uid) } as Post);
+    } else {
+      updatePostReaction({ id: post.id, likes: [...post.likes, uid] } as Post);
+    }
+
+    // stop validating if already running
+    if (isLoading) return;
+
+    // revalidate
     const { data: res } = await validate(post.id);
     updatePostReaction(res);
   }
@@ -36,7 +47,6 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
       sm
       dense
       onClick={handleReaction}
-      loading={isLoading}
       className={classNames([{ 'fill-current text-red-700': post.likes.includes(uid) }])}
     />
   );

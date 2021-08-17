@@ -4,7 +4,7 @@ import { authenticate } from 'passport';
 import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
-import { createError, parseEnv, sanitizeResponse } from 'src/utils/helpers';
+import { createError, parseEnv } from 'src/utils/helpers';
 // import faker from 'faker';
 // import { CreateQuery } from 'mongoose';
 
@@ -24,8 +24,8 @@ authRouter.post('/register', async (req, res) => {
   try {
     const newUser = await userModel.create({ ...user });
 
-    res.send({
-      ...sanitizeResponse(newUser.toJSON()),
+    res.json({
+      ...newUser.toJSON(),
       ...createTokens(newUser.toJSON()),
     });
   } catch (error) {
@@ -50,8 +50,8 @@ authRouter.post('/login', async (req, res) => {
     if (!(await userFromDb.comparePassword(password)))
       return res.status(400).send(createError('Username or password is incorrect!'));
 
-    res.send({
-      ...sanitizeResponse(userFromDb.toJSON()),
+    res.json({
+      ...userFromDb.toJSON(),
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
@@ -92,8 +92,8 @@ authRouter.get('/user', auth, async (req, res) => {
 
     if (!userFromDb) return res.status(404).send(createError('User not found !'));
 
-    res.send({
-      ...sanitizeResponse(userFromDb.toJSON()),
+    res.json({
+      ...userFromDb.toJSON(),
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
@@ -117,7 +117,7 @@ authRouter.get('/token', async (req, res) => {
 
     if (!userFromDb) return res.status(404).send(createError('User not found !'));
 
-    res.send({
+    res.json({
       ...createTokens(userFromDb.toJSON()),
     });
   } catch (error) {
@@ -147,7 +147,7 @@ authRouter.get('/token', async (req, res) => {
 
 //   await userModel.insertMany(timeSeriesData);
 
-//   res.send('OK');
+//   res.json('OK');
 // });
 
 export { authRouter };

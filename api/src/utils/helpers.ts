@@ -9,7 +9,7 @@ import { ParsedQs } from './types';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { mongoose } from '@typegoose/typegoose';
 
-const toString = Object.prototype.toString;
+// const toString = Object.prototype.toString;
 
 export function parseEnv<T extends number | string | boolean>(key: string): T {
   return process.env[key] as T;
@@ -22,55 +22,55 @@ export function createError(message: string, error?: any) {
   };
 }
 
-type MaybeObjArrStrNum =
-  | { [x: string]: MaybeObjArrStrNum }
-  | (MaybeObjArrStrNum | string | number)[]
-  | string
-  | number;
+// type MaybeObjArrStrNum =
+//   | { [x: string]: MaybeObjArrStrNum }
+//   | (MaybeObjArrStrNum | string | number)[]
+//   | string
+//   | number;
 
-export function sanitizeResponse(data: {
-  [x: string]: MaybeObjArrStrNum;
-}): { [x: string]: any } | { [x: string]: any }[] {
-  function sanitizeObject(data: { [x: string]: string | number }) {
-    return Object.keys(data).reduce(
-      (o, key) => (key.startsWith('_') ? { ...o } : { ...o, [key]: data[key] }),
-      {},
-    );
-  }
+// export function sanitizeResponse(data: {
+//   [x: string]: MaybeObjArrStrNum;
+// }): { [x: string]: any } | { [x: string]: any }[] {
+//   function sanitizeObject(data: { [x: string]: string | number }) {
+//     return Object.keys(data).reduce(
+//       (o, key) => (key.startsWith('_') ? { ...o } : { ...o, [key]: data[key] }),
+//       {},
+//     );
+//   }
 
-  function sanitizeArray(dat: (MaybeObjArrStrNum | string | number)[]): any[] {
-    return dat.map((el) => {
-      if (Array.isArray(el)) return sanitizeArray(el);
-      if (el.toString() === '[object Object]') return sanitizeResponse(el as any);
-      return el;
-    });
-  }
+//   function sanitizeArray(dat: (MaybeObjArrStrNum | string | number)[]): any[] {
+//     return dat.map((el) => {
+//       if (Array.isArray(el)) return sanitizeArray(el);
+//       if (el.toString() === '[object Object]') return sanitizeResponse(el as any);
+//       return el;
+//     });
+//   }
 
-  return Object.keys(data).reduce<{ [x: string]: any }>((o, key) => {
-    if (!key.startsWith('_')) {
-      if (
-        toString.call(data[key]) === '[object Object]' &&
-        Object.values(data[key]).every(
-          (value) => !['[object Object]', '[object Array]'].includes(toString.call(value)),
-        )
-      ) {
-        o[key] = sanitizeObject(data[key] as any);
-      } else if (
-        toString.call(data[key]) === '[object String]' ||
-        toString.call(data[key]) === '[object Number]'
-      ) {
-        o[key] = data[key];
-      } else if (Array.isArray(data[key])) {
-        o[key] = sanitizeArray(data[key] as any[]);
-      } else if (toString.call(data[key]) === '[object Object]') {
-        o[key] = sanitizeResponse(data[key] as any);
-      } else {
-        o[key] = data[key];
-      }
-    }
-    return o;
-  }, {});
-}
+//   return Object.keys(data).reduce<{ [x: string]: any }>((o, key) => {
+//     if (!key.startsWith('_')) {
+//       if (
+//         toString.call(data[key]) === '[object Object]' &&
+//         Object.values(data[key]).every(
+//           (value) => !['[object Object]', '[object Array]'].includes(toString.call(value)),
+//         )
+//       ) {
+//         o[key] = sanitizeObject(data[key] as any);
+//       } else if (
+//         toString.call(data[key]) === '[object String]' ||
+//         toString.call(data[key]) === '[object Number]'
+//       ) {
+//         o[key] = data[key];
+//       } else if (Array.isArray(data[key])) {
+//         o[key] = sanitizeArray(data[key] as any[]);
+//       } else if (toString.call(data[key]) === '[object Object]') {
+//         o[key] = sanitizeResponse(data[key] as any);
+//       } else {
+//         o[key] = data[key];
+//       }
+//     }
+//     return o;
+//   }, {});
+// }
 
 export function formatResponse<T>(data: T) {
   return {
@@ -92,7 +92,7 @@ export async function offsetPaginateResponse<T extends TimeStamps>(
     const data = await model.skip(offset).limit(limit);
 
     return {
-      data: data.map((entity) => ({ ...sanitizeResponse(entity.toJSON()) })),
+      data,
       total_count,
       total_pages,
       current_page: page,
@@ -126,7 +126,8 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
       data = await model
         .find({})
         .sort({ updatedAt: -1 })
-        .limit(limit + 1);
+        .limit(limit + 1)
+        .exec();
     }
 
     const has_more = data.length === limit + 1;
@@ -140,7 +141,7 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
     }
 
     return {
-      data: data.map((entity) => ({ ...sanitizeResponse(entity.toJSON()) })),
+      data,
       total_count,
       has_more,
       next_cursor,
@@ -180,7 +181,7 @@ export async function filterFromQuery<T extends AnyParamConstructor<any>>(
     .select(config?.select)
     .limit(parseInt(query.limit as string) || 5);
 
-  return formatResponse(results.map((val) => sanitizeResponse(val.toJSON())));
+  return formatResponse(results);
 }
 
 export function getObjectId(val: string) {

@@ -14,12 +14,14 @@
     "start:app": "yarn workspace app serve",
     "dev:api": "yarn workspace api dev",
     "build:api": "yarn workspace api build",
+    "start:api": "yarn workspace api start",
     "build:api:swagger": "yarn workspace api build:swagger",
     "build:api:types": "yarn workspace api build:types",
     "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\"",
     "build": "concurrently --kill-others-on-fail \"yarn build:app\"  \"yarn build:api\""
   },
   "dependencies": {
-    "concurrently": "^6.1.0"
+    "concurrently": "^6.1.0",
+    "dango-core": "^1.3.0"
   }
 }

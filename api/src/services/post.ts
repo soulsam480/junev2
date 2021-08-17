@@ -1,12 +1,11 @@
 import { CreateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
-import { cursorPaginateResponse, getObjectId, sanitizeResponse } from 'src/utils/helpers';
+import { cursorPaginateResponse, getObjectId } from 'src/utils/helpers';
 
 export async function createPost(post: CreateQuery<Post>) {
   try {
-    const newPost = await postModel.create({ ...post });
-    return { ...sanitizeResponse(newPost.toJSON()) };
+    return await postModel.create({ ...post });
   } catch (error) {
     Promise.reject(error);
   }
@@ -15,7 +14,9 @@ export async function createPost(post: CreateQuery<Post>) {
 export async function getAllPosts(cursor: number, limit: number) {
   try {
     return await cursorPaginateResponse(
-      postModel.find().populate({ path: 'user', model: User, select: ['username', 'id', 'name'] }),
+      postModel
+        .find()
+        .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] }),
       cursor,
       limit,
       await postModel.estimatedDocumentCount(),
@@ -27,8 +28,8 @@ export async function getAllPosts(cursor: number, limit: number) {
 
 export async function getPostsByUserId(id: string) {
   try {
-    const allPosts = await postModel.find({ user: id });
-    return allPosts.map((post) => ({ ...sanitizeResponse(post.toJSON()) }));
+    const allPosts = await postModel.find({ user: id }).exec();
+    return allPosts;
   } catch (error) {
     Promise.reject(error);
   }
@@ -36,32 +37,34 @@ export async function getPostsByUserId(id: string) {
 
 export async function reactPost(id: string, userId: string) {
   try {
-    const isLiked = await postModel.find({
-      _id: id,
-      likes: { $in: [getObjectId(userId)] },
-    });
+    const isLiked = await postModel
+      .findOne({
+        _id: id,
+        likes: { $in: [getObjectId(userId)] },
+      })
+      .select(['id'])
+      .exec();
 
-    if (!isLiked.length) {
-      await postModel.findOneAndUpdate({ _id: id }, { $push: { likes: getObjectId(userId) } });
-      await userModel.findOneAndUpdate(
-        { _id: userId },
-        { $push: { liked_posts: getObjectId(id) } },
-      );
+    if (!isLiked) {
+      await postModel.updateOne({ _id: id }, { $push: { likes: getObjectId(userId) } }).exec();
+
+      await userModel
+        .updateOne({ _id: userId }, { $push: { liked_posts: getObjectId(id) } })
+        .exec();
     } else {
-      await postModel.findOneAndUpdate({ _id: id }, { $pull: { likes: getObjectId(userId) } });
-      await userModel.findOneAndUpdate(
-        { _id: userId },
-        { $pull: { liked_posts: getObjectId(id) } },
-      );
+      await postModel.updateOne({ _id: id }, { $pull: { likes: getObjectId(userId) } }).exec();
+
+      await userModel
+        .updateOne({ _id: userId }, { $pull: { liked_posts: getObjectId(id) } })
+        .exec();
     }
 
-    const updated = await postModel
-      .find({
+    return await postModel
+      .findOne({
         _id: id,
       })
-      .populate({ path: 'user', model: User, select: ['username', 'id', 'name'] });
-
-    return { ...sanitizeResponse(updated[0].toJSON()) };
+      .select(['likes', 'total_likes', 'id', 'updatedAt'])
+      .exec();
   } catch (error) {
     Promise.reject(error);
   }

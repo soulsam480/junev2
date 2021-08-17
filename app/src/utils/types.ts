@@ -51,6 +51,8 @@ export interface Post {
   url?: string;
   likes: string[];
   comments: Comment[];
+  total_comments?: number;
+  total_likes?: number;
 }
 
 export interface Trigger {

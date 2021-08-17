@@ -66,10 +66,10 @@ const Test: React.FC<Props> = () => {
         {data?.map((post) => (
           <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
         ))}
-        {!!data.length && (
+        {(!!data.length || isLoading) && (
           <div className="flex justify-center w-full">
             <JButton
-              label="Load more"
+              label={isEnd ? 'Reached end' : 'Load more'}
               onClick={validate}
               flat
               disabled={isEnd}

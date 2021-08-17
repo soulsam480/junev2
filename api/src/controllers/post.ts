@@ -22,25 +22,23 @@ import { createError, formatResponse } from 'src/utils/helpers';
 
 //   await postModel.insertMany(timeSeriesData);
 
-//   res.send('OK');
+//   return res.json('OK');
 // });
 
 const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
   path: '/',
   method: 'get',
-  handler: async (req, res, _, __, { limit: pagination_limit, cursor: pagination_cursor }) => {
+  handler: async (___, res, _, __, { limit: pagination_limit, cursor: pagination_cursor }) => {
     try {
       const cursor: number = parseInt(pagination_cursor);
       const limit: number = parseInt(pagination_limit) || 10;
 
       const data = await getAllPosts(cursor, limit);
 
-      res.json({
-        ...data,
-      });
+      return res.json(data);
     } catch (error) {
       console.log(error);
-      res.status(500).send(createError('Internal server error.', error));
+      res.sendError(500, error);
     }
   },
 });
@@ -48,16 +46,16 @@ const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
 const postsByUserId = createRoute<any, { id: string }>({
   path: '/user/:id',
   method: 'get',
-  handler: async (req, res, _, { id }) => {
+  handler: async (__, res, _, { id }) => {
     if (!id) return res.status(400).send(createError('User id not found'));
 
     try {
       const posts = await getPostsByUserId(id);
 
-      res.send(formatResponse(posts));
+      return res.json(formatResponse(posts));
     } catch (error) {
       console.log(error);
-      res.status(500).send(createError('Internal server error.', error));
+      res.sendError(500, error);
     }
   },
 });
@@ -71,10 +69,10 @@ const create = createRoute<{ post: { [x: string]: any } }>({
     try {
       const newPost = await createPost({ ...(post as any), user: userId });
 
-      res.send(formatResponse(newPost));
+      return res.json(formatResponse(newPost));
     } catch (error) {
       console.log(error);
-      res.status(500).send(createError('Internal server error.', error));
+      res.sendError(500, error);
     }
   },
 });
@@ -86,14 +84,14 @@ const react = createRoute<any, { id: string }>({
     try {
       const data = await reactPost(id, userId as string);
 
-      res.send(formatResponse(data));
+      return res.json(formatResponse(data));
     } catch (error) {
       console.log(error);
-      res.status(500).send(createError('Internal server error.', error));
+      res.sendError(500, error);
     }
   },
 });
 
-const postController = createController('/posts', [getPosts, postsByUserId, create, react], [auth]);
+const postController = createController('/posts', [getPosts, postsByUserId, create, react]);
 
 export { postController };

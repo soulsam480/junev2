@@ -5,7 +5,7 @@ import { Comment, Post } from 'src/entities/post';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({
-  schemaOptions: { timestamps: true, toJSON: { virtuals: true } },
+  schemaOptions: { timestamps: true, toJSON: { virtuals: true, versionKey: false } },
 })
 @pre<User>('save', async function (next) {
   if (!this.isModified('password')) next();
