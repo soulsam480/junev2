@@ -124,7 +124,7 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
         .exec();
     } else {
       data = await model
-        .find({})
+        .find()
         .sort({ updatedAt: -1 })
         .limit(limit + 1)
         .exec();
