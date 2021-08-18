@@ -81,14 +81,14 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
       }
       contentSlot={
         <>
-          <div className="p-2">
+          <div className="p-2 break-all">
             <AppLinkifier
               linkEl={({ match, key, href }) => (
                 <a
                   href={href}
                   target="_blank"
                   key={key}
-                  className="j-link"
+                  className="j-link break-all"
                   rel="noopener noreferrer nofollow"
                 >
                   {match}

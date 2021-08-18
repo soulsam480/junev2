@@ -55,7 +55,7 @@ const AppLinkifier: React.FC<Props> = ({ children, linkEl }) => {
 
   const parsedText = useMemo(() => parse(), [parse]);
 
-  return <div>{parsedText}</div>;
+  return <div className="break-all">{parsedText}</div>;
 };
 
 export default AppLinkifier;
