@@ -86,7 +86,6 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
               linkEl={({ match, key, href }) => (
                 <a
                   href={href}
-                  target="_blank"
                   key={key}
                   className="j-link break-all"
                   rel="noopener noreferrer nofollow"

@@ -17,7 +17,7 @@ const AppNavbar: React.FC<Props> = () => {
   return (
     <nav
       className={classNames([
-        'sticky top-0 z-20 transition-colors duration-400',
+        'sticky top-0 z-200 transition-colors duration-400',
         'ease-in-out bg-warm-gray-100 dark:bg-cool-gray-800',
         'border-b border-gray-200',
       ])}
@@ -52,7 +52,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <span className="flex-none">
                         <JIcon icon="ion:ios-contact-outline" />
                       </span>
-                      <span className="flex-grow">Account</span>
+                      <span className="flex-grow">Home</span>
                     </JMenuItem>
 
                     <JMenuItem
@@ -63,7 +63,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <span className="flex-none">
                         <JIcon icon="ion:home-outline" />
                       </span>
-                      <span className="flex-grow">Home</span>
+                      <span className="flex-grow">Settings</span>
                     </JMenuItem>
 
                     <JMenuItem
@@ -82,7 +82,10 @@ const AppNavbar: React.FC<Props> = () => {
                       closeMenuCallback={cMenu}
                       to="/lib"
                     >
-                      Lib
+                      <span className="flex-none">
+                        <JIcon icon="ion:library-outline" />
+                      </span>
+                      <span>Lib</span>{' '}
                     </JMenuItem>
                   </>
                 )}

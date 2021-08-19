@@ -4,6 +4,7 @@ import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
 import { googleLogin, login, LoginUserDto, register } from 'src/User/services/auth';
 import { useUserStore } from 'src/User/store/useUserStore';
+import { useAuth } from 'src/utils/auth';
 import { setApiToken } from 'src/utils/helpers';
 
 interface Props {}
@@ -11,6 +12,8 @@ interface Props {}
 const Login: React.FC<Props> = () => {
   const { setUser, setLogin } = useUserStore();
   const naviagte = useNavigate();
+  const { tokenWatcher } = useAuth();
+
   const [user, setUSerDto] = useState<LoginUserDto>({
     email: '',
     name: '',
@@ -19,12 +22,15 @@ const Login: React.FC<Props> = () => {
   });
   const [isLogin, setLoginType] = useState(true);
 
+  const [isLoginLoading, setLoginLoading] = useState(false);
+
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.stopPropagation();
     e.preventDefault();
     if (!user.email || !user.password) return;
 
     try {
+      setLoginLoading(true);
       const { data } = await login(user);
 
       localStorage.setItem('__token', data.refresh);
@@ -34,6 +40,7 @@ const Login: React.FC<Props> = () => {
 
       setUser({ ...data });
       setLogin(true);
+      tokenWatcher();
       naviagte('/u');
     } catch (error) {
       console.log(error);
@@ -46,6 +53,7 @@ const Login: React.FC<Props> = () => {
     if (Object.values(user).length < 4) return;
 
     try {
+      setLoginLoading(true);
       const { data } = await register(user);
 
       localStorage.setItem('__token', data.refresh);
@@ -55,6 +63,7 @@ const Login: React.FC<Props> = () => {
 
       setUser({ ...data });
       setLogin(true);
+      tokenWatcher();
       naviagte('/u');
     } catch (error) {
       console.log(error);
@@ -78,7 +87,7 @@ const Login: React.FC<Props> = () => {
                   alt=""
                 />
 
-                <form className="flex flex-col space-y-4 " onSubmit={(e) => handleLogin(e)}>
+                <form className="flex flex-col space-y-4 " onSubmit={handleLogin}>
                   {' '}
                   <JInput
                     value={user?.email}
@@ -92,7 +101,7 @@ const Login: React.FC<Props> = () => {
                     placeholder="Password"
                     type="password"
                   />
-                  <JButton label="Log In" type="submit" block />
+                  <JButton label="Log In" type="submit" block loading={isLoginLoading} />
                 </form>
 
                 <div className="text-base">OR</div>
@@ -132,7 +141,7 @@ const Login: React.FC<Props> = () => {
                     placeholder="Password"
                     type="password"
                   />
-                  <JButton label="Sign Up" type="submit" block />
+                  <JButton label="Sign Up" type="submit" block loading={isLoginLoading} />
                 </form>
               </div>
             )}
