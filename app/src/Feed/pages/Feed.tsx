@@ -13,6 +13,7 @@ const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
   const [editorData, setEditorData] = useState('');
+
   const { data, validate, isEnd, forceValidate, isLoading } = usePaginatedQuery<Post>(
     [],
     getAllPosts,
@@ -62,6 +63,7 @@ const Test: React.FC<Props> = () => {
           />
         </div>
       </div>
+
       <div className="flex flex-col items-start space-y-3 pb-15">
         {data?.map((post) => (
           <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />

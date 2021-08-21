@@ -14,6 +14,7 @@ const JMenuItem: React.FC<Props> = ({ children, onClick, className, closeMenuCal
     if (!!closeMenuCallback) closeMenuCallback();
     if (!!onClick) onClick(e);
   }
+
   return !!to ? (
     <Link
       to={to}

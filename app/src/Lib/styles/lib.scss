@@ -16,7 +16,7 @@
 }
 
 .j-button {
-  @apply focus:outline-none disabled:(cursor-not-allowed filter saturate-50) px-3 py-2;
+  @apply focus:outline-none focus:ring-2 focus:ring-lime-200 disabled:(cursor-not-allowed filter saturate-50) px-3 py-2;
   @apply relative transition-colors duration-300 ease-in-out justify-center flex items-center;
 
   &__content {
@@ -27,14 +27,17 @@
       pointer-events: none;
     }
   }
+
   &__bottom {
     @apply absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
   }
+
   &__loading {
     &--invert {
       border-top-color: rgba(163, 230, 53, var(--tw-bg-opacity)) !important;
       border-right-color: rgba(163, 230, 53, var(--tw-bg-opacity)) !important;
     }
+
     &--normal {
       border-top-color: white !important;
       border-right-color: white !important;
@@ -107,6 +110,7 @@
     @apply rounded-md focus:(ring-lime-200 ring-2);
     @apply text-black dark:text-white bg-warm-gray-200 h-full;
   }
+
   textarea {
     @apply px-2 py-3 resize-none;
   }
@@ -126,6 +130,7 @@
 
 .j-rich {
   @apply relative w-full h-full;
+
   &__editor {
     @apply outline-none ease-in-out transition-all border-none w-full;
     @apply rounded-md focus:(ring-lime-200 ring-2) p-3;
@@ -135,9 +140,11 @@
       width: 3px;
       @apply bg-transparent rounded-md;
     }
+
     &::-webkit-scrollbar-thumb {
       @apply bg-cool-gray-400 rounded-md;
     }
+
     &::-webkit-scrollbar-track {
       @apply bg-transparent rounded-md;
     }
@@ -146,5 +153,38 @@
   &__toolbar {
     @apply absolute bottom-0 left-0 right-0 flex items-center justify-end space-x-1;
     @apply p-1 bg-warm-gray-300 rounded-b-md;
+  }
+}
+
+.j-dialog {
+  &-enter {
+    @apply opacity-0 scale-95;
+  }
+
+  &-enter-active {
+    @apply transform opacity-100 scale-100 duration-300;
+  }
+
+  &-exit {
+    @apply opacity-100 scale-100;
+  }
+
+  &-exit-active {
+    @apply transform opacity-0 scale-95 duration-300;
+  }
+
+  &__backdrop {
+    @apply overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none;
+    @apply focus:outline-none justify-center items-center flex backdrop-filter backdrop-blur-sm;
+    @apply bg-warm-gray-50 dark:bg-cool-gray-50 bg-opacity-50;
+  }
+
+  &__parent {
+    @apply relative my-6 sm:mx-auto mx-2 md:max-w-3xl max-w-[calc(100vw-16px)];
+  }
+
+  &__content {
+    @apply shadow-md relative flex border-none rounded-md;
+    @apply transition-colors duration-400 ease-in-out outline-none focus:outline-none;
   }
 }

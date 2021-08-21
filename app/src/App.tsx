@@ -15,16 +15,16 @@ const App: React.FC<Props> = () => {
     (async () => await auth())();
   }, []);
   return (
-    <div>
+    <>
       {!isLoading && !isCatchLoading && (
         <div>
           <AppNavbar />
-          <Suspense fallback={<span></span>}>
+          <Suspense fallback={<span />}>
             <div className="px-2 py-1 sm:max-w-7xl mx-auto">{Routes}</div>
           </Suspense>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

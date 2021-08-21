@@ -47,21 +47,17 @@ const AppNavbar: React.FC<Props> = () => {
                     <JMenuItem
                       className="flex space-x-2 items-center"
                       closeMenuCallback={cMenu}
-                      onClick={logger}
+                      to="/u"
                     >
                       <span className="flex-none">
-                        <JIcon icon="ion:ios-contact-outline" />
+                        <JIcon icon="ion:home-outline" />
                       </span>
                       <span className="flex-grow">Home</span>
                     </JMenuItem>
 
-                    <JMenuItem
-                      className="flex space-x-2 items-center"
-                      closeMenuCallback={cMenu}
-                      onClick={logger}
-                    >
+                    <JMenuItem className="flex space-x-2 items-center" closeMenuCallback={cMenu}>
                       <span className="flex-none">
-                        <JIcon icon="ion:home-outline" />
+                        <JIcon icon="ion:gear-a" />
                       </span>
                       <span className="flex-grow">Settings</span>
                     </JMenuItem>
@@ -85,7 +81,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <span className="flex-none">
                         <JIcon icon="ion:library-outline" />
                       </span>
-                      <span>Lib</span>{' '}
+                      <span>June lib</span>{' '}
                     </JMenuItem>
                   </>
                 )}

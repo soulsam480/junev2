@@ -111,6 +111,8 @@ const AppPostEditor: React.FC<Props> = ({
     const { selection } = coords;
     const user = suggestions[idx];
 
+    if (!user) return;
+
     const newText = `${value.slice(0, selection - 1)}@${user.username}${value.slice(
       selection + user.username.length,
       value.length,

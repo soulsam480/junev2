@@ -9,3 +9,11 @@ body {
 .j-link {
   @apply text-lime-600;
 }
+
+.body-noscroll {
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    padding-right: 15px;
+  }
+}
