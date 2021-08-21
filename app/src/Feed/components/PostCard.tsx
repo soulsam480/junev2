@@ -8,6 +8,7 @@ import { Post } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
 import { useUserStore } from 'src/User/store/useUserStore';
 import PostReact from 'src/Feed/components/postCard/PostReact';
+import { Link } from 'react-router-dom';
 interface Props {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -48,8 +49,8 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
               <JAvatar src="https://cdn.quasar.dev/img/avatar.png" rounded />
             </div>
             <div className="flex grow flex-col space-y-1 justify-start">
-              <div className="text-sm leading-none">{post.user.name}</div>
-              <div className="text-xs leading-none text-warm-gray-500">@{post.user.username}</div>
+              <div className="text-sm leading-none">{post.user.username}</div>
+              <div className="text-xs leading-none text-warm-gray-500">{post.user.name}</div>
             </div>
           </div>
           <div className="flex-none">
@@ -83,16 +84,27 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
         <>
           <div className="p-2 break-all">
             <AppLinkifier
-              linkEl={({ match, key, href }) => (
-                <a
-                  href={href}
-                  key={key}
-                  className="j-link break-all"
-                  rel="noopener noreferrer nofollow"
-                >
-                  {match}
-                </a>
-              )}
+              linkEl={({ match, key, href }) =>
+                match.startsWith('@') ? (
+                  <Link
+                    to={`/u/${match}/`}
+                    key={key}
+                    className="j-link break-all"
+                    rel="noopener noreferrer nofollow"
+                  >
+                    {match}{' '}
+                  </Link>
+                ) : (
+                  <a
+                    href={href}
+                    key={key}
+                    className="j-link break-all"
+                    rel="noopener noreferrer nofollow"
+                  >
+                    {match}
+                  </a>
+                )
+              }
             >
               {post.content}
             </AppLinkifier>

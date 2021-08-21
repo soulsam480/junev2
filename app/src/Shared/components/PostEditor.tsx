@@ -128,6 +128,7 @@ const AppPostEditor: React.FC<Props> = ({
   }
 
   async function findUserByUsername() {
+    if (!isSuggestor) return;
     if (!searchQuery) return setSuggestions([]);
 
     try {

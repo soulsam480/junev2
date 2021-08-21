@@ -5,6 +5,7 @@ import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
 import { useAlert } from 'src/Lib/store/alerts';
+import { useUserStore } from 'src/User/store/useUserStore';
 import { classNames } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
 
@@ -12,6 +13,7 @@ interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
   const { setAlert } = useAlert();
+  const { isLoggedIn } = useUserStore();
 
   function handlelogout() {
     logout();
@@ -66,16 +68,18 @@ const AppNavbar: React.FC<Props> = () => {
                       <span className="flex-grow">Settings</span>
                     </JMenuItem>
 
-                    <JMenuItem
-                      className="flex space-x-2 items-center"
-                      closeMenuCallback={cMenu}
-                      onClick={handlelogout}
-                    >
-                      <span className="flex-none">
-                        <JIcon icon="ion:log-out-outline" />
-                      </span>
-                      <span className="flex-grow">Log out</span>
-                    </JMenuItem>
+                    {isLoggedIn && (
+                      <JMenuItem
+                        className="flex space-x-2 items-center"
+                        closeMenuCallback={cMenu}
+                        onClick={handlelogout}
+                      >
+                        <span className="flex-none">
+                          <JIcon icon="ion:log-out-outline" />
+                        </span>
+                        <span className="flex-grow">Log out</span>
+                      </JMenuItem>
+                    )}
 
                     <JMenuItem
                       className="flex space-x-2 items-center"

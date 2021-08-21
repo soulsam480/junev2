@@ -1,0 +1,22 @@
+.user-profile {
+  @apply sm:max-w-3xl px-2 pb-2 mx-auto flex flex-col;
+
+  &__header {
+    @apply h-52 relative mb-22;
+  }
+  &__header-cover {
+    @apply absolute inset-0 h-full w-full rounded-md bg-cover bg-no-repeat z-0 bg-warm-gray-300;
+  }
+
+  &__header-profile {
+    @apply absolute -bottom-[80px] z-10 left-1/2 transform -translate-x-1/2 mx-auto;
+  }
+
+  &__bio {
+    @apply flex flex-col space-y-1 justify-center items-center;
+  }
+
+  &__info {
+    @apply grid grid-cols-3 pt-4;
+  }
+}

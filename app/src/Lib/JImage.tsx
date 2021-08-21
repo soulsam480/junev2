@@ -10,6 +10,7 @@ interface Props {
   width?: string;
   minHeight?: string;
   minWidth?: string;
+  style?: React.CSSProperties;
 }
 
 const JImage: React.FC<Props> = ({
@@ -21,6 +22,7 @@ const JImage: React.FC<Props> = ({
   width,
   minHeight,
   minWidth,
+  style,
 }) => {
   const [isLoading, setLoading] = useState(true);
 
@@ -70,7 +72,14 @@ const JImage: React.FC<Props> = ({
   return (
     <div
       className="j-image transition-all ease-in duration-300"
-      style={{ height, width, minWidth, minHeight: computedMinHeight }}
+      style={{
+        height,
+        width,
+        minWidth,
+        minHeight: computedMinHeight,
+        borderRadius: 'inherit',
+        ...style,
+      }}
     >
       <img
         src={src}
@@ -78,7 +87,7 @@ const JImage: React.FC<Props> = ({
         onLoad={handleLoad}
         onError={handleError}
         className={classNames(['j-image__content', isLoading ? 'opacity-0' : 'opacity-100'])}
-        style={{ objectFit: 'cover', objectPosition: '50% 50%' }}
+        style={{ objectFit: 'cover', objectPosition: '50% 50%', borderRadius: 'inherit' }}
       />
 
       {isLoading && (

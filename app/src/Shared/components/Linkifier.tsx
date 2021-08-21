@@ -35,10 +35,7 @@ const AppLinkifier: React.FC<Props> = ({ children, linkEl }) => {
         linkEl({
           match: match.getMatchedText(),
           key: index,
-          href:
-            match.getType() === 'mention'
-              ? `/user/${match.getMatchedText()}`
-              : match.getMatchedText(),
+          href: match.getMatchedText(),
         }),
       );
 
