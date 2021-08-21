@@ -47,7 +47,7 @@ const AppNavbar: React.FC<Props> = () => {
                     <JMenuItem
                       className="flex space-x-2 items-center"
                       closeMenuCallback={cMenu}
-                      to="/u"
+                      to="/u/feed"
                     >
                       <span className="flex-none">
                         <JIcon icon="ion:home-outline" />

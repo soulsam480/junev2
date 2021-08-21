@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import JButton from 'src/Lib/JButton';
-import { likePost } from 'src/Shared/services/post';
+import { likePost, unlikePost } from 'src/Shared/services/post';
 import { classNames } from 'src/utils/helpers';
-import { useQuery } from 'src/utils/hooks';
-import { Post, ResponseSchema } from 'src/utils/types';
+import { Post } from 'src/utils/types';
 
 interface Props {
   updatePostReaction(post: Post): void;
@@ -12,32 +11,37 @@ interface Props {
 }
 
 const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
-  const { isLoading, validate, error } = useQuery<ResponseSchema<Post>, [string]>(
-    { data: {} as any } as any,
-    (args) => likePost(args[0]),
-  );
-
-  async function handleReaction() {
-    // change first
-    if (post.likes.includes(uid)) {
-      updatePostReaction({ id: post.id, likes: post.likes.filter((el) => el !== uid) } as Post);
-    } else {
-      updatePostReaction({ id: post.id, likes: [...post.likes, uid] } as Post);
-    }
-
-    // stop validating if already running
-    if (isLoading) return;
-
-    // revalidate
-    const { data: res } = await validate(post.id);
-    updatePostReaction(res);
+  function localUnlike() {
+    updatePostReaction({ id: post.id, likes: post.likes.filter((el) => el !== uid) } as Post);
   }
 
-  useEffect(() => {
-    if (!!error) {
-      console.log('some error');
+  function localLike() {
+    updatePostReaction({ id: post.id, likes: [...post.likes, uid] } as Post);
+  }
+
+  async function handleReaction(post: Post) {
+    if (post.likes.includes(uid)) {
+      localUnlike();
+
+      try {
+        await unlikePost(post.id);
+      } catch (error) {
+        console.log(error);
+
+        localLike();
+      }
+    } else {
+      localLike();
+
+      try {
+        await likePost(post.id);
+      } catch (error) {
+        console.log(error);
+
+        localUnlike();
+      }
     }
-  }, [error]);
+  }
 
   return (
     <JButton
@@ -46,7 +50,7 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
       size="25px"
       sm
       dense
-      onClick={handleReaction}
+      onClick={() => handleReaction(post)}
       className={classNames([{ 'fill-current text-red-700': post.likes.includes(uid) }])}
     />
   );

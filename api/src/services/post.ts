@@ -43,36 +43,21 @@ export async function getPostsByUserId(id: string) {
   }
 }
 
-export async function reactPost(id: string, userId: string) {
+export async function likePost(id: string, userId: string) {
   try {
-    const isLiked = await postModel
-      .findOne({
-        _id: id,
-        likes: { $in: [getObjectId(userId)] },
-      })
-      .select(['id'])
-      .exec();
+    await postModel.updateOne({ _id: id }, { $push: { likes: getObjectId(userId) } }).exec();
 
-    if (!isLiked) {
-      await postModel.updateOne({ _id: id }, { $push: { likes: getObjectId(userId) } }).exec();
+    await userModel.updateOne({ _id: userId }, { $push: { liked_posts: getObjectId(id) } }).exec();
+  } catch (error) {
+    Promise.reject(error);
+  }
+}
 
-      await userModel
-        .updateOne({ _id: userId }, { $push: { liked_posts: getObjectId(id) } })
-        .exec();
-    } else {
-      await postModel.updateOne({ _id: id }, { $pull: { likes: getObjectId(userId) } }).exec();
+export async function unlikePost(id: string, userId: string) {
+  try {
+    await postModel.updateOne({ _id: id }, { $pull: { likes: getObjectId(userId) } }).exec();
 
-      await userModel
-        .updateOne({ _id: userId }, { $pull: { liked_posts: getObjectId(id) } })
-        .exec();
-    }
-
-    return await postModel
-      .findOne({
-        _id: id,
-      })
-      .select(['likes', 'total_likes', 'id', 'updatedAt'])
-      .exec();
+    await userModel.updateOne({ _id: userId }, { $pull: { liked_posts: getObjectId(id) } }).exec();
   } catch (error) {
     Promise.reject(error);
   }

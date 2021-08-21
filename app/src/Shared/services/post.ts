@@ -10,5 +10,9 @@ export function getAllPosts(opts: PaginationParams) {
 }
 
 export function likePost(id: string) {
-  return api.post<ResponseSchema<Post>>(`/posts/${id}/react`);
+  return api.post<ResponseSchema<Post>>(`/posts/${id}/like`);
+}
+
+export function unlikePost(id: string) {
+  return api.post<ResponseSchema<Post>>(`/posts/${id}/unlike`);
 }

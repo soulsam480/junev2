@@ -1,6 +1,6 @@
 import { createController, createRoute } from 'dango-core';
 import { auth } from 'src/middlewares/auth';
-import { createPost, getAllPosts, getPostsByUserId, reactPost } from 'src/services/post';
+import { createPost, getAllPosts, getPostsByUserId, likePost, unlikePost } from 'src/services/post';
 import { createError, formatResponse } from 'src/utils/helpers';
 
 /**
@@ -77,14 +77,14 @@ const create = createRoute<{ post: { [x: string]: any } }>({
   },
 });
 
-const react = createRoute<any, { id: string }>({
-  path: '/:id/react',
+const like = createRoute<any, { id: string }>({
+  path: '/:id/like',
   method: 'post',
   handler: async ({ userId }, res, _, { id }) => {
     try {
-      const data = await reactPost(id, userId as string);
+      await likePost(id, userId as string);
 
-      return res.json(formatResponse(data));
+      return res.sendStatus(200);
     } catch (error) {
       console.log(error);
       res.sendError(500, error);
@@ -92,6 +92,21 @@ const react = createRoute<any, { id: string }>({
   },
 });
 
-const postController = createController('/posts', [getPosts, postsByUserId, create, react]);
+const unlike = createRoute<any, { id: string }>({
+  path: '/:id/unlike',
+  method: 'post',
+  handler: async ({ userId }, res, _, { id }) => {
+    try {
+      await unlikePost(id, userId as string);
+
+      return res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const postController = createController('/posts', [getPosts, postsByUserId, create, like, unlike]);
 
 export { postController };
