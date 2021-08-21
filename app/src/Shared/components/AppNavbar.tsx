@@ -4,14 +4,18 @@ import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
+import { useAlert } from 'src/Lib/store/alerts';
 import { classNames } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
 
 interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
-  function logger() {
-    console.log('fired');
+  const { setAlert } = useAlert();
+
+  function handlelogout() {
+    logout();
+    setAlert({ type: 'success', message: 'Logged out' });
   }
 
   return (
@@ -65,7 +69,7 @@ const AppNavbar: React.FC<Props> = () => {
                     <JMenuItem
                       className="flex space-x-2 items-center"
                       closeMenuCallback={cMenu}
-                      onClick={logout}
+                      onClick={handlelogout}
                     >
                       <span className="flex-none">
                         <JIcon icon="ion:log-out-outline" />

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
+import { useAlert } from 'src/Lib/store/alerts';
 import { googleLogin, login, LoginUserDto, register } from 'src/User/services/auth';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAuth } from 'src/utils/auth';
@@ -13,6 +14,7 @@ const Login: React.FC<Props> = () => {
   const { setUser, setLogin } = useUserStore();
   const naviagte = useNavigate();
   const { tokenWatcher } = useAuth();
+  const { setAlert } = useAlert();
 
   const [user, setUSerDto] = useState<LoginUserDto>({
     email: '',
@@ -41,6 +43,7 @@ const Login: React.FC<Props> = () => {
       setUser({ ...data });
       setLogin(true);
       tokenWatcher();
+      setAlert({ type: 'success', message: 'Logged in' });
       naviagte('/u');
     } catch (error) {
       console.log(error);
@@ -64,6 +67,7 @@ const Login: React.FC<Props> = () => {
       setUser({ ...data });
       setLogin(true);
       tokenWatcher();
+      setAlert({ type: 'success', message: 'Registered and logged in' });
       naviagte('/u');
     } catch (error) {
       console.log(error);

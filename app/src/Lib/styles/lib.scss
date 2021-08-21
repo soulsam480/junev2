@@ -200,3 +200,38 @@
     @apply rounded-sm;
   }
 }
+
+.j-alert {
+  @apply py-3 self-center;
+
+  &__content {
+    @apply flex items-center space-x-2 text-white text-sm font-bold px-4 py-2 rounded-md shadow-md z-50;
+  }
+
+  &-anim {
+    &-enter,
+    &-exit {
+      transition: all 1s ease-in-out;
+    }
+
+    &-enter {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    &-exit {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    &-enter-active {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    &-exit-active {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
+}

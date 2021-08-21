@@ -1,7 +1,9 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { memo, Suspense, useEffect } from 'react';
 import AppNavbar from 'src/Shared/components/AppNavbar';
 import { useAuth, useAuthRedirect } from 'src/utils/auth';
 import { useJuneRouter } from 'src/Shared/router';
+import * as JAlert from 'src/Lib/JAlerts';
+import { createPortal } from 'react-dom';
 
 interface Props {}
 
@@ -18,10 +20,11 @@ const App: React.FC<Props> = () => {
     <>
       {!isLoading && !isCatchLoading && (
         <div>
+          {createPortal(<JAlert.JAlertGroup />, document.body)}
           <AppNavbar />
           <Suspense fallback={<span />}>
             <div className="px-2 py-1 sm:max-w-7xl mx-auto">{Routes}</div>
-          </Suspense>
+          </Suspense>{' '}
         </div>
       )}
     </>

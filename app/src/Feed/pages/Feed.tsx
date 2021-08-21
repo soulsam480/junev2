@@ -7,6 +7,7 @@ import { Post, ResponseSchema } from 'src/utils/types';
 import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
 import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
+import { useAlert } from 'src/Lib/store/alerts';
 
 interface Props {}
 
@@ -14,6 +15,8 @@ const MemoizedPostCard = React.memo(PostCard);
 
 const Test: React.FC<Props> = () => {
   const [editorData, setEditorData] = useState('');
+
+  const { setAlert } = useAlert();
 
   const { data, validate, isEnd, forceValidate, isLoading } = usePaginatedQuery<Post>(
     [],
@@ -35,9 +38,12 @@ const Test: React.FC<Props> = () => {
 
       console.log(data);
       forceValidate((prev) => [{ ...data }, ...prev]);
+
       setEditorData('');
+      setAlert({ message: 'Post published', type: 'success' });
     } catch (error) {
       console.log(error);
+      setAlert({ type: 'danger', message: 'Some error occured !' });
     }
   }
 
