@@ -1,5 +1,4 @@
 import { createController, createRoute } from 'dango-core';
-import { auth } from 'src/middlewares/auth';
 import { createPost, getAllPosts, getPostsByUserId, likePost, unlikePost } from 'src/services/post';
 import { createError, formatResponse } from 'src/utils/helpers';
 

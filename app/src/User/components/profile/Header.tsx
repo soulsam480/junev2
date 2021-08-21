@@ -1,10 +1,10 @@
 import React from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JImage from 'src/Lib/JImage';
-import { User } from 'src/User/store/useUserStore';
+import { UserProfile } from 'src/User/store/useUserStore';
 
 interface Props {
-  user?: User;
+  user?: UserProfile;
 }
 
 const Header: React.FC<Props> = () => {

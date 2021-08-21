@@ -35,8 +35,16 @@ export class User extends TimeStamps {
   @prop({ ref: () => User })
   public followers?: Ref<User>[];
 
+  public get total_followers() {
+    return this.followers?.length;
+  }
+
   @prop({ ref: () => User })
   public followings?: Ref<User>[];
+
+  public get total_followings() {
+    return this.followings?.length;
+  }
 
   @prop({ required: true })
   public password!: string;

@@ -11,6 +11,12 @@ export interface User {
   refresh: string;
 }
 
+export interface UserProfile extends Omit<User, 'token' | 'refresh'> {
+  total_followers?: number;
+  total_followings?: number;
+  total_posts?: number;
+}
+
 export interface UserState extends State {
   isLoggedIn: boolean;
   user: Omit<User, 'refresh' | 'token'>;

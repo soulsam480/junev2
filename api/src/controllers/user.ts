@@ -1,21 +1,54 @@
-import { Router } from 'express';
+import { createController, createRoute } from 'dango-core';
 import { userModel } from 'src/entities/user';
-import { auth } from 'src/middlewares/auth';
-import { createError, filterFromQuery } from 'src/utils/helpers';
+import { getUserPosts, getUserProfile } from 'src/services/user';
+import { filterFromQuery } from 'src/utils/helpers';
 
-const userRouter = Router();
+const searchUser = createRoute({
+  path: '/search',
+  method: 'get',
+  handler: async (req, res) => {
+    try {
+      const data = await filterFromQuery(req.query, userModel, ['username', 'name'], {
+        select: 'name username id',
+      });
 
-userRouter.use(auth);
-
-userRouter.get('/search', async (req, res) => {
-  try {
-    const data = await filterFromQuery(req.query, userModel, ['username', 'name'], {
-      select: 'name username id',
-    });
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(createError('Internal server error.', error));
-  }
+      res.json(data);
+    } catch (error) {
+      res.sendError(500, { message: 'Internal server error', error });
+    }
+  },
 });
 
-export { userRouter };
+const userData = createRoute<any, { username: string }>({
+  path: '/:username',
+  method: 'get',
+  handler: async (_, res, __, { username }) => {
+    console.log(username);
+
+    try {
+      const data = await getUserProfile(username);
+
+      res.json(data);
+    } catch (error) {
+      res.sendError(500, { message: 'Internal server error', error });
+    }
+  },
+});
+
+const userPosts = createRoute<any, { id: string }>({
+  path: '/:id/posts',
+  method: 'get',
+  handler: async (_, res, __, { id }) => {
+    try {
+      const data = await getUserPosts(id);
+
+      res.json(data);
+    } catch (error) {
+      res.sendError(500, { message: 'Internal server error', error });
+    }
+  },
+});
+
+const userController = createController('/users', [searchUser, userData, userPosts]);
+
+export { userController };
