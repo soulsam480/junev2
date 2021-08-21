@@ -37,12 +37,12 @@ const JButton: React.FC<JButtonProps> = ({
     () => [
       noBg
         ? 'bg-transparent hover:bg-transparent'
-        : invert
-        ? 'bg-lime-300 hover:bg-lime-400'
         : flat
         ? 'hover:bg-lime-200'
         : outline
         ? 'hover:bg-lime-200 border border-lime-400'
+        : invert
+        ? 'bg-lime-300 hover:bg-lime-400'
         : 'bg-lime-400 hover:bg-lime-300',
       dense
         ? '!px-[2px] !py-[2px]'
@@ -51,8 +51,9 @@ const JButton: React.FC<JButtonProps> = ({
         : round
         ? '!px-3 !py-3'
         : '',
-      `${round ? 'rounded-full' : 'rounded-md'}`,
-      `${className || ''}`,
+      round ? 'rounded-full' : 'rounded-md',
+      className || '',
+      { 'focus:ring-2 focus:ring-lime-200': !(noBg || flat) },
       {
         'w-full': !!block,
       },

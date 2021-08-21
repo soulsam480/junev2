@@ -5,7 +5,15 @@ import { cursorPaginateResponse, getObjectId } from 'src/utils/helpers';
 
 export async function createPost(post: CreateQuery<Post>) {
   try {
-    return await postModel.create({ ...post });
+    const newPost = await postModel.create({ ...post });
+
+    return await newPost
+      .populate({
+        path: 'user',
+        model: 'User',
+        select: ['username', 'id', 'name', 'image'],
+      })
+      .execPopulate();
   } catch (error) {
     Promise.reject(error);
   }

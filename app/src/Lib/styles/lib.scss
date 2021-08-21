@@ -16,7 +16,7 @@
 }
 
 .j-button {
-  @apply focus:outline-none focus:ring-2 focus:ring-lime-200 disabled:(cursor-not-allowed filter saturate-50) px-3 py-2;
+  @apply focus:outline-none disabled:(cursor-not-allowed filter saturate-50) px-3 py-2;
   @apply relative transition-colors duration-300 ease-in-out justify-center flex items-center;
 
   &__content {
@@ -186,5 +186,17 @@
   &__content {
     @apply shadow-md relative flex border-none rounded-md;
     @apply transition-colors duration-400 ease-in-out outline-none focus:outline-none;
+  }
+}
+
+.j-skeleton {
+  @apply bg-warm-gray-300;
+
+  &--round {
+    @apply rounded-full;
+  }
+
+  &--rounded {
+    @apply rounded-sm;
   }
 }

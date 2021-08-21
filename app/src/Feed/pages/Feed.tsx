@@ -6,6 +6,7 @@ import { usePaginatedQuery, useQuery } from 'src/utils/hooks';
 import { Post, ResponseSchema } from 'src/utils/types';
 import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
+import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
 
 interface Props {}
 
@@ -33,6 +34,7 @@ const Test: React.FC<Props> = () => {
       const { data } = await create({ content: editorData });
 
       console.log(data);
+      forceValidate((prev) => [{ ...data }, ...prev]);
       setEditorData('');
     } catch (error) {
       console.log(error);
@@ -69,15 +71,20 @@ const Test: React.FC<Props> = () => {
           <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
         ))}
         {(!!data.length || isLoading) && (
-          <div className="flex justify-center w-full">
-            <JButton
-              label={isEnd ? 'Reached end' : 'Load more'}
-              onClick={validate}
-              flat
-              disabled={isEnd}
-              loading={isLoading}
-            />
-          </div>
+          <>
+            <div className="flex flex-col w-full space-y-3">
+              {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
+              <div className="flex justify-center">
+                <JButton
+                  label={isEnd ? 'Reached end' : 'Load more'}
+                  onClick={validate}
+                  flat
+                  disabled={isEnd}
+                  loading={isLoading}
+                />
+              </div>
+            </div>
+          </>
         )}
       </div>
     </>
