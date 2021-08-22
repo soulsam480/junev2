@@ -9,6 +9,7 @@ import { Post } from 'src/utils/types';
 import PostCard from 'src/Feed/components/PostCard';
 import * as JPanels from 'src/Lib/JPanels';
 import { useScreenWidth } from 'src/utils/hooks';
+import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
 
 interface Props {}
 
@@ -22,6 +23,7 @@ const Index: React.FC<Props> = () => {
 
   const [userProfileData, setUserProfile] = useState<UserProfile>();
   const [userPostsData, setUserPosts] = useState<Post[]>([]);
+  const [isLoading, setLoading] = useState(false);
 
   async function userPosts(id: string) {
     try {
@@ -36,6 +38,7 @@ const Index: React.FC<Props> = () => {
   }
 
   async function userProfile() {
+    setLoading(true);
     try {
       const {
         data: { data },
@@ -46,6 +49,8 @@ const Index: React.FC<Props> = () => {
       await userPosts(data.id);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -85,6 +90,11 @@ const Index: React.FC<Props> = () => {
                   updatePostReaction={updatePostReaction}
                 />
               ))}
+              {isLoading && (
+                <div className="flex flex-col w-full space-y-3">
+                  {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
+                </div>
+              )}
             </div>
           </div>
           <div id="uploads">uooooo</div>
