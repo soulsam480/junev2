@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import 'src/User/styles/userProfile.scss';
 import Header from 'src/User/components/profile/Header';
-import JButton from 'src/Lib/JButton';
 import Bio from 'src/User/components/profile/Bio';
 import { getUserPostsById, getUserProfileByUsername } from 'src/User/services/users';
 import { UserProfile } from 'src/User/store/useUserStore';
 import { Post } from 'src/utils/types';
 import PostCard from 'src/Feed/components/PostCard';
+import * as JPanels from 'src/Lib/JPanels';
+import { useScreenWidth } from 'src/utils/hooks';
 
 interface Props {}
 
@@ -15,6 +16,9 @@ const MemoizedPostCard = React.memo(PostCard);
 
 const Index: React.FC<Props> = () => {
   const { username } = useParams();
+  const { width: screenWidth } = useScreenWidth();
+
+  const [tab, setTab] = useState('posts');
 
   const [userProfileData, setUserProfile] = useState<UserProfile>();
   const [userPostsData, setUserPosts] = useState<Post[]>([]);
@@ -60,31 +64,33 @@ const Index: React.FC<Props> = () => {
       <Header user={userProfileData} />
       <Bio user={userProfileData} />
 
-      <div>
-        <div className="mt-10 bg-warm-gray-200 rounded-md grid grid-cols-3">
-          <JButton
-            label="posts"
-            noBg
-            className="self-stretch hover:(bg-warm-gray-300 rounded-md)"
-          />
-          <JButton
-            label="uploads"
-            noBg
-            className="self-stretch hover:(bg-warm-gray-300 rounded-md)"
-          />
-          <JButton
-            label="interests"
-            noBg
-            className="self-stretch hover:(bg-warm-gray-300 rounded-md)"
-          />
-        </div>
-      </div>
+      <JPanels.JPanels selected={tab} className="pt-6">
+        <JPanels.JTabs
+          tabs={[
+            { label: 'posts', icon: 'ion:grid-outline' },
+            { label: 'uploads', icon: 'ion:images-outline' },
+            { label: 'interests', icon: 'ion:megaphone-outline' },
+          ]}
+          onClick={(val) => setTab(val)}
+          noLabel={screenWidth < 768 ? true : false}
+        />
 
-      <div className="mt-5 flex flex-col items-start space-y-3">
-        {userPostsData?.map((post) => (
-          <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
-        ))}
-      </div>
+        <JPanels.JPanel>
+          <div id="posts">
+            <div className="mt-3 flex flex-col items-start space-y-3">
+              {userPostsData?.map((post) => (
+                <MemoizedPostCard
+                  key={post.id}
+                  post={post}
+                  updatePostReaction={updatePostReaction}
+                />
+              ))}
+            </div>
+          </div>
+          <div id="uploads">uooooo</div>
+          <div id="interests">uooooo</div>
+        </JPanels.JPanel>
+      </JPanels.JPanels>
     </div>
   );
 };

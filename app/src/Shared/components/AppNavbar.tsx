@@ -50,41 +50,47 @@ const AppNavbar: React.FC<Props> = () => {
               >
                 {({ closeMenu: cMenu }) => (
                   <>
-                    <JMenuItem
-                      className="flex space-x-2 items-center"
-                      closeMenuCallback={cMenu}
-                      to="/u/feed"
-                    >
-                      <span className="flex-none">
-                        <JIcon icon="ion:home-outline" />
-                      </span>
-                      <span className="flex-grow">Home</span>
-                    </JMenuItem>
-
-                    <JMenuItem className="flex space-x-2 items-center" closeMenuCallback={cMenu}>
-                      <span className="flex-none">
-                        <JIcon icon="ion:gear-a" />
-                      </span>
-                      <span className="flex-grow">Settings</span>
-                    </JMenuItem>
-
                     {isLoggedIn && (
-                      <JMenuItem
-                        className="flex space-x-2 items-center"
-                        closeMenuCallback={cMenu}
-                        onClick={handlelogout}
-                      >
-                        <span className="flex-none">
-                          <JIcon icon="ion:log-out-outline" />
-                        </span>
-                        <span className="flex-grow">Log out</span>
-                      </JMenuItem>
+                      <>
+                        <JMenuItem
+                          className="flex space-x-2 items-center"
+                          closeMenuCallback={cMenu}
+                          to="/u/feed/"
+                        >
+                          <span className="flex-none">
+                            <JIcon icon="ion:home-outline" />
+                          </span>
+                          <span className="flex-grow">Home</span>
+                        </JMenuItem>
+
+                        <JMenuItem
+                          className="flex space-x-2 items-center"
+                          closeMenuCallback={cMenu}
+                          to="/u/settings/"
+                        >
+                          <span className="flex-none">
+                            <JIcon icon="ion:gear-a" />
+                          </span>
+                          <span className="flex-grow">Settings</span>
+                        </JMenuItem>
+
+                        <JMenuItem
+                          className="flex space-x-2 items-center"
+                          closeMenuCallback={cMenu}
+                          onClick={handlelogout}
+                        >
+                          <span className="flex-none">
+                            <JIcon icon="ion:log-out-outline" />
+                          </span>
+                          <span className="flex-grow">Log out</span>
+                        </JMenuItem>
+                      </>
                     )}
 
                     <JMenuItem
                       className="flex space-x-2 items-center"
                       closeMenuCallback={cMenu}
-                      to="/lib"
+                      to="/lib/"
                     >
                       <span className="flex-none">
                         <JIcon icon="ion:library-outline" />

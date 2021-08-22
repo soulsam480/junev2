@@ -18,7 +18,11 @@ export async function getUserProfile(username: string) {
 
 export async function getUserPosts(id: string) {
   try {
-    const userPosts = await postModel.find({ user: getObjectId(id) });
+    const userPosts = await postModel.find({ user: getObjectId(id) }).populate({
+      path: 'user',
+      model: User,
+      select: ['username', 'id', 'name', 'image'],
+    });
 
     return formatResponse(userPosts);
   } catch (error) {
