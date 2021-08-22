@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import BottomNav from 'src/Feed/components/BottomNav';
 import LeftNav from 'src/Feed/components/LeftNav';

@@ -144,6 +144,7 @@ const AppPostEditor: React.FC<Props> = ({
 
   const handleCtrlEnter = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (!value) return;
       const { which, ctrlKey } = e;
       if (which === 13 && ctrlKey) {
         e.preventDefault();

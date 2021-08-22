@@ -6,6 +6,7 @@ const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
 const Login = React.lazy(() => import('src/User/pages/Login'));
 const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
 const UserProfile = React.lazy(() => import('src/User/pages/Index'));
+const Settings = React.lazy(() => import('src/User/pages/Settings'));
 import { useUserStore } from 'src/User/store/useUserStore';
 
 interface PrivateRouteProps extends Record<string, any> {
@@ -53,6 +54,10 @@ export function useJuneRouter() {
         {
           path: '/feed',
           element: <Feed />,
+        },
+        {
+          path: '/settings',
+          element: <Settings />,
         },
         {
           path: '/:username',

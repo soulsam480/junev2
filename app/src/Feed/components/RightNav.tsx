@@ -1,20 +1,31 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
+import { useAlert } from 'src/Lib/store/alerts';
 import { useUserStore } from 'src/User/store/useUserStore';
 
+import { logout } from 'src/utils/hooks';
 interface Props {}
 
 const RightNav: React.FC<Props> = () => {
   const { user } = useUserStore();
+  const { setAlert } = useAlert();
+
+  const { pathname } = useLocation();
+
+  const navigate = useNavigate();
+
+  function handlelogout() {
+    logout();
+    setAlert({ type: 'success', message: 'Logged out' });
+  }
+
   return (
     <div>
       <div className="h-32 relative mb-10">
-        <div
-          className="absolute inset-0 h-full w-full rounded-md bg-cover bg-no-repeat z-0 bg-warm-gray-300"
-          //   style={{ backgroundImage: "url('https://cdn.quasar.dev/img/avatar.png')" }}
-        />
+        <div className="absolute inset-0 h-full w-full rounded-md bg-cover bg-no-repeat z-0 bg-warm-gray-300" />
         <div className="absolute -bottom-[40px] z-10 left-1/2 transform -translate-x-1/2 mx-auto">
           <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="70px" rounded />
         </div>
@@ -25,15 +36,28 @@ const RightNav: React.FC<Props> = () => {
       </div>
       <div className="flex flex-col pt-2 items-center space-y-2">
         <div className="text-2xl"> {user.name} </div>
-        <div className="text-sm w-full rounded">{user.email}</div>
         <div className="text-sm w-full rounded">{user.username}</div>
-        <div className="text-sm w-full rounded"></div>
+
         <div className="flex items-center w-full space-x-2 pt-3">
           <div className="flex-auto">
-            <JButton icon="ion:settings-outline" label="Settings" block sm size="16px" />
+            <JButton
+              icon="ion:settings-outline"
+              label="settings"
+              block
+              sm
+              size="16px"
+              onClick={() => navigate('/u/settings/')}
+            />
           </div>
           <div className="flex-auto">
-            <JButton icon="ion:log-out-outline" label="Logout" block sm size="16px" />
+            <JButton
+              icon="ion:log-out-outline"
+              label="logout"
+              block
+              sm
+              size="16px"
+              onClick={handlelogout}
+            />
           </div>
         </div>
       </div>

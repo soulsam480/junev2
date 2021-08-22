@@ -60,7 +60,7 @@ const JDialog: React.FC<Props> = ({ isModal, setModal, children }) => {
   }, [isModal]);
 
   return createPortal(
-    <>
+    <div>
       <CSSTransition
         in={isModal}
         timeout={{
@@ -78,7 +78,7 @@ const JDialog: React.FC<Props> = ({ isModal, setModal, children }) => {
           </div>
         </div>
       </CSSTransition>
-    </>,
+    </div>,
     document.body,
   );
 };

@@ -4,8 +4,8 @@ import 'src/User/styles/userProfile.scss';
 import Header from 'src/User/components/profile/Header';
 import JButton from 'src/Lib/JButton';
 import Bio from 'src/User/components/profile/Bio';
-import { getUserPostsById, getUserProfileByUsername } from '../services/users';
-import { UserProfile } from '../store/useUserStore';
+import { getUserPostsById, getUserProfileByUsername } from 'src/User/services/users';
+import { UserProfile } from 'src/User/store/useUserStore';
 import { Post } from 'src/utils/types';
 import PostCard from 'src/Feed/components/PostCard';
 
