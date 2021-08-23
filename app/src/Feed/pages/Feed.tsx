@@ -1,16 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PostCard from 'src/Feed/components/PostCard';
 import JButton from 'src/Lib/JButton';
 import { getAllPosts } from 'src/Shared/services/post';
-import { usePaginatedQuery, useQuery } from 'src/utils/hooks';
+import { useObserver, usePaginatedQuery, useQuery } from 'src/utils/hooks';
 import { Post, ResponseSchema } from 'src/utils/types';
 import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
 
-interface Props {}
+interface Props { }
 
 const MemoizedPostCard = React.memo(PostCard);
-
 const Test: React.FC<Props> = () => {
   const [editorData, setEditorData] = useState('');
   const { data, validate, isEnd, forceValidate, isLoading } = usePaginatedQuery<Post>(
@@ -20,7 +19,7 @@ const Test: React.FC<Props> = () => {
       limit: 5,
     },
   );
-
+  const [loaderRef] = useObserver(isEnd, isLoading, validate)
   const { validate: create, isLoading: createLoading } = useQuery<
     ResponseSchema<Post>,
     [{ content: string }]
@@ -67,7 +66,7 @@ const Test: React.FC<Props> = () => {
           <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
         ))}
         {(!!data.length || isLoading) && (
-          <div className="flex justify-center w-full">
+          <div ref={loaderRef} className="flex justify-center w-full">
             <JButton
               label={isEnd ? 'Reached end' : 'Load more'}
               onClick={validate}

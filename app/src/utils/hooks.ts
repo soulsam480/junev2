@@ -248,3 +248,36 @@ export function logout() {
     localStorage.removeItem('__token');
   }
 }
+
+export function useObserver(
+  // loaderRef: HTMLDivElement,
+  isEnd: boolean,
+  isLoading: boolean,
+  cb: () => void) {
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+  let options = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.25
+  };
+  function handleIntersect(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
+    if (isEnd) return;
+    if (isLoading) return;
+    entries.forEach(async (entry) => {
+      if (entry.isIntersecting) {
+        await cb()
+      }
+    });
+  }
+  useEffect(() => {
+    let observer = new IntersectionObserver(handleIntersect, options);
+    loaderRef.current && observer.observe(loaderRef.current);
+    return () => {
+      loaderRef.current && observer.unobserve(loaderRef.current);
+
+    }
+  }, [loaderRef, options])
+  return [loaderRef]
+}
+
+

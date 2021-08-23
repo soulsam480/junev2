@@ -150,7 +150,7 @@ const AppPostEditor: React.FC<Props> = ({
     [onPost],
   );
 
-  const debounced = useDebounceCallback(findUserByUsername, 500);
+  const debounced = useDebounceCallback(findUserByUsername, 300);
 
   useEffect(() => {
     debounced();
