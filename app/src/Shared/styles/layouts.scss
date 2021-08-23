@@ -25,4 +25,9 @@
       @apply -bottom-[60px];
     }
   }
+
+  &__topbar {
+    @apply flex p-2 bg-warm-gray-200 rounded-lg mb-2;
+    @apply sticky top-[68px] z-199 shadow;
+  }
 }

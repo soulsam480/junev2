@@ -62,8 +62,8 @@ const Index: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    (async () => await userProfile())();
-  }, []);
+    userProfile();
+  }, [username]);
 
   return (
     <div className="user-profile">

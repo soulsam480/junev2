@@ -1,66 +1,102 @@
 import React from 'react';
-import { useRoutes, Navigate } from 'react-router-dom';
+import { useRoutes, Navigate, useLocation } from 'react-router-dom';
 import Index from 'src/Shared/layouts/Index';
-const Home = React.lazy(() => import('src/Feed/layouts/Home'));
+const Home = React.lazy(() => import('src/Shared/layouts/Home'));
 const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
 const Login = React.lazy(() => import('src/User/pages/Login'));
 const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
 const UserProfile = React.lazy(() => import('src/User/pages/Index'));
 const Settings = React.lazy(() => import('src/User/pages/Settings'));
+const BottomNav = React.lazy(() => import('src/Shared/components/BottomNav'));
+const TopNav = React.lazy(() => import('src/Shared/components/TopNav'));
+const FeedLeftNav = React.lazy(() => import('src/Feed/components/LeftNav'));
+const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
 import { useUserStore } from 'src/User/store/useUserStore';
+import { useScreenWidth } from 'src/utils/hooks';
 
 interface PrivateRouteProps extends Record<string, any> {
-  component: React.FC<any>;
+  component: (props: any) => React.ReactNode;
   isSignedIn: boolean;
   redirect: string;
 }
 
 const PrivateRoute = (props: PrivateRouteProps) => {
-  const { component: Component, isSignedIn, redirect, ...rest } = props;
+  const { component, isSignedIn, redirect, ...rest } = props;
 
-  return isSignedIn ? <Component {...rest} /> : <Navigate to={redirect} />;
+  return isSignedIn ? component(rest) : <Navigate to={redirect} />;
 };
+
+export enum JunePaths {
+  Root = '/',
+  Lib = '/lib',
+  Login = '/login',
+  User = 'u',
+  Feed = '/feed',
+  Settings = '/settings',
+  UserProfile = '/:username',
+}
 
 export function useJuneRouter() {
   const { isLoggedIn } = useUserStore();
+  const { pathname } = useLocation();
+  const { width } = useScreenWidth();
 
   const Routes = useRoutes([
     {
-      path: '/',
+      path: JunePaths.Root,
       element: <Index />,
       children: [
         {
-          path: '/',
-          element: PrivateRoute({ component: Login, isSignedIn: !isLoggedIn, redirect: '/u/feed' }),
+          path: JunePaths.Root,
+          element: PrivateRoute({
+            component: (props) => <Login {...props} />,
+            isSignedIn: !isLoggedIn,
+            redirect: `/${JunePaths.User}${JunePaths.Feed}`,
+          }),
         },
         {
-          path: '/lib',
+          path: JunePaths.Lib,
           element: <Lib />,
         },
         {
-          path: '/login',
-          element: PrivateRoute({ component: Login, isSignedIn: !isLoggedIn, redirect: '/u/feed' }),
+          path: JunePaths.Login,
+          element: PrivateRoute({
+            component: (props) => <Login {...props} />,
+            isSignedIn: !isLoggedIn,
+            redirect: `/${JunePaths.User}${JunePaths.Feed}`,
+          }),
         },
       ],
     },
     {
-      path: 'u',
-      element: PrivateRoute({ component: Home, isSignedIn: isLoggedIn, redirect: '/' }),
+      path: JunePaths.User,
+      element: PrivateRoute({
+        component: (props) => (
+          <Home
+            leftNavSlot={<FeedLeftNav />}
+            rightNavSlot={<FeedRightNav />}
+            bottomNavSlot={<BottomNav />}
+            {...props}
+          />
+        ),
+        isSignedIn: isLoggedIn,
+        redirect: JunePaths.Root,
+      }),
       children: [
         {
-          path: '/',
+          path: JunePaths.Root,
           element: <Feed />,
         },
         {
-          path: '/feed',
+          path: JunePaths.Feed,
           element: <Feed />,
         },
         {
-          path: '/settings',
+          path: JunePaths.Settings,
           element: <Settings />,
         },
         {
-          path: '/:username',
+          path: JunePaths.UserProfile,
           element: <UserProfile />,
         },
       ],

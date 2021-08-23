@@ -141,7 +141,7 @@ export function usePaginatedQuery<T, K = any>(
     limit?: number;
   },
 ): PaginatedQueryInstance<T, K> {
-  const [cursor, setCursor] = useState<number | null>(null);
+  const cursor = useRef<number | null>(null);
   const [data, setData] = useState(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -162,9 +162,9 @@ export function usePaginatedQuery<T, K = any>(
         setLoading(true);
         const {
           data: { data: apiData, next_cursor, has_more },
-        } = await fetcher(getPageArgs(cursor, opts?.limit));
+        } = await fetcher(getPageArgs(cursor.current, opts?.limit));
 
-        setCursor(next_cursor);
+        cursor.current = next_cursor;
         setData((data) => [...data, ...apiData]);
         resolve(apiData);
 
