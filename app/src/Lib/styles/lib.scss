@@ -235,3 +235,37 @@
     }
   }
 }
+
+.j-spinner {
+  @apply origin-center align-middle text-lime-400;
+  animation: rotate 2s linear infinite;
+
+  &__path {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: path-dash 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes path-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}

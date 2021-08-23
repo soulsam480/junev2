@@ -49,7 +49,9 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
               <JAvatar src="https://cdn.quasar.dev/img/avatar.png" rounded />
             </div>
             <div className="flex grow flex-col space-y-1 justify-start">
-              <div className="text-sm leading-none">{post.user.username}</div>
+              <Link className="text-sm leading-none" to={`/u/@${post.user.username}`}>
+                {post.user.username}
+              </Link>
               <div className="text-xs leading-none text-warm-gray-500">{post.user.name}</div>
             </div>
           </div>

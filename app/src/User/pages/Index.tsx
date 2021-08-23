@@ -10,6 +10,7 @@ import PostCard from 'src/Feed/components/PostCard';
 import * as JPanels from 'src/Lib/JPanels';
 import { useScreenWidth } from 'src/utils/hooks';
 import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
+import JSpinner from 'src/Lib/JSpinner';
 
 interface Props {}
 
@@ -66,41 +67,54 @@ const Index: React.FC<Props> = () => {
 
   return (
     <div className="user-profile">
-      <Header user={userProfileData} />
-      <Bio user={userProfileData} />
+      {!!userProfileData ? (
+        <>
+          <Header user={userProfileData} />
+          <Bio user={userProfileData} />
 
-      <JPanels.JPanels selected={tab} className="pt-6">
-        <JPanels.JTabs
-          tabs={[
-            { label: 'posts', icon: 'ion:grid-outline' },
-            { label: 'uploads', icon: 'ion:images-outline' },
-            { label: 'interests', icon: 'ion:megaphone-outline' },
-          ]}
-          onClick={(val) => setTab(val)}
-          noLabel={screenWidth < 768 ? true : false}
-        />
+          <JPanels.JPanels selected={tab} className="pt-6">
+            <JPanels.JTabs
+              tabs={[
+                { label: 'posts', icon: 'ion:grid-outline' },
+                { label: 'uploads', icon: 'ion:images-outline' },
+                { label: 'interests', icon: 'ion:megaphone-outline' },
+              ]}
+              onClick={(val) => setTab(val)}
+              noLabel={screenWidth < 768 ? true : false}
+            />
 
-        <JPanels.JPanel>
-          <div id="posts">
-            <div className="mt-3 flex flex-col items-start space-y-3">
-              {userPostsData?.map((post) => (
-                <MemoizedPostCard
-                  key={post.id}
-                  post={post}
-                  updatePostReaction={updatePostReaction}
-                />
-              ))}
-              {isLoading && (
-                <div className="flex flex-col w-full space-y-3">
-                  {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
+            <JPanels.JPanel>
+              <div id="posts">
+                <div className="mt-3 flex flex-col space-y-3">
+                  {isLoading ? (
+                    <div className="flex flex-col w-full space-y-3">
+                      {Array.from(Array(4)).map((_, i) => (
+                        <PostSkeletonLoader key={i} />
+                      ))}
+                    </div>
+                  ) : !!userPostsData.length ? (
+                    userPostsData?.map((post) => (
+                      <MemoizedPostCard
+                        key={post.id}
+                        post={post}
+                        updatePostReaction={updatePostReaction}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex justify-center">no published post found!</div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-          <div id="uploads">uooooo</div>
-          <div id="interests">uooooo</div>
-        </JPanels.JPanel>
-      </JPanels.JPanels>
+              </div>
+              <div id="uploads">Uploads</div>
+              <div id="interests">Interests</div>
+            </JPanels.JPanel>
+          </JPanels.JPanels>
+        </>
+      ) : (
+        <div className="flex items-center justify-center pt-5">
+          <JSpinner size="50px" />
+        </div>
+      )}
     </div>
   );
 };
