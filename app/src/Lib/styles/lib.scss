@@ -32,6 +32,10 @@
     @apply absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center;
   }
 
+  &--active {
+    @apply text-lime-600;
+  }
+
   &__loading {
     &--invert {
       border-top-color: rgba(163, 230, 53, var(--tw-bg-opacity)) !important;

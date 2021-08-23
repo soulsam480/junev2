@@ -3,6 +3,7 @@ import { classNames } from 'src/utils/helpers';
 import JIcon from 'src/Lib/JIcon';
 import JAvatar from 'src/Lib/JAvatar';
 import { BaseJButtonProps } from 'src/utils/types';
+import { NavLink } from 'react-router-dom';
 
 export interface JButtonProps extends BaseJButtonProps {
   loading?: boolean;
@@ -31,6 +32,7 @@ const JButton: React.FC<JButtonProps> = ({
   type,
   noBg,
   className,
+  to,
   ...rest
 }) => {
   const buttonClasses = useMemo(
@@ -71,52 +73,80 @@ const JButton: React.FC<JButtonProps> = ({
     [loading, iconRight],
   );
 
-  return (
+  const children = useMemo(
+    () => (
+      <>
+        {' '}
+        <span className={classNames(['j-button__content', ...buttonContentClasses])}>
+          <>
+            {!!iconSlot ? (
+              iconSlot
+            ) : icon ? (
+              <JIcon icon={icon} size={size ? size : sm ? '12px' : '16px'} />
+            ) : (
+              avatar && (
+                <JAvatar
+                  icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : undefined}
+                  src={avatar.startsWith('img:') ? avatar.split('img:')[1] : undefined}
+                  size={size || '16px'}
+                  content={
+                    !avatar.startsWith('img:') || !avatar.startsWith('icn:') ? avatar : undefined
+                  }
+                  rounded={avatarRound}
+                />
+              )
+            )}
+          </>
+          <>
+            {!!labelSlot
+              ? labelSlot
+              : label && (
+                  <span className={classNames([{ 'text-xs': sm }, 'flex-grow'])}>{label}</span>
+                )}
+          </>
+        </span>
+        {loading && (
+          <span className="j-button__bottom">
+            <span
+              className={classNames([
+                'j-button__loading',
+                `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
+              ])}
+              style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
+            ></span>
+          </span>
+        )}
+      </>
+    ),
+    [
+      buttonClasses,
+      buttonContentClasses,
+      iconSlot,
+      icon,
+      avatarRound,
+      labelSlot,
+      loading,
+      labelSlot,
+      label,
+      size,
+      avatar,
+    ],
+  );
+
+  return !!to ? (
+    <NavLink
+      to={to}
+      children={children}
+      className={classNames(['j-button', ...buttonClasses])}
+      activeClassName="j-button--active"
+    />
+  ) : (
     <button
       className={classNames(['j-button', ...buttonClasses])}
       type={type || 'button'}
       {...rest}
-    >
-      <span className={classNames(['j-button__content', ...buttonContentClasses])}>
-        <>
-          {!!iconSlot ? (
-            iconSlot
-          ) : icon ? (
-            <JIcon icon={icon} size={size ? size : sm ? '12px' : '16px'} />
-          ) : (
-            avatar && (
-              <JAvatar
-                icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : undefined}
-                src={avatar.startsWith('img:') ? avatar.split('img:')[1] : undefined}
-                size={size || '16px'}
-                content={
-                  !avatar.startsWith('img:') || !avatar.startsWith('icn:') ? avatar : undefined
-                }
-                rounded={avatarRound}
-              />
-            )
-          )}
-        </>
-        <>
-          {!!labelSlot
-            ? labelSlot
-            : label && (
-                <span className={classNames([{ 'text-xs': sm }, 'flex-grow'])}>{label}</span>
-              )}
-        </>
-      </span>
-      {loading && (
-        <span className="j-button__bottom">
-          <span
-            className={classNames([
-              'j-button__loading',
-              `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
-            ])}
-            style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
-          ></span>
-        </span>
-      )}
-    </button>
+      children={children}
+    />
   );
 };
 

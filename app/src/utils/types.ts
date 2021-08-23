@@ -19,6 +19,7 @@ export interface BaseJButtonProps
   dense?: boolean;
   noBg?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  to?: string;
 }
 
 export interface User {
