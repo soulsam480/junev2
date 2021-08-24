@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import PostCard from 'src/Feed/components/PostCard';
 import JButton from 'src/Lib/JButton';
 import { getAllPosts } from 'src/Shared/services/post';
-import { usePaginatedQuery, useQuery } from 'src/utils/hooks';
+import { useObserver, usePaginatedQuery, useQuery } from 'src/utils/hooks';
 import { Post, ResponseSchema } from 'src/utils/types';
 import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
@@ -12,10 +12,8 @@ import { useAlert } from 'src/Lib/store/alerts';
 interface Props {}
 
 const MemoizedPostCard = React.memo(PostCard);
-
 const Test: React.FC<Props> = () => {
   const [editorData, setEditorData] = useState('');
-
   const { setAlert } = useAlert();
 
   const { data, validate, isEnd, forceValidate, isLoading } = usePaginatedQuery<Post>(
@@ -25,11 +23,17 @@ const Test: React.FC<Props> = () => {
       limit: 5,
     },
   );
-
+  const [loaderRef] = useObserver<HTMLDivElement>(observerCb);
   const { validate: create, isLoading: createLoading } = useQuery<
     ResponseSchema<Post>,
     [{ content: string }]
   >({ data: {} as any, next_cursor: null }, (args) => createPost(...args));
+
+  async function observerCb() {
+    if (isEnd) return;
+    if (isLoading) return;
+    await validate();
+  }
 
   async function savePost() {
     if (isLoading) return;
@@ -80,7 +84,7 @@ const Test: React.FC<Props> = () => {
           <>
             <div className="flex flex-col w-full space-y-3">
               {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
-              <div className="flex justify-center">
+              <div ref={loaderRef} className="flex justify-center">
                 <JButton
                   label={isEnd ? 'Reached end' : 'Load more'}
                   onClick={validate}
