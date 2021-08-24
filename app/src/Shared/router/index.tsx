@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRoutes, Navigate, useLocation } from 'react-router-dom';
+import { useRoutes, Navigate } from 'react-router-dom';
 import Index from 'src/Shared/layouts/Index';
 const Home = React.lazy(() => import('src/Shared/layouts/Home'));
 const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
@@ -8,11 +8,9 @@ const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
 const UserProfile = React.lazy(() => import('src/User/pages/Index'));
 const Settings = React.lazy(() => import('src/User/pages/Settings'));
 const BottomNav = React.lazy(() => import('src/Shared/components/BottomNav'));
-const TopNav = React.lazy(() => import('src/Shared/components/TopNav'));
 const FeedLeftNav = React.lazy(() => import('src/Feed/components/LeftNav'));
 const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
 import { useUserStore } from 'src/User/store/useUserStore';
-import { useScreenWidth } from 'src/utils/hooks';
 
 interface PrivateRouteProps extends Record<string, any> {
   component: (props: any) => React.ReactNode;
@@ -38,8 +36,6 @@ export enum JunePaths {
 
 export function useJuneRouter() {
   const { isLoggedIn } = useUserStore();
-  const { pathname } = useLocation();
-  const { width } = useScreenWidth();
 
   const Routes = useRoutes([
     {
@@ -51,7 +47,7 @@ export function useJuneRouter() {
           element: PrivateRoute({
             component: (props) => <Login {...props} />,
             isSignedIn: !isLoggedIn,
-            redirect: `/${JunePaths.User}${JunePaths.Feed}`,
+            redirect: `/${JunePaths.User}${JunePaths.Feed}/`,
           }),
         },
         {
@@ -63,7 +59,7 @@ export function useJuneRouter() {
           element: PrivateRoute({
             component: (props) => <Login {...props} />,
             isSignedIn: !isLoggedIn,
-            redirect: `/${JunePaths.User}${JunePaths.Feed}`,
+            redirect: `/${JunePaths.User}${JunePaths.Feed}/`,
           }),
         },
       ],

@@ -20,11 +20,16 @@ const JMenuItem: React.FC<Props> = ({ children, onClick, className, closeMenuCal
       to={to}
       className={classNames(['j-menu__list-item', className || ''])}
       onClick={handleClick}
+      tabIndex={0}
     >
       {children}
     </Link>
   ) : (
-    <div className={classNames(['j-menu__list-item', className || ''])} onClick={handleClick}>
+    <div
+      className={classNames(['j-menu__list-item', className || ''])}
+      onClick={handleClick}
+      tabIndex={0}
+    >
       {children}
     </div>
   );
