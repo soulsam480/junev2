@@ -18,6 +18,7 @@ import { setupOauth } from './oauth';
 import { postController } from './controllers/post';
 import { auth } from './middlewares/auth';
 import { userController } from './controllers/user';
+import { CORS_ORIGINS } from './utils/constants';
 
 const PORT = parseEnv<number>('PORT') || 3000;
 
@@ -34,7 +35,7 @@ async function main() {
   app.use(
     cors({
       credentials: true,
-      origin: ['http://localhost:4002', 'https://june.sambitsahoo.com'],
+      origin: [...CORS_ORIGINS],
     }),
   );
   app.use(helmet());
