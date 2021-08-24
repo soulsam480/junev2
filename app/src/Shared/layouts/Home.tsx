@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import 'src/Shared/styles/layouts.scss';
+import UserBottomDrawer from 'src/User/components/UserBottomDrawer';
 import { classNames } from 'src/utils/helpers';
 import { useHideOnScroll } from 'src/utils/hooks';
 
@@ -16,6 +17,8 @@ const Authorized: React.FC<Props> = ({ bottomNavSlot, rightNavSlot, leftNavSlot,
 
   return (
     <div className="j-layout">
+      <UserBottomDrawer />
+
       <aside className="j-layout__leftbar">{leftNavSlot}</aside>
       <main className="j-layout__content">
         {!!topNavSlot && <div className="j-layout__topbar"> {topNavSlot} </div>}

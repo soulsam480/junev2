@@ -44,7 +44,7 @@ const Login: React.FC<Props> = () => {
       setLogin(true);
       tokenWatcher();
       setAlert({ type: 'success', message: 'Logged in' });
-      naviagte('/u');
+      naviagte('/u/feed/');
     } catch (error) {
       console.log(error);
     }
@@ -68,7 +68,7 @@ const Login: React.FC<Props> = () => {
       setLogin(true);
       tokenWatcher();
       setAlert({ type: 'success', message: 'Registered and logged in' });
-      naviagte('/u');
+      naviagte('/u/feed/');
     } catch (error) {
       console.log(error);
     }

@@ -6,10 +6,18 @@ import JIcon from 'src/Lib/JIcon';
 import { useState } from 'react';
 import { classNames } from 'src/utils/helpers';
 import JCard from 'src/Lib/JCard';
+import JBottomDrawer from 'src/Lib/JBottomDrawer';
+
+import { useDrawers } from 'src/Shared/store/drawers';
+import JMenuItem from 'src/Lib/JMenuItem';
 
 interface Props {}
 
 const Lib: React.FC<Props> = () => {
+  const userDrawer = useDrawers((state) => state.drawerState.isUserDrawer);
+
+  const setUserDrawer = useDrawers((state) => state.setDrawer);
+
   const [isLike, setLike] = useState(false);
   const [val, setVal] = useState('');
   const options = [
@@ -39,7 +47,11 @@ const Lib: React.FC<Props> = () => {
         <div className="flex space-y-5 flex-col">
           <div className="text-lg">Buttons</div>
           <div className="flex space-x-3 items-center flex-wrap">
-            <JButton label="Manish" icon="ion:person" disabled />
+            <JButton
+              label="Manish"
+              icon="ion:person"
+              onClick={() => setUserDrawer('isUserDrawer', true)}
+            />
             <JButton label="Manish" icon="ion:person" flat disabled />
             <JButton label="Manish" icon="ion:person" invert disabled />
             <JButton label="Manish" icon="ion:person" outline disabled />
@@ -231,12 +243,31 @@ const Lib: React.FC<Props> = () => {
                 <JButton noBg icon="ion:share-social-outline" size="25px" sm dense />
               </div>
             }
-            height={'auto'}
-            width={'400px'}
             noBg
           >
-            <img src="https://wallpaperaccess.com/full/211836.jpg" className="text-center" />
+            ssssssss
           </JCard>
+        </div>
+
+        <div>
+          <JBottomDrawer
+            isDrawer={userDrawer}
+            setDrawer={() => setUserDrawer('isUserDrawer', false)}
+          >
+            {Array.from(Array(10)).map((_, i) => (
+              <JMenuItem
+                key={i}
+                className="flex space-x-2 items-center"
+                to="/u/settings/"
+                closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
+              >
+                <span className="flex-none">
+                  <JIcon icon="ion:gear-a" />
+                </span>
+                <span className="flex-grow">Settings</span>
+              </JMenuItem>
+            ))}
+          </JBottomDrawer>
         </div>
       </div>
     </div>

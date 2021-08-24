@@ -18,7 +18,7 @@
   }
 
   &__bottombar {
-    @apply fixed w-full bottom-0 z-40 bg-warm-gray-200 md:hidden h-14;
+    @apply fixed w-full bottom-0 z-40 bg-warm-gray-200 md:hidden h-12;
     @apply inset-x-0 transition-all ease-in-out duration-300;
 
     &--hidden {
