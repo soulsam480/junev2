@@ -334,8 +334,8 @@
   }
 
   &__list {
-    @apply text-base;
-    @apply overflow-y-auto h-full pt-2;
+    @apply text-lg;
+    @apply overflow-y-auto h-full py-2;
   }
 
   &__list-item {

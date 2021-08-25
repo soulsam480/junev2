@@ -29,7 +29,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
           to="/u/feed/"
         >
           <span className="flex-none">
-            <JIcon icon="ion:home-outline" />
+            <JIcon size="18px" icon="ion:home-outline" />
           </span>
           <span className="flex-grow">home</span>
         </JMenuItem>
@@ -40,7 +40,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
           to={`/u/@${username}/`}
         >
           <span className="flex-none">
-            <JIcon icon="ion:person-circle-outline" />
+            <JIcon size="18px" icon="ion:person-circle-outline" />
           </span>
           <span className="flex-grow">profile</span>
         </JMenuItem>
@@ -51,7 +51,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
           to="/u/settings/"
         >
           <span className="flex-none">
-            <JIcon icon="ion:gear-a" />
+            <JIcon size="18px" icon="ion:gear-a" />
           </span>
           <span className="flex-grow">settings</span>
         </JMenuItem>
@@ -62,7 +62,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
           onClick={handlelogout}
         >
           <span className="flex-none">
-            <JIcon icon="ion:log-out-outline" />
+            <JIcon size="18px" icon="ion:log-out-outline" />
           </span>
           <span className="flex-grow">log out</span>
         </JMenuItem>
@@ -73,7 +73,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
           to="/lib/"
         >
           <span className="flex-none">
-            <JIcon icon="ion:library-outline" />
+            <JIcon size="18px" icon="ion:library-outline" />
           </span>
           <span>june lib</span>{' '}
         </JMenuItem>
