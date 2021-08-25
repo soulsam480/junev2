@@ -6,6 +6,10 @@ body {
   font-family: 'Roboto Slab', serif;
 }
 
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 .j-link {
   @apply text-lime-600;
 }
