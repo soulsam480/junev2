@@ -214,7 +214,7 @@ const AppPostEditor: React.FC<Props> = ({
                     key={el.id}
                     className={classNames([
                       'j-menu__list-item',
-                      { 'bg-lime-300': idx === keySelection },
+                      { 'bg-warm-gray-200': idx === keySelection },
                     ])}
                     onClick={() => insertUser(idx)}
                   >

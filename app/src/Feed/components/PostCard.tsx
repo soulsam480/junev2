@@ -1,43 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JCard from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
-import JMenu from 'src/Lib/JMenu';
 import { Post } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
 import { useUserStore } from 'src/User/store/useUserStore';
 import PostReact from 'src/Feed/components/postCard/PostReact';
 import { Link } from 'react-router-dom';
+import PostContext from './postCard/PostContext';
 interface Props {
   post: Post;
   updatePostReaction: (post: Post) => void;
 }
 
 const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
-  const [val, setVal] = useState('');
-
-  const {
-    user: { id },
-  } = useUserStore();
-
-  const options = [
-    {
-      label: 'Account',
-      value: 'account',
-      icon: 'ion:ios-contact-outline',
-    },
-    {
-      label: 'Home',
-      value: 'home',
-      icon: 'ion:home-outline',
-    },
-    {
-      label: 'Log out',
-      value: 'logout',
-      icon: 'ion:log-out-outline',
-    },
-  ];
+  const id = useUserStore((state) => state.user.id);
 
   return (
     <JCard
@@ -56,19 +34,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
             </div>
           </div>
           <div className="flex-none">
-            <JMenu
-              value={val}
-              onInput={(v) => setVal(v)}
-              optionKey="value"
-              options={options}
-              size="25px"
-              round
-              sm
-              noBg
-              dense
-              icon="ion:ellipsis-horizontal-outline"
-              listAlign="right"
-            />
+            <PostContext post={post} />
           </div>
         </div>
       }
