@@ -342,3 +342,10 @@
     @apply cursor-pointer select-none relative p-3 flex;
   }
 }
+
+//TODO: Fix this
+// .j-bar-loader {
+//   @apply fixed z-10000 bg-lime-500 top-0 left-0 right-0 w-full;
+
+//   transition: transform 0.5s cubic-bezier(0, 0, 0.2, 1), opacity 0.5s;
+// }

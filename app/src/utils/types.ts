@@ -84,7 +84,7 @@ export interface ResponseSchema<T = any> {
   data: T;
   total_count?: number;
   has_more?: boolean;
-  next_cursor: number | null;
+  next_cursor?: number | null;
 }
 
 export interface PaginationParams {

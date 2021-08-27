@@ -27,7 +27,7 @@ const Test: React.FC<Props> = () => {
   const { validate: create, isLoading: createLoading } = useQuery<
     ResponseSchema<Post>,
     [{ content: string }]
-  >({ data: {} as any, next_cursor: null }, (args) => createPost(...args));
+  >({ data: {} as any }, (args) => createPost(...args));
 
   async function observerCb() {
     if (isEnd) return;
