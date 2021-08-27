@@ -1,6 +1,17 @@
 import { createController, createRoute } from 'dango-core';
-import { createPost, getAllPosts, getPostsByUserId, likePost, unlikePost } from 'src/services/post';
+import { UpdateQuery } from 'mongoose';
 import { createError, formatResponse } from 'src/utils/helpers';
+import { Post } from 'src/entities/post';
+import {
+  createPost,
+  deletePostById,
+  getAllPosts,
+  getPostById,
+  getPostsByUserId,
+  likePost,
+  unlikePost,
+  updatePostById,
+} from 'src/services/post';
 
 /**
  * @private only for seeding once
@@ -46,7 +57,7 @@ const postsByUserId = createRoute<any, { id: string }>({
   path: '/user/:id',
   method: 'get',
   handler: async (__, res, _, { id }) => {
-    if (!id) return res.status(400).send(createError('User id not found'));
+    if (!id) return res.sendError(400, createError('User id not found'));
 
     try {
       const posts = await getPostsByUserId(id);
@@ -63,7 +74,7 @@ const create = createRoute<{ post: { [x: string]: any } }>({
   path: '/',
   method: 'post',
   handler: async ({ userId }, res, { post }) => {
-    if (!Object.keys(post).length) res.status(400).send(createError('Post not found'));
+    if (!Object.keys(post).length) res.sendError(400, createError('Post not found'));
 
     try {
       const newPost = await createPost({ ...(post as any), user: userId });
@@ -106,6 +117,63 @@ const unlike = createRoute<any, { id: string }>({
   },
 });
 
-const postController = createController('/posts', [getPosts, postsByUserId, create, like, unlike]);
+const update = createRoute<UpdateQuery<Post>, { id: string }>({
+  path: '/:id',
+  method: 'patch',
+  handler: async ({ userId }, res, postBody, { id }) => {
+    try {
+      if (!postBody || !Object.keys(postBody).length)
+        return res.sendError(400, 'Post body not found !');
+
+      await updatePostById(id, userId as string, { ...postBody });
+
+      return res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const getById = createRoute<any, { id: string }>({
+  path: '/:id',
+  method: 'get',
+  handler: async ({ userId }, res, { id }) => {
+    try {
+      const post = await getPostById(id, userId as string);
+
+      return res.json(post);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const deleteById = createRoute<any, { id: string }>({
+  path: '/:id',
+  method: 'delete',
+  handler: async ({ userId }, res, { id }) => {
+    try {
+      await deletePostById(id, userId as string);
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const postController = createController('/posts', [
+  getPosts,
+  postsByUserId,
+  create,
+  like,
+  unlike,
+  update,
+  getById,
+  deleteById,
+]);
 
 export { postController };

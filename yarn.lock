@@ -1871,13 +1871,13 @@ dango-core@^1.3.0:
     "@types/express" "^4.17.12"
     fast-glob "^3.2.5"
 
-dango-core@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/dango-core/-/dango-core-1.4.0.tgz#c9e73eadf9b6abdc9b90de8f9b4c39c60039e0d9"
-  integrity sha512-h7ONS/RTW33doxajVCF5serJLG7v5dXuIws3HNM1QSg/U5bWJ/pq59G5KJmTo6XCvf3UO/dotGgPsDJhUaE9Ng==
+dango-core@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/dango-core/-/dango-core-1.5.0.tgz#c1dfe262788ef9a9d0d49cf6277f95b66dd52116"
+  integrity sha512-XOrpJ2sL6HFRGlMcqUbmw+Ia9rBTZJVhVqK16Wior/6v8CTJbNe4BrykyjhGxgGQmMRPb2XMfMZF1AggV+DnwQ==
   dependencies:
-    "@types/express" "^4.17.12"
-    fast-glob "^3.2.5"
+    "@types/express" "^4.17.13"
+    fast-glob "^3.2.7"
 
 date-fns@^2.16.1:
   version "2.23.0"

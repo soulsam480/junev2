@@ -23,8 +23,6 @@ const userData = createRoute<any, { username: string }>({
   path: '/:username',
   method: 'get',
   handler: async (_, res, __, { username }) => {
-    console.log(username);
-
     try {
       const data = await getUserProfile(username);
 
