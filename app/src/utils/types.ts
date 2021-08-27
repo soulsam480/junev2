@@ -57,6 +57,7 @@ export interface Post {
   comments: Comment[];
   total_comments?: number;
   total_likes?: number;
+  is_archived?: boolean;
 }
 
 export interface Trigger {

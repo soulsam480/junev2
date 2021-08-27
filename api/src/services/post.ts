@@ -23,7 +23,7 @@ export async function getAllPosts(cursor: number, limit: number) {
   try {
     return await cursorPaginateResponse(
       postModel
-        .find()
+        .find({ is_archived: false })
         .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] }),
       cursor,
       limit,
@@ -36,7 +36,7 @@ export async function getAllPosts(cursor: number, limit: number) {
 
 export async function getPostsByUserId(id: string) {
   try {
-    const allPosts = await postModel.find({ user: id }).exec();
+    const allPosts = await postModel.find({ user: id, is_archived: false }).exec();
     return allPosts;
   } catch (error) {
     Promise.reject(error);
@@ -73,7 +73,7 @@ export async function updatePostById(id: string, userId: string, post: UpdateQue
 
 export async function getPostById(id: string, userId: string) {
   try {
-    return await postModel.findOne({ _id: id, user: userId }).exec();
+    return await postModel.findOne({ _id: id, user: userId, is_archived: false }).exec();
   } catch (error) {
     Promise.reject(error);
   }

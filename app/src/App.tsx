@@ -3,6 +3,7 @@ import AppNavbar from 'src/Shared/components/AppNavbar';
 import { useAuth, useAuthRedirect } from 'src/utils/auth';
 import { useJuneRouter } from 'src/Shared/router';
 import * as JAlert from 'src/Lib/JAlerts';
+import FloatingLoader from 'src/Shared/components/FloatingLoader';
 
 interface Props {}
 
@@ -20,6 +21,7 @@ const App: React.FC<Props> = () => {
     <>
       {!isLoading && !isCatchLoading && (
         <div>
+          <FloatingLoader />
           <JAlert.JAlertGroup />
           <AppNavbar />
           <Suspense fallback={<span />}>

@@ -1,6 +1,9 @@
 import React from 'react';
 import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
+import { useAlert } from 'src/Lib/store/alerts';
+import { archivePost } from 'src/Shared/services/post';
+import { useLoader } from 'src/Shared/store/loader';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { Post } from 'src/utils/types';
 
@@ -10,6 +13,24 @@ interface Props {
 
 const PostContext: React.FC<Props> = ({ post }) => {
   const userId = useUserStore((state) => state.user.id);
+  const setAlert = useAlert((state) => state.setAlert);
+
+  const setLoader = useLoader((state) => state.setLoader);
+
+  const show = () => setLoader(true);
+  const hide = () => setLoader(false);
+
+  async function archive() {
+    show();
+    try {
+      await archivePost(post.id, true);
+      setAlert({ type: 'success', message: 'Post archived' });
+    } catch (error) {
+      setAlert({ type: 'danger', message: 'Failed to archive post' });
+    } finally {
+      hide();
+    }
+  }
 
   return (
     <JMenu size="25px" noBg dense icon="ion:ellipsis-horizontal-outline" listAlign="right">
@@ -21,7 +42,7 @@ const PostContext: React.FC<Props> = ({ post }) => {
 
           {userId === post?.user.id ? (
             <>
-              <JMenuItem closeMenuCallback={cMenu}>
+              <JMenuItem closeMenuCallback={cMenu} onClick={archive}>
                 <span className="flex-grow">archive</span>
               </JMenuItem>
             </>

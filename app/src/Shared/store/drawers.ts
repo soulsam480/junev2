@@ -4,12 +4,12 @@ interface Drawers {
   isUserDrawer: boolean;
 }
 
-export interface LoaderState extends State {
+export interface DrawerState extends State {
   drawerState: Drawers;
   setDrawer: (key: keyof Drawers, payload: boolean) => void;
 }
 
-export const useDrawers = create<LoaderState>((set, get) => ({
+export const useDrawers = create<DrawerState>((set, get) => ({
   drawerState: { isUserDrawer: false },
   setDrawer: (key, payload) => {
     set({ drawerState: { ...get().drawerState, [key]: payload } });

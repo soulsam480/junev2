@@ -142,7 +142,7 @@ const getById = createRoute<any, { id: string }>({
     try {
       const post = await getPostById(id, userId as string);
 
-      return res.json(post);
+      return res.json(formatResponse(post));
     } catch (error) {
       console.log(error);
       res.sendError(500, error);
