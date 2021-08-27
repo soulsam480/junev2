@@ -46,3 +46,7 @@ export const typeValidation =
     }
     return null;
   };
+
+export function between(v: number, min: number, max: number) {
+  return max <= min ? min : Math.min(max, Math.max(min, v));
+}

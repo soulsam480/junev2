@@ -52,6 +52,9 @@ export class Post extends TimeStamps {
   @prop({ type: () => Comment })
   public comments?: Comment[];
 
+  @prop({ default: false })
+  is_archived?: boolean;
+
   public get total_likes() {
     return this.likes?.length;
   }

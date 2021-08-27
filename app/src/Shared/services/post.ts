@@ -6,13 +6,29 @@ export async function createPost(params: { content: string }) {
 }
 
 export function getAllPosts(opts: PaginationParams) {
-  return api.get<ResponseSchema<Post[]>>('/posts', { params: { ...opts } });
+  return api.get<ResponseSchema<Post[]>>('/posts/', { params: { ...opts } });
 }
 
 export function likePost(id: string) {
-  return api.post<ResponseSchema<Post>>(`/posts/${id}/like`);
+  return api.post(`/posts/${id}/like/`);
 }
 
 export function unlikePost(id: string) {
-  return api.post<ResponseSchema<Post>>(`/posts/${id}/unlike`);
+  return api.post(`/posts/${id}/unlike/`);
+}
+
+export async function archivePost(id: string, is_archived: boolean) {
+  return api.patch(`/posts/${id}/`, { is_archived });
+}
+
+export async function deletePost(id: string) {
+  return api.delete(`/posts/${id}/`);
+}
+
+export async function updatePost(id: string, post: Partial<Post>) {
+  return api.patch(`/posts/${id}/`, { ...post });
+}
+
+export async function getPost(id: string) {
+  return api.get<ResponseSchema<Post>>(`/posts/${id}`);
 }

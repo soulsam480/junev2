@@ -57,6 +57,7 @@ export interface Post {
   comments: Comment[];
   total_comments?: number;
   total_likes?: number;
+  is_archived?: boolean;
 }
 
 export interface Trigger {
@@ -84,7 +85,7 @@ export interface ResponseSchema<T = any> {
   data: T;
   total_count?: number;
   has_more?: boolean;
-  next_cursor: number | null;
+  next_cursor?: number | null;
 }
 
 export interface PaginationParams {

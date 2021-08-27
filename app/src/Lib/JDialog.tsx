@@ -60,25 +60,23 @@ const JDialog: React.FC<Props> = ({ isModal, setModal, children }) => {
   }, [isModal]);
 
   return createPortal(
-    <div>
-      <CSSTransition
-        in={isModal}
-        timeout={{
-          enter: 300,
-          exit: 300,
-        }}
-        classNames="j-dialog"
-        unmountOnExit
-      >
-        <div className="j-dialog__backdrop" role="dialog" aria-modal={isModal}>
-          <div className="j-dialog__parent">
-            <div className="j-dialog__content" ref={ref}>
-              {children}
-            </div>
+    <CSSTransition
+      in={isModal}
+      timeout={{
+        enter: 300,
+        exit: 300,
+      }}
+      classNames="j-dialog"
+      unmountOnExit
+    >
+      <div className="j-dialog__backdrop" role="dialog" aria-modal={isModal}>
+        <div className="j-dialog__parent">
+          <div className="j-dialog__content" ref={ref}>
+            {children}
           </div>
         </div>
-      </CSSTransition>
-    </div>,
+      </div>
+    </CSSTransition>,
     document.body,
   );
 };

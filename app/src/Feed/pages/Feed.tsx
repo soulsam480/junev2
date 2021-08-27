@@ -27,7 +27,7 @@ const Test: React.FC<Props> = () => {
   const { validate: create, isLoading: createLoading } = useQuery<
     ResponseSchema<Post>,
     [{ content: string }]
-  >({ data: {} as any, next_cursor: null }, (args) => createPost(...args));
+  >({ data: {} as any }, (args) => createPost(...args));
 
   async function observerCb() {
     if (isEnd) return;
@@ -68,7 +68,7 @@ const Test: React.FC<Props> = () => {
           <AppPostEditor
             value={editorData}
             setValue={setEditorData}
-            placeholder="Create a post"
+            placeholder="use @ to mention"
             className="w-full h-full"
             onPost={savePost}
             isLoading={createLoading}
@@ -86,7 +86,7 @@ const Test: React.FC<Props> = () => {
               {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
               <div ref={loaderRef} className="flex justify-center">
                 <JButton
-                  label={isEnd ? 'Reached end' : 'Load more'}
+                  label={isEnd ? "That's all from june" : undefined}
                   onClick={validate}
                   flat
                   disabled={isEnd}

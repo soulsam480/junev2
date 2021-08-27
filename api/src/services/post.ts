@@ -1,4 +1,4 @@
-import { CreateQuery } from 'mongoose';
+import { CreateQuery, UpdateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
 import { cursorPaginateResponse, getObjectId } from 'src/utils/helpers';
@@ -23,7 +23,7 @@ export async function getAllPosts(cursor: number, limit: number) {
   try {
     return await cursorPaginateResponse(
       postModel
-        .find()
+        .find({ is_archived: false })
         .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] }),
       cursor,
       limit,
@@ -36,7 +36,7 @@ export async function getAllPosts(cursor: number, limit: number) {
 
 export async function getPostsByUserId(id: string) {
   try {
-    const allPosts = await postModel.find({ user: id }).exec();
+    const allPosts = await postModel.find({ user: id, is_archived: false }).exec();
     return allPosts;
   } catch (error) {
     Promise.reject(error);
@@ -58,6 +58,30 @@ export async function unlikePost(id: string, userId: string) {
     await postModel.updateOne({ _id: id }, { $pull: { likes: getObjectId(userId) } }).exec();
 
     await userModel.updateOne({ _id: userId }, { $pull: { liked_posts: getObjectId(id) } }).exec();
+  } catch (error) {
+    Promise.reject(error);
+  }
+}
+
+export async function updatePostById(id: string, userId: string, post: UpdateQuery<Post>) {
+  try {
+    await postModel.updateOne({ _id: id, user: userId }, { ...post }).exec();
+  } catch (error) {
+    Promise.reject(error);
+  }
+}
+
+export async function getPostById(id: string, userId: string) {
+  try {
+    return await postModel.findOne({ _id: id, user: userId, is_archived: false }).exec();
+  } catch (error) {
+    Promise.reject(error);
+  }
+}
+
+export async function deletePostById(id: string, user: string) {
+  try {
+    return await postModel.findOneAndDelete({ _id: id, user }).exec();
   } catch (error) {
     Promise.reject(error);
   }

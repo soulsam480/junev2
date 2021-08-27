@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { PaginationParams, ResponseSchema } from 'src/utils/types';
 
@@ -85,6 +85,7 @@ export function useQuery<T, P extends any[] = [], K = any>(
   const [data, setData] = useState<T>(baseState);
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
+  const { mountedRef } = useMountedRef();
 
   function reset() {
     setLoading(false);
@@ -98,6 +99,7 @@ export function useQuery<T, P extends any[] = [], K = any>(
         setLoading(true);
         const { data: apiData } = await fetcher.call(null, args);
 
+        if (!mountedRef.current) return;
         setData(apiData);
         resolve(apiData);
       } catch (error) {
@@ -146,6 +148,7 @@ export function usePaginatedQuery<T, K = any>(
   const [error, setError] = useState<K | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [isEnd, setEnd] = useState(false);
+  const { mountedRef } = useMountedRef();
 
   const getPageArgs = (cursor: number | null, limit = 10): PaginationParams => ({ cursor, limit });
 
@@ -164,7 +167,9 @@ export function usePaginatedQuery<T, K = any>(
           data: { data: apiData, next_cursor, has_more },
         } = await fetcher(getPageArgs(cursor.current, opts?.limit));
 
-        cursor.current = next_cursor;
+        if (mountedRef.current === false) return;
+
+        (cursor.current as any) = next_cursor;
         setData((data) => [...data, ...apiData]);
         resolve(apiData);
 
@@ -279,4 +284,14 @@ export function useObserver<T extends HTMLElement>(
   }, [elementRef, opts]);
 
   return [elementRef];
+}
+
+export function useMountedRef() {
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    () => (mountedRef.current = false);
+  }, []);
+
+  return { mountedRef };
 }

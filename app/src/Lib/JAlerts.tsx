@@ -3,6 +3,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { classNames } from 'src/utils/helpers';
 import { useAlert } from 'src/Lib/store/alerts';
 import JIcon from 'src/Lib/JIcon';
+import { createPortal } from 'react-dom';
 
 export interface Alert {
   icon?: string;
@@ -62,7 +63,7 @@ interface AlertGroupProps {}
 export const JAlertGroup: React.FC<AlertGroupProps> = () => {
   const { alerts } = useAlert();
 
-  return (
+  return createPortal(
     <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 list-group z-50">
       <TransitionGroup is="div" className="flex flex-col justify-center items-center">
         {alerts.map((alert) => (
@@ -71,6 +72,7 @@ export const JAlertGroup: React.FC<AlertGroupProps> = () => {
           </CSSTransition>
         ))}
       </TransitionGroup>
-    </div>
+    </div>,
+    document.getElementById('alert-root') as HTMLDivElement,
   );
 };

@@ -2,6 +2,7 @@ import { PassportStatic } from 'passport';
 import { Strategy } from 'passport-google-oauth2';
 import { userModel } from 'src/entities/user';
 import { parseEnv } from 'src/utils/helpers';
+import { v4 as uuid } from 'uuid';
 
 export function setupGoogleOauth(passportInstance: PassportStatic) {
   passportInstance.use(
@@ -25,7 +26,8 @@ export function setupGoogleOauth(passportInstance: PassportStatic) {
               email: profile.email,
               ga_id: profile.id,
               username: profile.email.split('@')[0],
-              password: profile.email.split('@')[0],
+              // TODO: imporve this
+              password: uuid(),
             })
             .then((user) => done(null, user.toJSON()));
           return;

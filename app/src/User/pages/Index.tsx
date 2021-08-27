@@ -8,7 +8,7 @@ import { UserProfile } from 'src/User/store/useUserStore';
 import { Post } from 'src/utils/types';
 import PostCard from 'src/Feed/components/PostCard';
 import * as JPanels from 'src/Lib/JPanels';
-import { useScreenWidth } from 'src/utils/hooks';
+import { useMountedRef, useScreenWidth } from 'src/utils/hooks';
 import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
 import JSpinner from 'src/Lib/JSpinner';
 
@@ -19,6 +19,7 @@ const MemoizedPostCard = React.memo(PostCard);
 const Index: React.FC<Props> = () => {
   const { username } = useParams();
   const { width: screenWidth } = useScreenWidth();
+  const { mountedRef } = useMountedRef();
 
   const [tab, setTab] = useState('posts');
 
@@ -32,6 +33,8 @@ const Index: React.FC<Props> = () => {
         data: { data },
       } = await getUserPostsById(id);
 
+      if (!mountedRef.current) return;
+
       setUserPosts([...data]);
     } catch (error) {
       console.log(error);
@@ -44,6 +47,8 @@ const Index: React.FC<Props> = () => {
       const {
         data: { data },
       } = await getUserProfileByUsername(username.split('@')[1]);
+
+      if (!mountedRef.current) return;
 
       setUserProfile({ ...data });
 
