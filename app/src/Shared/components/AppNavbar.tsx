@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import JMenu from 'src/Lib/JMenu';
@@ -7,13 +8,13 @@ import { useAlert } from 'src/Lib/store/alerts';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { classNames } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
-import TopNav from 'src/Shared/components/TopNav';
 
 interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
   const { setAlert } = useAlert();
-  const { isLoggedIn } = useUserStore();
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const username = useUserStore((state) => state.user.username);
 
   function handlelogout() {
     logout();
@@ -30,7 +31,11 @@ const AppNavbar: React.FC<Props> = () => {
     >
       <div className="max-w-7xl mx-auto px-2">
         <div className="relative flex items-center justify-between h-14">
-          <TopNav />
+          <div>
+            <Link to="/">
+              <img className="w-10 m-auto" src="/june-logo.svg" alt="June" />
+            </Link>
+          </div>
           <div className="flex space-x-1 items-center">
             <div className="hidden sm:block">
               <JButton noBg icon="ion:heart-outline" size="25px" sm dense />
@@ -57,6 +62,17 @@ const AppNavbar: React.FC<Props> = () => {
                             <JIcon icon="ion:home-outline" />
                           </span>
                           <span className="flex-grow">Home</span>
+                        </JMenuItem>
+
+                        <JMenuItem
+                          className="flex space-x-2 items-center"
+                          closeMenuCallback={cMenu}
+                          to={`/u/@${username}/`}
+                        >
+                          <span className="flex-none">
+                            <JIcon size="18px" icon="ion:person-circle-outline" />
+                          </span>
+                          <span className="flex-grow">profile</span>
                         </JMenuItem>
 
                         <JMenuItem
