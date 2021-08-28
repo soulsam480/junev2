@@ -119,13 +119,11 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
             $lt: new Date(decrypedDate),
           },
         })
-        .sort({ updatedAt: -1 })
         .limit(limit + 1)
         .exec();
     } else {
       data = await model
         .find()
-        .sort({ updatedAt: -1 })
         .limit(limit + 1)
         .exec();
     }

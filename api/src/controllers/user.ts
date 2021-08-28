@@ -33,12 +33,15 @@ const userData = createRoute<any, { username: string }>({
   },
 });
 
-const userPosts = createRoute<any, { id: string }>({
+const userPosts = createRoute<any, { id: string }, { cursor: string; limit: string }>({
   path: '/:id/posts',
   method: 'get',
-  handler: async (_, res, __, { id }) => {
+  handler: async (_, res, __, { id }, { cursor: pagination_cursor, limit: pagination_limit }) => {
     try {
-      const data = await getUserPosts(id);
+      const cursor: number = parseInt(pagination_cursor);
+      const limit: number = parseInt(pagination_limit) || 10;
+
+      const data = await getUserPosts(id, cursor, limit);
 
       res.json(data);
     } catch (error) {

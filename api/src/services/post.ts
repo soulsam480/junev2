@@ -24,7 +24,8 @@ export async function getAllPosts(cursor: number, limit: number) {
     return await cursorPaginateResponse(
       postModel
         .find({ is_archived: false })
-        .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] }),
+        .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
+        .sort({ createdAt: -1 }),
       cursor,
       limit,
       await postModel.estimatedDocumentCount(),

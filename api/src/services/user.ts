@@ -1,6 +1,6 @@
 import { postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
-import { formatResponse, getObjectId } from 'src/utils/helpers';
+import { cursorPaginateResponse, formatResponse, getObjectId } from 'src/utils/helpers';
 
 export async function getUserProfile(username: string) {
   try {
@@ -8,7 +8,7 @@ export async function getUserProfile(username: string) {
       .findOne({ username })
       .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
 
-    const postCount = await postModel.find({ user: { username } as User }).estimatedDocumentCount();
+    const postCount = await postModel.find({ user: getObjectId(userFromDb?._id) }).count();
 
     return formatResponse({ ...userFromDb?.toJSON(), total_posts: postCount });
   } catch (error) {
@@ -16,15 +16,22 @@ export async function getUserProfile(username: string) {
   }
 }
 
-export async function getUserPosts(id: string) {
+export async function getUserPosts(id: string, cursor: number, limit: number) {
   try {
-    const userPosts = await postModel.find({ user: getObjectId(id) }).populate({
-      path: 'user',
-      model: User,
-      select: ['username', 'id', 'name', 'image'],
-    });
+    const query = postModel.find({ user: getObjectId(id) });
 
-    return formatResponse(userPosts);
+    return cursorPaginateResponse(
+      query
+        .populate({
+          path: 'user',
+          model: User,
+          select: ['username', 'id', 'name', 'image'],
+        })
+        .sort({ createdAt: -1 }),
+      cursor,
+      limit,
+      await query.count(),
+    );
   } catch (error) {
     Promise.reject(error);
   }
