@@ -81,7 +81,9 @@ export const JPanels: React.FC<Props> = ({ children, selected, ...rest }) => {
       </div>
 
       {/* render panels */}
-      <div role="tabpanel">{memoizedPanel}</div>
+      <div role="tabpanel" className="pt-2">
+        {memoizedPanel}
+      </div>
     </div>
   );
 };

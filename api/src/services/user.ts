@@ -19,7 +19,6 @@ export async function getUserProfile(username: string) {
 export async function getUserPosts(id: string, cursor: number, limit: number) {
   try {
     const query = postModel.find({ user: getObjectId(id) });
-
     return cursorPaginateResponse(
       query
         .populate({

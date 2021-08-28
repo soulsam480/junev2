@@ -13,7 +13,8 @@ interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
   const { setAlert } = useAlert();
-  const { isLoggedIn } = useUserStore();
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+  const username = useUserStore((state) => state.user.username);
 
   function handlelogout() {
     logout();
@@ -61,6 +62,17 @@ const AppNavbar: React.FC<Props> = () => {
                             <JIcon icon="ion:home-outline" />
                           </span>
                           <span className="flex-grow">Home</span>
+                        </JMenuItem>
+
+                        <JMenuItem
+                          className="flex space-x-2 items-center"
+                          closeMenuCallback={cMenu}
+                          to={`/u/@${username}/`}
+                        >
+                          <span className="flex-none">
+                            <JIcon size="18px" icon="ion:person-circle-outline" />
+                          </span>
+                          <span className="flex-grow">profile</span>
                         </JMenuItem>
 
                         <JMenuItem

@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { PaginationParams, ResponseSchema } from 'src/utils/types';
 

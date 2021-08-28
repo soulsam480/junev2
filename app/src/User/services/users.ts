@@ -1,5 +1,5 @@
 import { api } from 'src/utils/helpers';
-import { Post, ResponseSchema } from 'src/utils/types';
+import { PaginationParams, Post, ResponseSchema } from 'src/utils/types';
 import { UserProfile } from 'src/User/store/useUserStore';
 
 export interface SearchUserResponse {
@@ -9,15 +9,15 @@ export interface SearchUserResponse {
 }
 
 export function searchUserWithFilters(params?: Record<string, any>) {
-  return api.get<ResponseSchema<SearchUserResponse[]>>('/users/search', {
+  return api.get<ResponseSchema<SearchUserResponse[]>>('/users/search/', {
     params: { ...params },
   });
 }
 
 export function getUserProfileByUsername(username: string) {
-  return api.get<ResponseSchema<UserProfile>>(`/users/${username}`);
+  return api.get<ResponseSchema<UserProfile>>(`/users/${username}/`);
 }
 
-export function getUserPostsById(id: string) {
-  return api.get<ResponseSchema<Post[]>>(`users/${id}/posts`);
+export function getUserPostsById(id: string, opts: PaginationParams) {
+  return api.get<ResponseSchema<Post[]>>(`users/${id}/posts/`, { params: { ...opts } });
 }
