@@ -11,7 +11,14 @@ body {
 }
 
 .j-link {
-  @apply text-lime-600;
+  @apply text-lime-600 relative break-all;
+
+  &::before {
+    display: block;
+    content: '';
+    position: absolute;
+    @apply inset-0;
+  }
 }
 
 .body-noscroll {

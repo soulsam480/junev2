@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { HTMLProps, useMemo } from 'react';
 import { classNames } from 'src/utils/helpers';
-export interface JCardProps {
+export interface JCardProps extends HTMLProps<HTMLDivElement> {
   className?: string;
   loading?: boolean;
   height?: string;
@@ -29,19 +29,24 @@ const JCard: React.FC<JCardProps> = ({
   round,
   block,
   contentSlot,
+  className,
   ...rest
 }) => {
   const cardClasses = useMemo(
     () => [
       noBg ? 'bg-transparent' : 'bg-warm-gray-200',
       `${round ? 'rounded-full' : 'rounded-md'}`,
-      `${rest.className ?? ''}`,
+      `${className ?? ''}`,
     ],
-    [noBg, round, rest.className],
+    [noBg, round, className],
   );
 
   return (
-    <div className={classNames([...cardClasses])} style={{ width: block ? '100%' : width, height }}>
+    <div
+      className={classNames([...cardClasses])}
+      style={{ width: block ? '100%' : width, height }}
+      {...rest}
+    >
       {!!children ? (
         children
       ) : (

@@ -21,7 +21,6 @@ export interface BaseJButtonProps
   iconRight?: boolean;
   dense?: boolean;
   noBg?: boolean;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
   to?: string;
 }
 

@@ -4,8 +4,8 @@ import JButton from 'src/Lib/JButton';
 import { classNames } from 'src/utils/helpers';
 import { useObserver, usePaginatedQuery } from 'src/utils/hooks';
 import { PaginationParams, Post, ResponseSchema } from 'src/utils/types';
-import PostCard from './PostCard';
-import PostSkeletonLoader from './postCard/PostSkeletonLoader';
+import PostCard from 'src/Feed/components/PostCard';
+import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
 
 interface Props extends HTMLProps<HTMLDivElement> {
   fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<any[]>>>;
@@ -36,7 +36,10 @@ const PostFeed: React.FC<Props> = ({ fetcher, className, ...rest }) => {
   }, []);
 
   return (
-    <div className={classNames(['flex flex-col items-start space-y-3 pb-15', className || ''])}>
+    <div
+      className={classNames(['flex flex-col items-start space-y-3 pb-15', className || ''])}
+      {...rest}
+    >
       {!!data.length
         ? data?.map((post) => (
             <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />

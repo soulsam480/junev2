@@ -9,7 +9,7 @@ interface Props {
 
 const JIcon: React.FC<Props> = ({ size, icon, className }) => {
   return (
-    <span className={classNames(['flex items-center', `${className ?? ''}`])}>
+    <span className={classNames(['inline-flex items-stretch', `${className ?? ''}`])}>
       <i
         style={{ fontSize: size || '16px' }}
         className="iconify"
