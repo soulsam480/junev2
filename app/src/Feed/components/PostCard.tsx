@@ -9,7 +9,7 @@ import { useUserStore } from 'src/User/store/useUserStore';
 import PostReact from 'src/Feed/components/postCard/PostReact';
 import { Link, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
-import '../styles/postcard.scss';
+import 'src/Feed/styles/postcard.scss';
 interface Props {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -22,7 +22,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
   function handlePostClick(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement) return;
 
-    navigate(`/${post.user.username}/p/${post.id}`);
+    navigate(`/${post.user.username}/post/${post.id}`);
   }
   return (
     <JCard
@@ -31,7 +31,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
       className="post-card"
       headerSlot={
         <div className="post-card__header">
-          <Link to={`/u/@${post.user.username}`}>
+          <Link to={`/@${post.user.username}`}>
             <div className="flex-none">
               <JAvatar src="https://cdn.quasar.dev/img/avatar.png" rounded />
             </div>
@@ -62,7 +62,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
               linkEl={({ match, key, href }) =>
                 match.startsWith('@') ? (
                   <Link
-                    to={`/u/${match}/`}
+                    to={`/${match}/`}
                     key={key}
                     className="j-link"
                     rel="noopener noreferrer nofollow"

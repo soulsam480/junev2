@@ -98,7 +98,7 @@ export function useAuthRedirect() {
         setUser({ ...data });
         setLogin(true);
 
-        navigate('/u');
+        navigate('/home');
       } catch (error) {
         console.log(error);
 

@@ -49,7 +49,7 @@ const PostFeed: React.FC<Props> = ({ fetcher, className, ...rest }) => {
       {(!!data.length || isLoading) && (
         <>
           <div className="flex flex-col w-full space-y-3">
-            {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
+            {isLoading && Array.from(Array(2)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
             <div ref={loaderRef} className="flex justify-center">
               <JButton
                 label={isEnd ? "That's all from june" : ''}

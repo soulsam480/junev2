@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
 import { useAlert } from 'src/Lib/store/alerts';
+import { JunePaths } from 'src/Shared/router';
 import { googleLogin, login, LoginUserDto, register } from 'src/User/services/auth';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAuth } from 'src/utils/auth';
@@ -44,7 +45,7 @@ const Login: React.FC<Props> = () => {
       setLogin(true);
       tokenWatcher();
       setAlert({ type: 'success', message: 'Logged in' });
-      naviagte('/u/feed/');
+      naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);
     }
@@ -68,7 +69,7 @@ const Login: React.FC<Props> = () => {
       setLogin(true);
       tokenWatcher();
       setAlert({ type: 'success', message: 'Registered and logged in' });
-      naviagte('/u/feed/');
+      naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);
     }
