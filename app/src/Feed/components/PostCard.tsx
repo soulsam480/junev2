@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JCard from 'src/Lib/JCard';

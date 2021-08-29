@@ -33,35 +33,33 @@ const PostContext: React.FC<Props> = ({ post }) => {
   }
 
   return (
-    <div className="absolute z-1000">
-      <JMenu size="20px" sm noBg icon="ion:ellipsis-horizontal-outline" listAlign="right">
-        {({ closeMenu: cMenu }) => (
-          <>
-            <JMenuItem closeMenuCallback={cMenu}>
-              <span className="flex-grow">view</span>
-            </JMenuItem>
+    <JMenu size="20px" sm noBg icon="ion:ellipsis-horizontal-outline" listAlign="right">
+      {({ closeMenu: cMenu }) => (
+        <>
+          <JMenuItem closeMenuCallback={cMenu} to={`/${post.user.username}/post/${post.id}`}>
+            <span className="flex-grow">view</span>
+          </JMenuItem>
 
-            {userId === post?.user.id ? (
-              <>
-                <JMenuItem closeMenuCallback={cMenu} onClick={archive}>
-                  <span className="flex-grow">archive</span>
-                </JMenuItem>
-              </>
-            ) : (
-              <>
-                <JMenuItem closeMenuCallback={cMenu}>
-                  <span className="flex-grow">report</span>
-                </JMenuItem>
+          {userId === post?.user.id ? (
+            <>
+              <JMenuItem closeMenuCallback={cMenu} onClick={archive}>
+                <span className="flex-grow">archive</span>
+              </JMenuItem>
+            </>
+          ) : (
+            <>
+              <JMenuItem closeMenuCallback={cMenu}>
+                <span className="flex-grow">report</span>
+              </JMenuItem>
 
-                <JMenuItem closeMenuCallback={cMenu}>
-                  <span className="flex-grow">follow</span>
-                </JMenuItem>
-              </>
-            )}
-          </>
-        )}
-      </JMenu>
-    </div>
+              <JMenuItem closeMenuCallback={cMenu}>
+                <span className="flex-grow">follow</span>
+              </JMenuItem>
+            </>
+          )}
+        </>
+      )}
+    </JMenu>
   );
 };
 
