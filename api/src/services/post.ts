@@ -72,9 +72,12 @@ export async function updatePostById(id: string, userId: string, post: UpdateQue
   }
 }
 
-export async function getPostById(id: string, userId: string) {
+export async function getPostById(id: string) {
   try {
-    return await postModel.findOne({ _id: id, user: userId, is_archived: false }).exec();
+    return await postModel
+      .findOne({ _id: id, is_archived: false })
+      .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
+      .exec();
   } catch (error) {
     Promise.reject(error);
   }

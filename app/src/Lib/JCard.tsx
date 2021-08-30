@@ -14,6 +14,7 @@ export interface JCardProps extends HTMLProps<HTMLDivElement> {
   outline?: boolean;
   round?: boolean;
   block?: boolean;
+  separators?: boolean;
 }
 
 const JCard: React.FC<JCardProps> = ({
@@ -30,6 +31,7 @@ const JCard: React.FC<JCardProps> = ({
   block,
   contentSlot,
   className,
+  separators,
   ...rest
 }) => {
   const cardClasses = useMemo(
@@ -50,7 +52,7 @@ const JCard: React.FC<JCardProps> = ({
       {!!children ? (
         children
       ) : (
-        <div className="flex flex-col space-y-2">
+        <div className={classNames(['flex flex-col', { 'divide-y': separators }])}>
           <div>{headerSlot}</div>
           <div className="grow max-h-full max-w-full w-full">{contentSlot}</div>
           <div>{footerSlot}</div>

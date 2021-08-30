@@ -1,8 +1,12 @@
 .post-card {
-  @apply cursor-pointer hover:(bg-opacity-70) transition-colors duration-200 ease-in-out;
+  @apply transition-colors duration-200 ease-in-out;
+
+  &--no-detail {
+    @apply cursor-pointer hover:(bg-opacity-70);
+  }
 
   &__header {
-    @apply flex px-3 pt-4 justify-between items-center;
+    @apply flex px-3 py-4 justify-between items-center;
 
     a {
       @apply flex space-x-2 items-center relative;

@@ -30,5 +30,5 @@ export async function updatePost(id: string, post: Partial<Post>) {
 }
 
 export async function getPost(id: string) {
-  return api.get<ResponseSchema<Post>>(`/posts/${id}`);
+  return api.get<ResponseSchema<Post>>(`/posts/${id}/`);
 }

@@ -138,9 +138,9 @@ const update = createRoute<UpdateQuery<Post>, { id: string }>({
 const getById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'get',
-  handler: async ({ userId }, res, { id }) => {
+  handler: async (_, res, __, { id }) => {
     try {
-      const post = await getPostById(id, userId as string);
+      const post = await getPostById(id);
 
       return res.json(formatResponse(post));
     } catch (error) {
@@ -153,7 +153,7 @@ const getById = createRoute<any, { id: string }>({
 const deleteById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'delete',
-  handler: async ({ userId }, res, { id }) => {
+  handler: async ({ userId }, res, __, { id }) => {
     try {
       await deletePostById(id, userId as string);
 

@@ -11,7 +11,7 @@ const Settings = React.lazy(() => import('src/User/pages/Settings'));
 const BottomNav = React.lazy(() => import('src/Shared/components/BottomNav'));
 const FeedLeftNav = React.lazy(() => import('src/Feed/components/LeftNav'));
 const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
-const PostDetails = React.lazy(() => import('src/Feed/pages/Post'));
+const PostDetails = React.lazy(() => import('src/Feed/pages/PostDetail'));
 
 export enum JunePaths {
   Root = '/',

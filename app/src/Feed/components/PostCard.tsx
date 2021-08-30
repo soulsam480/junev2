@@ -1,25 +1,33 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
-import JCard from 'src/Lib/JCard';
+import JCard, { JCardProps } from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import { Post } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
 import { useUserStore } from 'src/User/store/useUserStore';
 import PostReact from 'src/Feed/components/postCard/PostReact';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
 import 'src/Feed/styles/postcard.scss';
-interface Props {
+import { classNames } from 'src/utils/helpers';
+interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
 }
 
-const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
+const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
   const id = useUserStore((state) => state.user.id);
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  const isDetailsPage = useMemo(() => {
+    return pathname.includes('post');
+  }, [pathname]);
+
   function handlePostClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (isDetailsPage) return;
+
     if (e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement) return;
 
     navigate(`/${post.user.username}/post/${post.id}`);
@@ -28,7 +36,8 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
     <JCard
       onClick={handlePostClick}
       block
-      className="post-card"
+      className={classNames([{ 'post-card--no-detail': !isDetailsPage }, 'post-card'])}
+      {...rest}
       headerSlot={
         <div className="post-card__header">
           <Link to={`/@${post.user.username}`}>
