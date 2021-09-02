@@ -18,8 +18,27 @@ export class Comment extends TimeStamps {
   @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
-  @prop({ ref: () => Comment })
-  public replies?: Ref<Comment[]>;
+  @prop({ type: () => Reply, default: [] })
+  public replies?: Reply[];
+
+  public get total_likes() {
+    return this.likes?.length;
+  }
+
+  public get total_replies() {
+    return this.likes?.length;
+  }
+}
+
+class Reply extends TimeStamps {
+  @prop()
+  public comment: string;
+
+  @prop({ ref: 'User' })
+  public user: Ref<User>;
+
+  @prop({ ref: 'User' })
+  public likes?: Ref<User>[];
 
   public get total_likes() {
     return this.likes?.length;
