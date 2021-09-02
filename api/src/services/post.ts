@@ -20,15 +20,17 @@ export async function createPost(post: CreateQuery<Post>) {
 }
 
 export async function getAllPosts(cursor: number, limit: number) {
+  const baseQuery = postModel
+    .find({ is_archived: false })
+    .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
+    .sort({ createdAt: -1 });
+
   try {
     return await cursorPaginateResponse(
-      postModel
-        .find({ is_archived: false })
-        .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
-        .sort({ createdAt: -1 }),
+      baseQuery,
       cursor,
       limit,
-      await postModel.estimatedDocumentCount(),
+      await baseQuery.estimatedDocumentCount(),
     );
   } catch (error) {
     Promise.reject(error);

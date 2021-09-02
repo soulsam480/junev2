@@ -19,7 +19,7 @@ export class Comment extends TimeStamps {
   public likes?: Ref<User>[];
 
   @prop({ ref: () => Comment })
-  public replies: Ref<Comment>[];
+  public replies?: Ref<Comment[]>;
 
   public get total_likes() {
     return this.likes?.length;
@@ -65,3 +65,5 @@ export class Post extends TimeStamps {
 }
 
 export const postModel = getModelForClass(Post);
+
+export const commentModel = getModelForClass(Comment);
