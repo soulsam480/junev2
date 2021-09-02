@@ -11,7 +11,7 @@ interface UserDetails {
   email: string;
   bio?: string;
   image?: string;
-  password: string;
+  username?: string;
 }
 
 const Settings: React.FC<Props> = () => {
@@ -24,87 +24,73 @@ const Settings: React.FC<Props> = () => {
     email: user.email,
     bio: user.bio,
     image: user.image,
-    password: '',
+    username: user.username,
   });
 
   const updateUserDetails = (e: FormEvent) => {
     e.preventDefault();
   };
   return (
-    <>
-      <form className="flex flex-col space-y-8" onSubmit={updateUserDetails}>
-        <span className="flex flex-col items-center justify-center ">
+    <div>
+      <div className="text-2xl">settings</div>
+      <hr className="my-2 border-lime-400" />
+      <form className="flex flex-col space-y-4" onSubmit={updateUserDetails}>
+        <div className="flex flex-col items-center justify-center">
           <div className="py-2">
             <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="150px" rounded />
           </div>
+
           <JButton
             icon="ion:camera-outline"
             onClick={() => {
               inputFile.current?.click();
             }}
             sm
-            flat
             round
             size="20px"
           />
-          <input type="file" id="file" ref={inputFile} style={{ display: 'none' }} />
-        </span>
-        <span className="relative">
-          <label htmlFor="name" className="absolute left-3 -top-1 px-1 text-xs">
-            Name
-          </label>
-          <JInput
-            id="name"
-            value={userDetails.name}
-            onInput={(name) => setUserDetails({ ...userDetails, name })}
-            type="text"
-            is="input"
-          />
-        </span>
+        </div>
 
-        <span className="relative">
-          <label htmlFor="email" className="absolute left-3 -top-1 px-1 text-xs">
-            Email
-          </label>
-          <JInput
-            id="email"
-            value={userDetails.email}
-            onInput={(email) => setUserDetails({ ...userDetails, email })}
-            type="text"
-            is="input"
-          />
-        </span>
+        <input type="file" id="file" ref={inputFile} style={{ display: 'none' }} />
 
-        <span className="relative">
-          <label htmlFor="bio" className="absolute left-3 -top-1 px-1 text-xs">
-            Bio
-          </label>
-          <JInput
-            id="bio"
-            value={userDetails.bio}
-            onInput={(bio) => setUserDetails({ ...userDetails, bio })}
-            type="text"
-            is="textarea"
-          />
-        </span>
+        <JInput
+          label="name"
+          id="name"
+          value={userDetails.name}
+          onInput={(name) => setUserDetails({ ...userDetails, name })}
+          type="text"
+        />
 
-        <span className="relative">
-          <label htmlFor="password" className="absolute left-3 -top-1 px-1 text-xs">
-            Password
-          </label>
-          <JInput
-            id="password"
-            value={userDetails.password}
-            onInput={(password) => setUserDetails({ ...userDetails, password })}
-            type="password"
-            is="input"
-          />
-        </span>
+        <JInput
+          label="username"
+          id="username"
+          value={userDetails.username}
+          onInput={(username) => setUserDetails({ ...userDetails, username })}
+          type="text"
+        />
+
+        {/* //TODO: will be a different component */}
+        <JInput
+          label="Email"
+          id="email"
+          value={userDetails.email}
+          onInput={(email) => setUserDetails({ ...userDetails, email })}
+          type="text"
+        />
+
+        <JInput
+          label="bio"
+          id="bio"
+          value={userDetails.bio}
+          onInput={(bio) => setUserDetails({ ...userDetails, bio })}
+          is="textarea"
+        />
+
         <div className="flex justify-end">
-          <JButton type="submit">Update</JButton>
+          <JButton type="submit">save</JButton>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 export default Settings;
