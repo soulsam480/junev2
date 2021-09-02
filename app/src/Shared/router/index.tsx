@@ -32,13 +32,20 @@ interface RouteObject {
 interface PrivateRouteProps extends Record<string, any> {
   component: (props: any) => React.ReactNode;
   isSignedIn: boolean;
-  redirect: string;
+  redirect?: string;
+  from?: string;
 }
 
 const PrivateRoute = (props: PrivateRouteProps) => {
-  const { component, isSignedIn, redirect, ...rest } = props;
+  const { component, isSignedIn, redirect, from, ...rest } = props;
 
-  return isSignedIn ? component(rest) : <Navigate to={redirect} />;
+  return isSignedIn ? (
+    component(rest)
+  ) : from ? (
+    <Navigate to={from} />
+  ) : (
+    redirect && <Navigate to={redirect} state={{ from }} />
+  );
 };
 
 function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteObject[] {
@@ -48,6 +55,7 @@ function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteO
       component: () => Element,
       redirect: JunePaths.Login,
       isSignedIn: isLoggedin,
+      from: path,
     }),
   }));
 }
