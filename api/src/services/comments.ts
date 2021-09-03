@@ -1,5 +1,6 @@
 import { DocumentDefinition } from 'mongoose';
 import { Comment, commentModel, postModel } from 'src/entities/post';
+import { User } from 'src/entities/user';
 import { getObjectId } from 'src/utils/helpers';
 
 export async function getCommentsForPost(id: string) {
@@ -7,6 +8,7 @@ export async function getCommentsForPost(id: string) {
     const post = await postModel
       .findOne({ _id: id })
       .populate({ path: 'comments', model: Comment })
+      .populate({ path: 'comments.user', model: User, select: ['name', 'username', 'id', 'image'] })
       .select(['comments'])
       .exec();
 

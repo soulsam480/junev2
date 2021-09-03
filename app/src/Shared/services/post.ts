@@ -34,7 +34,7 @@ export async function getPost(id: string) {
 }
 
 export async function getPostComments(id: string) {
-  return api.get(`/posts/${id}/comments`);
+  return api.get<ResponseSchema<Comment[]>>(`/posts/${id}/comments`);
 }
 
 export async function createCommentOnPost(id: string, comment: Comment) {

@@ -9,13 +9,16 @@ import { useUserStore } from 'src/User/store/useUserStore';
 import { classNames } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
 import { JunePaths } from 'src/Shared/router';
+import JAvatar from 'src/Lib/JAvatar';
 
 interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
   const { setAlert } = useAlert();
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-  const username = useUserStore((state) => state.user.username);
+  const {
+    user: { username, image },
+  } = useUserStore();
 
   function handlelogout() {
     logout();
@@ -43,76 +46,72 @@ const AppNavbar: React.FC<Props> = () => {
             </div>
             <JButton noBg icon="ion:chatbubble-ellipses-outline" size="25px" dense sm />
             <div className="hidden sm:block">
-              <JMenu
-                avatarRound
-                avatar="img:https://cdn.quasar.dev/img/avatar.png"
-                size="35px"
-                sm
-                noBg
-              >
-                {({ closeMenu: cMenu }) => (
-                  <>
-                    {isLoggedIn && (
-                      <>
-                        <JMenuItem
-                          className="flex space-x-2 items-center"
-                          closeMenuCallback={cMenu}
-                          to={JunePaths.User}
-                        >
-                          <span className="flex-none">
-                            <JIcon icon="ion:home-outline" />
-                          </span>
-                          <span className="flex-grow">Home</span>
-                        </JMenuItem>
+              {isLoggedIn && (
+                <JMenu
+                  avatarRound
+                  size="35px"
+                  sm
+                  noBg
+                  iconSlot={
+                    <JAvatar
+                      src={image}
+                      content={!image ? username.slice(0, 2) : undefined}
+                      contentClass="bg-lime-200 shadow-sm"
+                      rounded
+                      size="35px"
+                      iconSize="15px"
+                    />
+                  }
+                >
+                  {({ closeMenu: cMenu }) => (
+                    <>
+                      <JMenuItem
+                        className="flex space-x-2 items-center"
+                        closeMenuCallback={cMenu}
+                        to={JunePaths.User}
+                      >
+                        <span className="flex-none">
+                          <JIcon icon="ion:home-outline" />
+                        </span>
+                        <span className="flex-grow">Home</span>
+                      </JMenuItem>
 
-                        <JMenuItem
-                          className="flex space-x-2 items-center"
-                          closeMenuCallback={cMenu}
-                          to={`/@${username}/`}
-                        >
-                          <span className="flex-none">
-                            <JIcon size="18px" icon="ion:person-circle-outline" />
-                          </span>
-                          <span className="flex-grow">profile</span>
-                        </JMenuItem>
+                      <JMenuItem
+                        className="flex space-x-2 items-center"
+                        closeMenuCallback={cMenu}
+                        to={`/@${username}/`}
+                      >
+                        <span className="flex-none">
+                          <JIcon size="18px" icon="ion:person-circle-outline" />
+                        </span>
+                        <span className="flex-grow">profile</span>
+                      </JMenuItem>
 
-                        <JMenuItem
-                          className="flex space-x-2 items-center"
-                          closeMenuCallback={cMenu}
-                          to={JunePaths.Settings}
-                        >
-                          <span className="flex-none">
-                            <JIcon icon="ion:gear-a" />
-                          </span>
-                          <span className="flex-grow">Settings</span>
-                        </JMenuItem>
+                      <JMenuItem
+                        className="flex space-x-2 items-center"
+                        closeMenuCallback={cMenu}
+                        to={JunePaths.Settings}
+                      >
+                        <span className="flex-none">
+                          <JIcon icon="ion:gear-a" />
+                        </span>
+                        <span className="flex-grow">Settings</span>
+                      </JMenuItem>
 
-                        <JMenuItem
-                          className="flex space-x-2 items-center"
-                          closeMenuCallback={cMenu}
-                          onClick={handlelogout}
-                        >
-                          <span className="flex-none">
-                            <JIcon icon="ion:log-out-outline" />
-                          </span>
-                          <span className="flex-grow">Log out</span>
-                        </JMenuItem>
-                      </>
-                    )}
-
-                    <JMenuItem
-                      className="flex space-x-2 items-center"
-                      closeMenuCallback={cMenu}
-                      to="/lib/"
-                    >
-                      <span className="flex-none">
-                        <JIcon icon="ion:library-outline" />
-                      </span>
-                      <span>June lib</span>{' '}
-                    </JMenuItem>
-                  </>
-                )}
-              </JMenu>
+                      <JMenuItem
+                        className="flex space-x-2 items-center"
+                        closeMenuCallback={cMenu}
+                        onClick={handlelogout}
+                      >
+                        <span className="flex-none">
+                          <JIcon icon="ion:log-out-outline" />
+                        </span>
+                        <span className="flex-grow">Log out</span>
+                      </JMenuItem>
+                    </>
+                  )}
+                </JMenu>
+              )}
             </div>
           </div>
         </div>
