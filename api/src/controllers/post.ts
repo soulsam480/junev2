@@ -1,5 +1,5 @@
 import { createController, createRoute } from 'dango-core';
-import { CreateQuery, UpdateQuery } from 'mongoose';
+import { DocumentDefinition, UpdateQuery } from 'mongoose';
 import { createError, formatResponse } from 'src/utils/helpers';
 import { Comment, Post } from 'src/entities/post';
 import {
@@ -186,7 +186,7 @@ const getCommentsByPostId = createRoute<any, { id: string }>({
   },
 });
 
-const addCommentByPostId = createRoute<{ comment: CreateQuery<Comment> }, { id: string }>({
+const addCommentByPostId = createRoute<{ comment: DocumentDefinition<Comment> }, { id: string }>({
   path: '/:id/comments',
   method: 'post',
   handler: async ({ userId }, res, { comment }, { id }) => {
@@ -217,7 +217,7 @@ const getRepliesByCommentId = createRoute<any, { id: string; commentId: string }
 });
 
 const addReplyByCommentId = createRoute<
-  { reply: CreateQuery<Comment> },
+  { reply: DocumentDefinition<Comment> },
   { id: string; commentId: string }
 >({
   path: '/:id/comments/:commentId',

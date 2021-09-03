@@ -13,7 +13,7 @@ import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
     this.password = await this.hashPassword(this.password);
     next();
   } catch (error) {
-    next(error);
+    next(error as any);
   }
 })
 export class User extends TimeStamps {

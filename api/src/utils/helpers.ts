@@ -4,7 +4,7 @@ import {
   DocumentType,
   ReturnModelType,
 } from '@typegoose/typegoose/lib/types';
-import { Query } from 'mongoose';
+import { Query, QueryWithHelpers } from 'mongoose';
 import { ParsedQs } from './types';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { mongoose } from '@typegoose/typegoose';
@@ -79,7 +79,13 @@ export function formatResponse<T>(data: T) {
 }
 
 export async function offsetPaginateResponse<T extends TimeStamps>(
-  model: Query<DocumentType<T>[]> & TimeStamps,
+  model: QueryWithHelpers<
+    DocumentType<T, BeAnObject>[],
+    DocumentType<T, BeAnObject>,
+    BeAnObject,
+    DocumentType<T, BeAnObject>
+  > &
+    TimeStamps,
   page: number,
   limit: number,
   total_count: number,
@@ -102,8 +108,8 @@ export async function offsetPaginateResponse<T extends TimeStamps>(
   }
 }
 
-export async function cursorPaginateResponse<T extends TimeStamps>(
-  model: Query<DocumentType<T>[]> & TimeStamps,
+export async function cursorPaginateResponse<K extends TimeStamps>(
+  model: Query<DocumentType<K, BeAnObject>[], DocumentType<K, BeAnObject>> & TimeStamps,
   cursor: number,
   limit: number,
   total_count: number,
@@ -113,6 +119,7 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
     if (cursor) {
       let decrypedDate = new Date(cursor * 1000);
 
+      //@ts-ignore
       data = await model
         .find({
           updatedAt: {
@@ -133,7 +140,7 @@ export async function cursorPaginateResponse<T extends TimeStamps>(
 
     if (has_more) {
       const nextCursorRecord = data[limit];
-      var unixTimestamp = Math.floor(nextCursorRecord.updatedAt.getTime() / 1000);
+      var unixTimestamp = Math.floor(nextCursorRecord.updatedAt!.getTime() / 1000);
       next_cursor = unixTimestamp.toString();
       data.pop();
     }
@@ -183,5 +190,6 @@ export async function filterFromQuery<T extends AnyParamConstructor<any>>(
 }
 
 export function getObjectId(val: string) {
+  //@ts-ignore
   return new mongoose.Types.ObjectId(val);
 }

@@ -50,7 +50,7 @@ const Login: React.FC<Props> = () => {
     } catch (error) {
       console.log(error);
       setLoginLoading(false);
-
+      //@ts-ignore
       setAlert({ type: 'danger', message: error.message });
     }
   }
@@ -77,7 +77,7 @@ const Login: React.FC<Props> = () => {
     } catch (error) {
       console.log(error);
       setLoginLoading(false);
-
+      //@ts-ignore
       setAlert({ type: 'danger', message: error.message });
     }
   }
