@@ -103,6 +103,7 @@ export function useQuery<T, P extends any[] = [], K = any>(
         setData(apiData);
         resolve(apiData);
       } catch (error) {
+        //@ts-ignore
         setError(error);
         reject(error);
       } finally {
@@ -175,6 +176,7 @@ export function usePaginatedQuery<T, K = any>(
 
         if (!has_more) setEnd(true);
       } catch (error) {
+        //@ts-ignore
         setError(error);
         reject(error);
       } finally {

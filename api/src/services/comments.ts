@@ -1,4 +1,4 @@
-import { CreateQuery } from 'mongoose';
+import { DocumentDefinition } from 'mongoose';
 import { Comment, commentModel, postModel } from 'src/entities/post';
 import { getObjectId } from 'src/utils/helpers';
 
@@ -17,7 +17,7 @@ export async function getCommentsForPost(id: string) {
 }
 
 //TODO: add update and delete
-export async function createCommentOnPost(id: string, comment: CreateQuery<Comment>) {
+export async function createCommentOnPost(id: string, comment: DocumentDefinition<Comment>) {
   try {
     const newComment = await commentModel.create({ ...comment });
 
@@ -55,7 +55,7 @@ export async function getRepliesForComment(id: string, commentId: string) {
 export async function createReplyOnPost(
   id: string,
   commentId: string,
-  reply: CreateQuery<Comment>,
+  reply: DocumentDefinition<Comment>,
 ) {
   try {
     const newReply = await commentModel.create({ ...reply });

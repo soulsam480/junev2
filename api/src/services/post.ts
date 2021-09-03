@@ -1,9 +1,9 @@
-import { CreateQuery, UpdateQuery } from 'mongoose';
+import { DocumentDefinition, UpdateQuery } from 'mongoose';
 import { Post, postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
 import { cursorPaginateResponse, getObjectId } from 'src/utils/helpers';
 
-export async function createPost(post: CreateQuery<Post>) {
+export async function createPost(post: DocumentDefinition<Post>) {
   try {
     const newPost = await postModel.create({ ...post });
 
