@@ -8,35 +8,35 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@iconify/iconify": "^2.0.3",
+    "@iconify/iconify": "^2.0.4",
     "autolinker": "^3.14.3",
-    "axios": "^0.21.1",
-    "history": "^5.0.0",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "react-router-dom": "6.0.0-beta.0",
+    "history": "^5.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.0.0-beta.2",
     "react-transition-group": "^4.4.2",
     "textarea-caret": "^3.1.0",
     "uuid": "^8.3.2",
-    "zustand": "^3.5.7"
+    "zustand": "^3.5.10"
   },
   "devDependencies": {
-    "@iconify/json": "1.1.384",
-    "@types/faker": "^5.5.7",
-    "@types/node": "^16.4.14",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@iconify/json": "^1.1.397",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
     "@types/react-linkify": "^1.0.1",
     "@types/react-transition-group": "^4.4.2",
     "@types/textarea-caret": "^3.0.1",
     "@types/uuid": "^8.3.1",
-    "@vitejs/plugin-react-refresh": "1.3.6",
-    "sass": "1.37.5",
-    "typescript": "^4.3.2",
-    "vite": "2.4.4",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "sass": "^1.39.0",
+    "typescript": "^4.4.2",
+    "vite": "^2.5.3",
     "vite-plugin-purge-icons": "^0.7.0",
-    "vite-plugin-pwa": "^0.10.0",
-    "vite-plugin-windicss": "1.2.7",
-    "windicss": "3.1.6"
-  }
+    "vite-plugin-pwa": "^0.11.2",
+    "vite-plugin-windicss": "^1.3.0",
+    "windicss": "^3.1.7"
+  },
+  "syncIgnore": [
+    "react-router-dom"
+  ]
 }

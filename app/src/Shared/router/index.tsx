@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useRoutes, Navigate, useLocation, useSearchParams } from 'react-router-dom';
+import React from 'react';
+import { useRoutes, Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from 'src/User/store/useUserStore';
 import Index from 'src/Shared/layouts/Index';
 const Home = React.lazy(() => import('src/Shared/layouts/Home'));
