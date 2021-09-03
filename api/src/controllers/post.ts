@@ -1,7 +1,7 @@
 import { createController, createRoute } from 'dango-core';
-import { UpdateQuery } from 'mongoose';
+import { DocumentDefinition, UpdateQuery } from 'mongoose';
 import { createError, formatResponse } from 'src/utils/helpers';
-import { Post } from 'src/entities/post';
+import { Comment, Post } from 'src/entities/post';
 import {
   createPost,
   deletePostById,
@@ -12,6 +12,12 @@ import {
   unlikePost,
   updatePostById,
 } from 'src/services/post';
+import {
+  createCommentOnPost,
+  createReplyOnPost,
+  getCommentsForPost,
+  getRepliesForComment,
+} from 'src/services/comments';
 
 /**
  * @private only for seeding once
@@ -165,6 +171,69 @@ const deleteById = createRoute<any, { id: string }>({
   },
 });
 
+const getCommentsByPostId = createRoute<any, { id: string }>({
+  path: '/:id/comments',
+  method: 'get',
+  handler: async (_, res, __, { id }) => {
+    try {
+      const comments = await getCommentsForPost(id);
+
+      res.json(formatResponse(comments));
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const addCommentByPostId = createRoute<{ comment: DocumentDefinition<Comment> }, { id: string }>({
+  path: '/:id/comments',
+  method: 'post',
+  handler: async ({ userId }, res, { comment }, { id }) => {
+    try {
+      await createCommentOnPost(id, { ...comment, user: userId as string });
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const getRepliesByCommentId = createRoute<any, { id: string; commentId: string }>({
+  path: '/:id/comments/:commentId',
+  method: 'get',
+  handler: async (_, res, __, { id, commentId }) => {
+    try {
+      const replies = await getRepliesForComment(id, commentId);
+
+      res.json(formatResponse(replies));
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
+const addReplyByCommentId = createRoute<
+  { reply: DocumentDefinition<Comment> },
+  { id: string; commentId: string }
+>({
+  path: '/:id/comments/:commentId',
+  method: 'post',
+  handler: async ({ userId }, res, { reply }, { id, commentId }) => {
+    try {
+      await createReplyOnPost(id, commentId, { ...reply, user: userId as string });
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendError(500, error);
+    }
+  },
+});
+
 const postController = createController('/posts', [
   getPosts,
   postsByUserId,
@@ -174,6 +243,10 @@ const postController = createController('/posts', [
   update,
   getById,
   deleteById,
+  getCommentsByPostId,
+  addCommentByPostId,
+  getRepliesByCommentId,
+  addReplyByCommentId,
 ]);
 
 export { postController };
