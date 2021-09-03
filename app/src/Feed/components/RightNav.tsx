@@ -4,6 +4,7 @@ import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import { useAlert } from 'src/Lib/store/alerts';
+import { JunePaths } from 'src/Shared/router';
 import { useUserStore } from 'src/User/store/useUserStore';
 
 import { logout } from 'src/utils/hooks';
@@ -12,8 +13,6 @@ interface Props {}
 const RightNav: React.FC<Props> = () => {
   const { user } = useUserStore();
   const { setAlert } = useAlert();
-
-  const { pathname } = useLocation();
 
   const navigate = useNavigate();
 
@@ -29,10 +28,6 @@ const RightNav: React.FC<Props> = () => {
         <div className="absolute -bottom-[40px] z-10 left-1/2 transform -translate-x-1/2 mx-auto">
           <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="70px" rounded />
         </div>
-
-        <div className="absolute bottom-1 right-1">
-          <JButton icon="ion:camera-reverse-outline" flat sm size="16px" />
-        </div>
       </div>
       <div className="flex flex-col pt-2 items-center space-y-2">
         <div className="text-2xl"> {user.name} </div>
@@ -46,7 +41,7 @@ const RightNav: React.FC<Props> = () => {
               block
               sm
               size="16px"
-              onClick={() => navigate('/u/settings/')}
+              onClick={() => navigate(JunePaths.Settings)}
             />
           </div>
           <div className="flex-auto">

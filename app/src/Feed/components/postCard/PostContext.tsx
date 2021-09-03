@@ -33,10 +33,10 @@ const PostContext: React.FC<Props> = ({ post }) => {
   }
 
   return (
-    <JMenu size="25px" noBg dense icon="ion:ellipsis-horizontal-outline" listAlign="right">
+    <JMenu size="20px" sm noBg icon="ion:ellipsis-horizontal-outline" listAlign="right">
       {({ closeMenu: cMenu }) => (
         <>
-          <JMenuItem closeMenuCallback={cMenu}>
+          <JMenuItem closeMenuCallback={cMenu} to={`/${post.user.username}/post/${post.id}`}>
             <span className="flex-grow">view</span>
           </JMenuItem>
 

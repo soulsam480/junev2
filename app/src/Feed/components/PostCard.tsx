@@ -1,74 +1,85 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
-import JCard from 'src/Lib/JCard';
+import JCard, { JCardProps } from 'src/Lib/JCard';
 import JImage from 'src/Lib/JImage';
 import { Post } from 'src/utils/types';
 import AppLinkifier from 'src/Shared/components/Linkifier';
 import { useUserStore } from 'src/User/store/useUserStore';
 import PostReact from 'src/Feed/components/postCard/PostReact';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
-interface Props {
+import 'src/Feed/styles/postcard.scss';
+import { classNames } from 'src/utils/helpers';
+interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
 }
 
-const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
+const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
   const id = useUserStore((state) => state.user.id);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
+  const isDetailsPage = useMemo(() => {
+    return pathname.includes('post');
+  }, [pathname]);
+
+  function handlePostClick(e: React.MouseEvent<HTMLDivElement>) {
+    if (isDetailsPage) return;
+
+    if (e.target instanceof HTMLButtonElement || e.target instanceof HTMLAnchorElement) return;
+
+    navigate(`/${post.user.username}/post/${post.id}`);
+  }
   return (
     <JCard
-      className="post-card"
+      onClick={handlePostClick}
+      block
+      className={classNames([{ 'post-card--no-detail': !isDetailsPage }, 'post-card'])}
+      {...rest}
       headerSlot={
-        <div className="flex px-3 pt-4 justify-between items-center">
-          <div className="flex space-x-2 grow items-center">
+        <div className="post-card__header">
+          <Link to={`/@${post.user.username}`}>
             <div className="flex-none">
               <JAvatar src="https://cdn.quasar.dev/img/avatar.png" rounded />
             </div>
-            <div className="flex grow flex-col space-y-1 justify-start">
-              <Link className="text-sm leading-none" to={`/u/@${post.user.username}`}>
-                {post.user.username}
-              </Link>
+            <div className="flex flex-col space-y-1 justify-start">
+              {post.user.username}
               <div className="text-xs leading-none text-warm-gray-500">{post.user.name}</div>
             </div>
-          </div>
-          <div className="flex-none">
+          </Link>
+          <div className="flex-none min-w-9 min-h-9">
             <PostContext post={post} />
           </div>
         </div>
       }
       footerSlot={
-        <div className="flex px-2 py-4 justify-between items-center">
-          <div className="flex space-x-2">
+        <div className="post-card__footer">
+          <div className="inline-flex">
             <PostReact updatePostReaction={updatePostReaction} post={post} uid={id} />
-            <JButton noBg icon="ion:chatbubble-outline" size="25px" sm dense />
+            <JButton icon="ion:chatbubble-outline" size="20px" sm noBg />
           </div>
 
-          <JButton noBg icon="ion:share-social-outline" size="25px" sm dense />
+          <JButton icon="ion:share-social-outline" size="20px" sm noBg />
         </div>
       }
       contentSlot={
         <>
-          <div className="p-2 break-all">
+          <div className="py-2 px-3 break-all">
             <AppLinkifier
               linkEl={({ match, key, href }) =>
                 match.startsWith('@') ? (
                   <Link
-                    to={`/u/${match}/`}
+                    to={`/${match}/`}
                     key={key}
-                    className="j-link break-all"
+                    className="j-link"
                     rel="noopener noreferrer nofollow"
                   >
                     {match}{' '}
                   </Link>
                 ) : (
-                  <a
-                    href={href}
-                    key={key}
-                    className="j-link break-all"
-                    rel="noopener noreferrer nofollow"
-                  >
+                  <a href={href} key={key} className="j-link" rel="noopener noreferrer nofollow">
                     {match}
                   </a>
                 )
@@ -80,7 +91,6 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction }) => {
           {!!post.url && <JImage src={post.url || ''} loading="lazy" minHeight="300px" />}
         </>
       }
-      block
     ></JCard>
   );
 };

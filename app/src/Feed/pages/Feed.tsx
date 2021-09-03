@@ -22,9 +22,7 @@ const Test: React.FC<Props> = () => {
   async function savePost() {
     if (createLoading) return;
     try {
-      const { data } = await create({ content: editorData });
-
-      console.log(data);
+      await create({ content: editorData });
 
       setEditorData('');
       setAlert({ message: 'Post published', type: 'success' });

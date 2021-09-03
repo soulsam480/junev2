@@ -11,7 +11,7 @@ interface Props {
 }
 
 const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
-  const { setAlert } = useAlert();
+  const setAlert = useAlert((state) => state.setAlert);
 
   function localUnlike() {
     updatePostReaction({ id: post.id, likes: post.likes.filter((el) => el !== uid) } as Post);
@@ -51,9 +51,8 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
     <JButton
       noBg
       icon="ion:heart"
-      size="25px"
+      size="20px"
       sm
-      dense
       onClick={() => handleReaction(post)}
       className={classNames([{ 'fill-current text-red-700': post.likes.includes(uid) }])}
     />

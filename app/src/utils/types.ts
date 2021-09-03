@@ -21,7 +21,6 @@ export interface BaseJButtonProps
   iconRight?: boolean;
   dense?: boolean;
   noBg?: boolean;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
   to?: string;
 }
 
@@ -44,9 +43,9 @@ export interface User {
 export interface Comment {
   id?: string;
   comment: string;
-  user: User;
+  user?: User;
   likes?: User[];
-  replies: Comment[];
+  replies?: Comment[];
 }
 export interface Post {
   id: string;

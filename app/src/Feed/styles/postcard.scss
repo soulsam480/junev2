@@ -1,0 +1,25 @@
+.post-card {
+  @apply transition-colors duration-200 ease-in-out;
+
+  &--no-detail {
+    @apply cursor-pointer hover:(bg-opacity-70);
+  }
+
+  &__header {
+    @apply flex px-3 py-4 justify-between items-center;
+
+    a {
+      @apply flex space-x-2 items-center relative;
+      &::before {
+        display: block;
+        content: '';
+        position: absolute;
+        @apply inset-0;
+      }
+    }
+  }
+
+  &__footer {
+    @apply flex px-2 py-2 justify-between items-center;
+  }
+}

@@ -33,6 +33,7 @@ const JButton: React.FC<JButtonProps> = ({
   noBg,
   className,
   to,
+  onClick,
   ...rest
 }) => {
   const buttonClasses = useMemo(
@@ -73,65 +74,58 @@ const JButton: React.FC<JButtonProps> = ({
     [loading, iconRight],
   );
 
-  const children = useMemo(
-    () => (
-      <>
-        {' '}
-        <span className={classNames(['j-button__content', ...buttonContentClasses])}>
-          <>
-            {!!iconSlot ? (
-              iconSlot
-            ) : icon ? (
-              <JIcon icon={icon} size={size ? size : sm ? '12px' : '16px'} />
-            ) : (
-              avatar && (
-                <JAvatar
-                  icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : undefined}
-                  src={avatar.startsWith('img:') ? avatar.split('img:')[1] : undefined}
-                  size={size || '16px'}
-                  content={
-                    !avatar.startsWith('img:') || !avatar.startsWith('icn:') ? avatar : undefined
-                  }
-                  rounded={avatarRound}
-                />
-              )
-            )}
-          </>
-          <>
-            {!!labelSlot
-              ? labelSlot
-              : label && (
-                  <span className={classNames([{ 'text-xs': sm }, 'flex-grow'])}>{label}</span>
-                )}
-          </>
+  const children = (
+    <>
+      {' '}
+      <span className={classNames(['j-button__content', ...buttonContentClasses])}>
+        <>
+          {!!iconSlot ? (
+            iconSlot
+          ) : icon ? (
+            <JIcon icon={icon} size={size ? size : sm ? '12px' : '16px'} />
+          ) : (
+            avatar && (
+              <JAvatar
+                icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : undefined}
+                src={avatar.startsWith('img:') ? avatar.split('img:')[1] : undefined}
+                size={size || '16px'}
+                content={
+                  !avatar.startsWith('img:') || !avatar.startsWith('icn:') ? avatar : undefined
+                }
+                rounded={avatarRound}
+              />
+            )
+          )}
+        </>
+        <>
+          {!!labelSlot
+            ? labelSlot
+            : label && (
+                <span className={classNames([{ 'text-xs': sm }, 'flex-grow'])}>{label}</span>
+              )}
+        </>
+      </span>
+      {loading && (
+        <span className="j-button__bottom">
+          <span
+            className={classNames([
+              'j-button__loading',
+              `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
+            ])}
+            style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
+          ></span>
         </span>
-        {loading && (
-          <span className="j-button__bottom">
-            <span
-              className={classNames([
-                'j-button__loading',
-                `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
-              ])}
-              style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
-            ></span>
-          </span>
-        )}
-      </>
-    ),
-    [
-      buttonClasses,
-      buttonContentClasses,
-      iconSlot,
-      icon,
-      avatarRound,
-      labelSlot,
-      loading,
-      labelSlot,
-      label,
-      size,
-      avatar,
-    ],
+      )}
+    </>
   );
+
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+
+    if (!!onClick) {
+      onClick(e);
+    }
+  }
 
   return !!to ? (
     <NavLink
@@ -139,13 +133,18 @@ const JButton: React.FC<JButtonProps> = ({
       children={children}
       className={classNames(['j-button', ...buttonClasses])}
       activeClassName="j-button--active"
+      //@ts-ignore
+      {...rest}
+      //@ts-ignore
+      onClick={handleClick}
     />
   ) : (
     <button
       className={classNames(['j-button', ...buttonClasses])}
       type={type || 'button'}
-      {...rest}
       children={children}
+      onClick={handleClick}
+      {...rest}
     />
   );
 };

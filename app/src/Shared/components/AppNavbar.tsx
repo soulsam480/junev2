@@ -8,6 +8,7 @@ import { useAlert } from 'src/Lib/store/alerts';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { classNames } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
+import { JunePaths } from 'src/Shared/router';
 
 interface Props {}
 
@@ -56,7 +57,7 @@ const AppNavbar: React.FC<Props> = () => {
                         <JMenuItem
                           className="flex space-x-2 items-center"
                           closeMenuCallback={cMenu}
-                          to="/u/feed/"
+                          to={JunePaths.User}
                         >
                           <span className="flex-none">
                             <JIcon icon="ion:home-outline" />
@@ -67,7 +68,7 @@ const AppNavbar: React.FC<Props> = () => {
                         <JMenuItem
                           className="flex space-x-2 items-center"
                           closeMenuCallback={cMenu}
-                          to={`/u/@${username}/`}
+                          to={`/@${username}/`}
                         >
                           <span className="flex-none">
                             <JIcon size="18px" icon="ion:person-circle-outline" />
@@ -78,7 +79,7 @@ const AppNavbar: React.FC<Props> = () => {
                         <JMenuItem
                           className="flex space-x-2 items-center"
                           closeMenuCallback={cMenu}
-                          to="/u/settings/"
+                          to={JunePaths.Settings}
                         >
                           <span className="flex-none">
                             <JIcon icon="ion:gear-a" />

@@ -4,8 +4,8 @@ import JButton from 'src/Lib/JButton';
 import { classNames } from 'src/utils/helpers';
 import { useObserver, usePaginatedQuery } from 'src/utils/hooks';
 import { PaginationParams, Post, ResponseSchema } from 'src/utils/types';
-import PostCard from './PostCard';
-import PostSkeletonLoader from './postCard/PostSkeletonLoader';
+import PostCard from 'src/Feed/components/PostCard';
+import PostSkeletonLoader from 'src/Feed/components/postCard/PostSkeletonLoader';
 
 interface Props extends HTMLProps<HTMLDivElement> {
   fetcher: (opts: PaginationParams) => Promise<AxiosResponse<ResponseSchema<any[]>>>;
@@ -36,7 +36,10 @@ const PostFeed: React.FC<Props> = ({ fetcher, className, ...rest }) => {
   }, []);
 
   return (
-    <div className={classNames(['flex flex-col items-start space-y-3 pb-15', className || ''])}>
+    <div
+      className={classNames(['flex flex-col items-start space-y-3 pb-15', className || ''])}
+      {...rest}
+    >
       {!!data.length
         ? data?.map((post) => (
             <MemoizedPostCard key={post.id} post={post} updatePostReaction={updatePostReaction} />
@@ -46,7 +49,7 @@ const PostFeed: React.FC<Props> = ({ fetcher, className, ...rest }) => {
       {(!!data.length || isLoading) && (
         <>
           <div className="flex flex-col w-full space-y-3">
-            {isLoading && Array.from(Array(4)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
+            {isLoading && Array.from(Array(2)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '}
             <div ref={loaderRef} className="flex justify-center">
               <JButton
                 label={isEnd ? "That's all from june" : ''}

@@ -5,7 +5,8 @@ import JMenuItem from 'src/Lib/JMenuItem';
 import JIcon from 'src/Lib/JIcon';
 import { useAlert } from 'src/Lib/store/alerts';
 import { logout } from 'src/utils/hooks';
-import { useUserStore } from '../store/useUserStore';
+import { useUserStore } from 'src/User/store/useUserStore';
+import { JunePaths } from 'src/Shared/router';
 
 interface Props {}
 
@@ -26,7 +27,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to="/u/feed/"
+          to={JunePaths.User}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:home-outline" />
@@ -37,7 +38,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to={`/u/@${username}/`}
+          to={`/@${username}/`}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:person-circle-outline" />
@@ -48,7 +49,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to="/u/settings/"
+          to={JunePaths.Settings}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:gear-a" />
