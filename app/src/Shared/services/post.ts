@@ -1,5 +1,5 @@
 import { api } from 'src/utils/helpers';
-import { PaginationParams, Post, ResponseSchema } from 'src/utils/types';
+import { Comment, PaginationParams, Post, ResponseSchema } from 'src/utils/types';
 
 export async function createPost(params: { content: string }) {
   return api.post<ResponseSchema<Post>>('/posts/', { post: { ...params } });
@@ -31,4 +31,12 @@ export async function updatePost(id: string, post: Partial<Post>) {
 
 export async function getPost(id: string) {
   return api.get<ResponseSchema<Post>>(`/posts/${id}/`);
+}
+
+export async function getPostComments(id: string) {
+  return api.get(`/posts/${id}/comments`);
+}
+
+export async function createCommentOnPost(id: string, comment: Comment) {
+  return api.post(`/posts/${id}/comments/`, { comment });
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRoutes, Navigate } from 'react-router-dom';
+import { useRoutes, Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from 'src/User/store/useUserStore';
 import Index from 'src/Shared/layouts/Index';
 const Home = React.lazy(() => import('src/Shared/layouts/Home'));
@@ -33,12 +33,25 @@ interface PrivateRouteProps extends Record<string, any> {
   component: (props: any) => React.ReactNode;
   isSignedIn: boolean;
   redirect: string;
+  from?: string;
+  search?: string;
 }
 
 const PrivateRoute = (props: PrivateRouteProps) => {
-  const { component, isSignedIn, redirect, ...rest } = props;
+  const { component, isSignedIn, redirect, from, ...rest } = props;
 
-  return isSignedIn ? component(rest) : <Navigate to={redirect} />;
+  return isSignedIn ? component(rest) : <Navigate to={`${redirect}?r=${from}`} />;
+};
+
+const LoginRoute = (props: Omit<PrivateRouteProps, 'redirect'>) => {
+  const { component, isSignedIn, from, search, ...rest } = props;
+
+  if (isSignedIn) {
+    const r = new URLSearchParams(search).get('r');
+    return <Navigate to={r || JunePaths.User} />;
+  }
+
+  return component(rest);
 };
 
 function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteObject[] {
@@ -48,6 +61,7 @@ function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteO
       component: () => Element,
       redirect: JunePaths.Login,
       isSignedIn: isLoggedin,
+      from: path,
     }),
   }));
 }
@@ -55,34 +69,36 @@ function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteO
 export function useJuneRouter() {
   const isLoggedIn = useUserStore((s) => s.isLoggedIn);
 
+  const { search } = useLocation();
+
   const Routes = useRoutes([
     {
       path: JunePaths.Root,
-      element: !isLoggedIn ? (
-        <Index />
-      ) : (
+      element: isLoggedIn ? (
         <Home
           leftNavSlot={<FeedLeftNav />}
           rightNavSlot={<FeedRightNav />}
           bottomNavSlot={<BottomNav />}
         />
+      ) : (
+        <Index />
       ),
       children: [
         //TODO: replace this with landing page
         {
           path: JunePaths.Root,
-          element: PrivateRoute({
-            component: (props) => <Login {...props} />,
-            isSignedIn: !isLoggedIn,
-            redirect: JunePaths.User,
+          element: LoginRoute({
+            component: (props: any) => <Login {...props} />,
+            isSignedIn: isLoggedIn,
+            search,
           }),
         },
         {
           path: JunePaths.Login,
-          element: PrivateRoute({
-            component: (props) => <Login {...props} />,
-            isSignedIn: !isLoggedIn,
-            redirect: JunePaths.User,
+          element: LoginRoute({
+            component: (props: any) => <Login {...props} />,
+            isSignedIn: isLoggedIn,
+            search,
           }),
         },
         ...spreadPrivateRoutes(

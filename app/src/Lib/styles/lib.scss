@@ -113,9 +113,9 @@
 
   input,
   textarea {
-    @apply outline-none ease-in-out transition-all border-none hover:(ring-lime-200 ring-2) w-full;
+    @apply outline-none ease-in-out transition-all border-none w-full;
     @apply rounded-md focus:(ring-lime-200 ring-2);
-    @apply text-black dark:text-white bg-warm-gray-200 h-full;
+    @apply text-black dark:text-white bg-warm-gray-100 h-full;
     @apply p-2;
   }
 
