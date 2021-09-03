@@ -11,7 +11,7 @@ interface Props extends HTMLProps<HTMLDivElement> {
 
 const PostComments: React.FC<Props> = ({ className, comment }) => {
   return (
-    <div className={classNames(['flex space-x-2 items-center', className || ''])}>
+    <div className={classNames(['flex space-x-2 items-start', className || ''])}>
       <div className="flex-none">
         <JAvatar
           src={comment?.user?.image}
@@ -23,9 +23,9 @@ const PostComments: React.FC<Props> = ({ className, comment }) => {
         />
       </div>
       <div className="flex-col flex-grow">
-        <div className="flex text-xs space-x-1 items-center">
-          <div className="flex-none font-medium">{comment?.user?.username} </div>
-          <div className="flex-grow">{comment?.comment}</div>
+        <div className="text-xs">
+          <span className="font-semibold tracking-wide">{comment?.user?.username}</span> &nbsp;
+          <span className="break-all">{comment?.comment} </span>
         </div>
         <div className="text-xs flex space-x-3 text-warm-gray-400">
           <span>time</span> <span>{comment?.total_likes} likes </span> <span>reply</span>

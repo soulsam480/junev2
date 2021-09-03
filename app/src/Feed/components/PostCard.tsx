@@ -50,7 +50,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
       {...rest}
       headerSlot={
         <div className="post-card__header">
-          <Link to={`/@${post.user.username}`}>
+          <Link to={`/@${post.user.username}`} className="flex">
             <div className="flex-none">
               <JAvatar
                 src={post.user?.image}
@@ -59,7 +59,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
                 rounded
               />{' '}
             </div>
-            <div className="flex flex-col space-y-1 justify-start">
+            <div className="flex flex-col self-start space-y-1 justify-start">
               {post.user.username}
               <div className="text-xs leading-none text-warm-gray-500">{post.user.name}</div>
             </div>
