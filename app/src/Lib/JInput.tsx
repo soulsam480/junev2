@@ -10,6 +10,7 @@ interface Props {
   placeholder?: string;
   is?: 'input' | 'textarea';
   contentClass?: string;
+  label?: string;
 }
 
 const JInput: React.FC<Props> = ({
@@ -19,13 +20,13 @@ const JInput: React.FC<Props> = ({
   className,
   id,
   placeholder,
-  is,
+  is = 'input',
   contentClass,
+  label,
 }) => {
-  is = !!is ? is : 'input';
-
   return (
     <div className={classNames(['j-input', className || ''])}>
+      {label && <label children={label} htmlFor={id} className="j-input__label" />}
       {is === 'input' ? (
         <input
           onChange={(e) => onInput(e.target.value)}
@@ -34,6 +35,7 @@ const JInput: React.FC<Props> = ({
           className={classNames([`${contentClass || ''}`])}
           value={value}
           placeholder={placeholder}
+          tabIndex={0}
         />
       ) : (
         <textarea
@@ -42,6 +44,7 @@ const JInput: React.FC<Props> = ({
           className={classNames([`${contentClass || ''}`])}
           value={value}
           placeholder={placeholder}
+          tabIndex={0}
         />
       )}
     </div>
