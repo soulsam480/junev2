@@ -1,6 +1,7 @@
 import React, { FormEvent, useRef, useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
+import JContainer from 'src/Lib/JContainer';
 // import JImage from 'src/Lib/JImage';
 import JInput from 'src/Lib/JInput';
 import { useUserStore } from 'src/User/store/useUserStore';
@@ -52,43 +53,44 @@ const Settings: React.FC<Props> = () => {
         </div>
 
         <input type="file" id="file" ref={inputFile} style={{ display: 'none' }} />
+        <JContainer className="flex flex-col space-y-4 rounded-lg py-5">
+          <JInput
+            label="name"
+            id="name"
+            value={userDetails.name}
+            onInput={(name) => setUserDetails({ ...userDetails, name })}
+            type="text"
+          />
 
-        <JInput
-          label="name"
-          id="name"
-          value={userDetails.name}
-          onInput={(name) => setUserDetails({ ...userDetails, name })}
-          type="text"
-        />
+          <JInput
+            label="username"
+            id="username"
+            value={userDetails.username}
+            onInput={(username) => setUserDetails({ ...userDetails, username })}
+            type="text"
+          />
 
-        <JInput
-          label="username"
-          id="username"
-          value={userDetails.username}
-          onInput={(username) => setUserDetails({ ...userDetails, username })}
-          type="text"
-        />
+          {/* //TODO: will be a different component */}
+          <JInput
+            label="Email"
+            id="email"
+            value={userDetails.email}
+            onInput={(email) => setUserDetails({ ...userDetails, email })}
+            type="text"
+          />
 
-        {/* //TODO: will be a different component */}
-        <JInput
-          label="Email"
-          id="email"
-          value={userDetails.email}
-          onInput={(email) => setUserDetails({ ...userDetails, email })}
-          type="text"
-        />
+          <JInput
+            label="bio"
+            id="bio"
+            value={userDetails.bio}
+            onInput={(bio) => setUserDetails({ ...userDetails, bio })}
+            is="textarea"
+          />
 
-        <JInput
-          label="bio"
-          id="bio"
-          value={userDetails.bio}
-          onInput={(bio) => setUserDetails({ ...userDetails, bio })}
-          is="textarea"
-        />
-
-        <div className="flex justify-end">
-          <JButton type="submit">save</JButton>
-        </div>
+          <div className="flex justify-end">
+            <JButton type="submit">save</JButton>
+          </div>
+        </JContainer>
       </form>
     </div>
   );
