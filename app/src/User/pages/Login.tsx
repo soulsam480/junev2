@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
+import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';
 import { useAlert } from 'src/Lib/store/alerts';
 import { JunePaths } from 'src/Shared/router';
@@ -48,6 +49,9 @@ const Login: React.FC<Props> = () => {
       naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);
+      setLoginLoading(false);
+
+      setAlert({ type: 'danger', message: error.message });
     }
   }
 
@@ -72,6 +76,9 @@ const Login: React.FC<Props> = () => {
       naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);
+      setLoginLoading(false);
+
+      setAlert({ type: 'danger', message: error.message });
     }
   }
 
@@ -84,7 +91,7 @@ const Login: React.FC<Props> = () => {
         <div className="w-full lg:w-1/2 flex flex-col space-y-4 flex-grow self-center">
           <div>
             {isLogin ? (
-              <div className="flex flex-col space-y-4 border-1 rounded-md p-3 text-center">
+              <JContainer className="flex flex-col space-y-4 border-1 rounded-md px-3 py-4 text-center">
                 <div className="text-xl text-gray-600 hidden sm:block">Log In</div>
                 <img
                   src="/june-logo.svg"
@@ -114,9 +121,9 @@ const Login: React.FC<Props> = () => {
                 <div className="flex items-center justify-center">
                   <JButton icon="ion:logo-google" size="22px" sm onClick={() => googleLogin()} />
                 </div>
-              </div>
+              </JContainer>
             ) : (
-              <div className="flex flex-col space-y-4 border-1 rounded-md p-3 text-center">
+              <JContainer className="flex flex-col space-y-4 border-1 rounded-md px-3 py-4 text-center">
                 <div className="text-xl text-gray-600 hidden sm:block">Sign Up</div>
                 <img
                   src="/june-logo.svg"
@@ -148,7 +155,7 @@ const Login: React.FC<Props> = () => {
                   />
                   <JButton label="Sign Up" type="submit" block loading={isLoginLoading} />
                 </form>
-              </div>
+              </JContainer>
             )}
           </div>
           <div className="flex flex-col space-y-4 border-1 rounded-md px-2 py-5 text-center">
