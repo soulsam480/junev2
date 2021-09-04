@@ -5,7 +5,7 @@ import JContainer from 'src/Lib/JContainer';
 import JSpinner from 'src/Lib/JSpinner';
 import PostComment, { ReplyCtx } from 'src/Feed/components/comments/PostComment';
 import PostCommentForm from 'src/Feed/components/comments/PostCommentForm';
-import { Comment } from 'src/utils/types';
+import { Comment, Reply } from 'src/utils/types';
 import { useAlert } from 'src/Lib/store/alerts';
 import {
   createCommentOnPost,
@@ -27,6 +27,27 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   const [postComments, setPostComments] = useState<Comment[]>([]);
   const [replyCtx, setReplyCtx] = useState<ReplyCtx | null>(null);
   const [isCommentsLoading, setCommentLoading] = useState(false);
+
+  const updateCommentReaction = useCallback((comment: Comment) => {
+    setPostComments((p) =>
+      p.map((el) => (el.id !== comment.id ? el : { ...el, likes: comment.likes })),
+    );
+  }, []);
+
+  const updateReplyReaction = useCallback((commentId: string, reply: Reply) => {
+    setPostComments((p) =>
+      p.map((co) =>
+        co.id !== commentId
+          ? co
+          : {
+              ...co,
+              replies: co.replies?.map((re) =>
+                re.id !== reply.id ? re : { ...re, likes: reply.likes },
+              ),
+            },
+      ),
+    );
+  }, []);
 
   const { mountedRef } = useMountedRef();
 
@@ -103,6 +124,9 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
         onRepliesExpand: useCallback(getRepliesOnComment, []),
         setReplyCtx: useCallback(setReplyCtx, []),
         commentAction: useCallback(commentAction, [replyCtx]),
+        postId,
+        updateCommentReaction,
+        updateReplyReaction,
       }}
     >
       <JContainer className="mt-3 rounded-md flex flex-col space-y-2">

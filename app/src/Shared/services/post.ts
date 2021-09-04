@@ -1,5 +1,5 @@
 import { api } from 'src/utils/helpers';
-import { Comment, PaginationParams, Post, ResponseSchema } from 'src/utils/types';
+import { Comment, PaginationParams, Post, Reply, ResponseSchema } from 'src/utils/types';
 
 export async function createPost(params: { content: string }) {
   return api.post<ResponseSchema<Post>>('/posts/', { post: { ...params } });
@@ -50,7 +50,21 @@ export async function createReplyOnComment(
 }
 
 export async function getCommentReplies(id: string, commentId: string) {
-  return api.get<ResponseSchema<Omit<Comment, 'replies' | 'total_replies'>[]>>(
-    `/posts/${id}/comments/${commentId}/`,
-  );
+  return api.get<ResponseSchema<Reply[]>>(`/posts/${id}/comments/${commentId}/`);
+}
+
+export async function likeComment(id: string, commentId: string) {
+  return api.post(`/posts/${id}/comments/${commentId}/like/`);
+}
+
+export async function unLikeComment(id: string, commentId: string) {
+  return api.post(`/posts/${id}/comments/${commentId}/unlike/`);
+}
+
+export async function likeReply(id: string, commentId: string, replyId: string) {
+  return api.post(`/posts/${id}/comments/${commentId}/replies/${replyId}/like/`);
+}
+
+export async function unLikeReply(id: string, commentId: string, replyId: string) {
+  return api.post(`/posts/${id}/comments/${commentId}/replies/${replyId}/unlike/`);
 }

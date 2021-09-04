@@ -44,12 +44,14 @@ export interface User extends TimeStamps {
   liked_comments?: Comment[];
 }
 
+export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
+
 export interface Comment extends TimeStamps {
   id: string;
   comment: string;
   user: User;
-  likes?: User[];
-  replies?: Omit<Comment, 'replies' | 'total_replies'>[];
+  likes: string[];
+  replies?: Reply[];
   total_likes: number;
   total_replies: number;
 }
