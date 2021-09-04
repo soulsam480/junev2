@@ -50,8 +50,8 @@ export interface Comment extends TimeStamps {
   user: User;
   likes?: User[];
   replies?: Omit<Comment, 'replies' | 'total_replies'>[];
-  total_likes?: number;
-  total_replies?: number;
+  total_likes: number;
+  total_replies: number;
 }
 export interface Post extends TimeStamps {
   id: string;

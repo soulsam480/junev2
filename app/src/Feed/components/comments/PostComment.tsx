@@ -1,9 +1,10 @@
-import React, { HTMLProps } from 'react';
+import React, { HTMLProps, memo, useMemo } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import { classNames, timeAgo } from 'src/utils/helpers';
 import { Comment } from 'src/utils/types';
+import { useComment } from 'src/Feed/context/commentApi';
 
 export interface ReplyCtx {
   user: string;
@@ -12,11 +13,12 @@ export interface ReplyCtx {
 }
 interface Props extends HTMLProps<HTMLDivElement> {
   comment: Comment;
-  setReplyCtx: (ctx: ReplyCtx) => void;
-  onRepliesExpand: (id: string) => any;
 }
 
-const PostComments: React.FC<Props> = ({ className, comment, setReplyCtx, onRepliesExpand }) => {
+const PostComment: React.FC<Props> = ({ className, comment }) => {
+  const { onRepliesExpand, setReplyCtx } = useComment();
+
+  const getTimeAgo = useMemo(() => timeAgo, []);
   return (
     <div className={classNames(['flex-col space-y-2', className || ''])}>
       <div className="flex space-x-2 items-start">
@@ -32,12 +34,17 @@ const PostComments: React.FC<Props> = ({ className, comment, setReplyCtx, onRepl
         </div>
         <div className="flex-col flex-grow">
           <div className="text-xs">
-            <span className="font-semibold tracking-wide">{comment?.user?.username}</span> &nbsp;
+            <span className="tracking-wide">
+              <b>{comment?.user?.username}</b>
+            </span>{' '}
+            &nbsp;
             <span className="break-all">{comment?.comment} </span>
           </div>
-          <div className="text-xs flex space-x-3 text-warm-gray-400">
-            <span> {timeAgo(comment?.createdAt as Date)} </span>{' '}
-            <span>{comment?.total_likes} likes </span>
+          <div className="text-xs flex items-center space-x-3 text-warm-gray-400">
+            <span> {getTimeAgo(comment?.createdAt as Date)} </span>{' '}
+            <span>
+              {comment.total_likes} {comment.total_likes > 1 ? 'likes' : 'like'}{' '}
+            </span>
             <JButton
               label="reply"
               dense
@@ -55,7 +62,9 @@ const PostComments: React.FC<Props> = ({ className, comment, setReplyCtx, onRepl
           {!comment.replies && comment.total_replies ? (
             <div className="text-warm-gray-500">
               <JButton
-                label={`${comment.total_replies} replies`}
+                label={`${comment.total_replies} ${
+                  comment.total_replies > 1 ? 'replies' : 'reply'
+                }`}
                 noBg
                 dense
                 sm
@@ -86,7 +95,7 @@ const PostComments: React.FC<Props> = ({ className, comment, setReplyCtx, onRepl
       <div className="flex">
         <div className="flex-col flex-grow space-y-2 ml-[40px]">
           {comment.replies?.map((reply) => {
-            return <PostComment reply={reply} key={reply.id} />;
+            return <MemoizedPostComment reply={reply} key={reply.id} />;
           })}
         </div>
       </div>
@@ -94,9 +103,11 @@ const PostComments: React.FC<Props> = ({ className, comment, setReplyCtx, onRepl
   );
 };
 
-export const PostComment: React.FC<{ reply: Omit<Comment, 'replies' | 'total_replies'> }> = ({
+export const PostReply: React.FC<{ reply: Omit<Comment, 'replies' | 'total_replies'> }> = ({
   reply,
 }) => {
+  const getTimeAgo = useMemo(() => timeAgo, []);
+
   return (
     <div className={classNames(['flex space-x-2 items-start'])}>
       <div className="flex-none">
@@ -111,11 +122,14 @@ export const PostComment: React.FC<{ reply: Omit<Comment, 'replies' | 'total_rep
       </div>
       <div className="flex-col flex-grow">
         <div className="text-xs">
-          <span className="font-semibold tracking-wide">{reply?.user?.username}</span> &nbsp;
+          <span className="tracking-wide">
+            <b>{reply?.user?.username}</b>
+          </span>{' '}
+          &nbsp;
           <span className="break-all">{reply?.comment} </span>
         </div>
         <div className="text-xs flex space-x-3 text-warm-gray-400">
-          <span> {timeAgo(reply?.createdAt as Date)} </span>{' '}
+          <span> {getTimeAgo(reply?.createdAt as Date)} </span>{' '}
           <span>{reply?.total_likes} likes </span>
         </div>
       </div>
@@ -141,4 +155,6 @@ export const PostComment: React.FC<{ reply: Omit<Comment, 'replies' | 'total_rep
   );
 };
 
-export default PostComments;
+const MemoizedPostComment = memo(PostReply);
+
+export default PostComment;
