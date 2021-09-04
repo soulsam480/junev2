@@ -2,7 +2,7 @@ import React, { HTMLProps } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
-import { classNames } from 'src/utils/helpers';
+import { classNames, timeAgo } from 'src/utils/helpers';
 import { Comment } from 'src/utils/types';
 
 interface Props extends HTMLProps<HTMLDivElement> {
@@ -28,7 +28,8 @@ const PostComments: React.FC<Props> = ({ className, comment }) => {
           <span className="break-all">{comment?.comment} </span>
         </div>
         <div className="text-xs flex space-x-3 text-warm-gray-400">
-          <span>time</span> <span>{comment?.total_likes} likes </span> <span>reply</span>
+          <span> {timeAgo(comment?.createdAt as Date)} </span>{' '}
+          <span>{comment?.total_likes} likes </span> <span>reply</span>
         </div>
       </div>
       <div className="flex-none">

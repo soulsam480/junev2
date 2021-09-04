@@ -50,3 +50,73 @@ export const typeValidation =
 export function between(v: number, min: number, max: number) {
   return max <= min ? min : Math.min(max, Math.max(min, v));
 }
+
+/**
+ * @borrows https://github.com/vueuse/vueuse/blob/main/packages/core/useTimeAgo/index.ts
+ * @author anthony fu
+ * @license MIT
+ */
+
+interface Unit {
+  max: number;
+  value: number;
+  name: string;
+}
+
+const UNITS: Unit[] = [
+  { max: 60000, value: 1000, name: 'second' },
+  { max: 2760000, value: 60000, name: 'minute' },
+  { max: 72000000, value: 3600000, name: 'hour' },
+  { max: 518400000, value: 86400000, name: 'day' },
+  { max: 2419200000, value: 604800000, name: 'week' },
+  { max: 28512000000, value: 2592000000, name: 'month' },
+  { max: Infinity, value: 31536000000, name: 'year' },
+];
+
+const DEFAULT_MESSAGES: { [x: string]: string | ((value: any, isPast: boolean) => string) } = {
+  justNow: 'just now',
+  past: (n) => (n.match(/\d/) ? `${n} ago` : n),
+  future: (n) => (n.match(/\d/) ? `in ${n}` : n),
+  month: (n, past) =>
+    n === 1 ? (past ? 'last month' : 'next month') : `${n} month${n > 1 ? 's' : ''}`,
+  year: (n, past) =>
+    n === 1 ? (past ? 'last year' : 'next year') : `${n} year${n > 1 ? 's' : ''}`,
+  day: (n, past) => (n === 1 ? (past ? 'yesterday' : 'tomorrow') : `${n} day${n > 1 ? 's' : ''}`),
+  week: (n, past) =>
+    n === 1 ? (past ? 'last week' : 'next week') : `${n} week${n > 1 ? 's' : ''}`,
+  hour: (n) => `${n} hour${n > 1 ? 's' : ''}`,
+  minute: (n) => `${n} minute${n > 1 ? 's' : ''}`,
+  second: (n) => `${n} second${n > 1 ? 's' : ''}`,
+};
+
+export function timeAgo(time: Date | string) {
+  const { abs, round } = Math;
+
+  function getTimeago(from: Date, now: Date) {
+    const diff = +now - +from;
+    const absDiff = abs(diff);
+
+    // less than a minute
+    if (absDiff < 60000) return DEFAULT_MESSAGES.justNow;
+
+    for (const unit of UNITS) {
+      if (absDiff < unit.max) return format(diff, unit);
+    }
+  }
+
+  function applyFormat(name: string, val: number | string, isPast: boolean) {
+    const formatter = DEFAULT_MESSAGES[name];
+    if (typeof formatter === 'function') return formatter(val as never, isPast);
+    return formatter.replace('{0}', val.toString());
+  }
+
+  function format(diff: number, unit: Unit) {
+    const val = round(abs(diff) / unit.value);
+    const past = diff > 0;
+
+    const str = applyFormat(unit.name, val, past);
+    return applyFormat(past ? 'past' : 'future', str, past);
+  }
+
+  return getTimeago(new Date(time), new Date());
+}
