@@ -29,7 +29,7 @@ interface TimeStamps {
   updatedAt?: Date;
 }
 export interface User extends TimeStamps {
-  id?: string;
+  id: string;
   name: string;
   username: string;
   email: string;
@@ -45,11 +45,11 @@ export interface User extends TimeStamps {
 }
 
 export interface Comment extends TimeStamps {
-  id?: string;
+  id: string;
   comment: string;
-  user?: User;
+  user: User;
   likes?: User[];
-  replies?: Comment[];
+  replies?: Omit<Comment, 'replies' | 'total_replies'>[];
   total_likes?: number;
   total_replies?: number;
 }

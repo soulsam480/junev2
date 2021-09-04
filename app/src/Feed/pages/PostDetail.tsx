@@ -1,14 +1,21 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import JSpinner from 'src/Lib/JSpinner';
-import { createCommentOnPost, getPost, getPostComments } from 'src/Shared/services/post';
+import {
+  createCommentOnPost,
+  createReplyOnComment,
+  getCommentReplies,
+  getPost,
+  getPostComments,
+} from 'src/Shared/services/post';
 import { useMountedRef } from 'src/utils/hooks';
 import { Comment, Post } from 'src/utils/types';
 import PostCard from 'src/Feed/components/PostCard';
 import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';
-import PostComments from 'src/Feed/components/postCard/comments/PostComment';
+import PostComments, { ReplyCtx } from 'src/Feed/components/postCard/comments/PostComment';
 import { useAlert } from 'src/Lib/store/alerts';
+import JButton from 'src/Lib/JButton';
 
 interface Props {}
 
@@ -20,6 +27,7 @@ const PostDetail: React.FC<Props> = () => {
   const [postData, setPostData] = useState<Post>({} as any);
   const [isLoading, setLoading] = useState(false);
   const [postComments, setPostComments] = useState<Comment[]>([]);
+  const [replyCtx, setReplyCtx] = useState<ReplyCtx | null>(null);
 
   const [isRenders, setIsRenders] = useState({
     isComments: false,
@@ -67,9 +75,22 @@ const PostDetail: React.FC<Props> = () => {
     }
   }
 
-  async function createComment() {
-    if (!comment) return;
+  async function getRepliesOnComment(id: string) {
+    try {
+      const {
+        data: { data },
+      } = await getCommentReplies(postId, id);
 
+      setPostComments((p) => {
+        return p.map((el) => (el.id !== id ? el : { ...el, replies: data }));
+      });
+    } catch (error) {
+      console.log(error);
+      setAlert({ type: 'danger', message: (error as any).message });
+    }
+  }
+
+  async function createComment() {
     try {
       await createCommentOnPost(postId, { comment });
 
@@ -79,6 +100,32 @@ const PostDetail: React.FC<Props> = () => {
       console.log(error);
       setAlert({ type: 'danger', message: (error as any).message });
     }
+  }
+
+  async function createReply(commentId: string) {
+    try {
+      await createReplyOnComment(postId, commentId, { comment });
+
+      setComment('');
+      getComments();
+    } catch (error) {
+      console.log(error);
+      setAlert({ type: 'danger', message: (error as any).message });
+    } finally {
+      setReplyCtx(null);
+    }
+  }
+
+  async function commentAction(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!comment) return;
+
+    if (replyCtx) {
+      return await createReply(replyCtx.id);
+    }
+
+    await createComment();
   }
 
   function handleCommentBtnClick() {
@@ -123,19 +170,40 @@ const PostDetail: React.FC<Props> = () => {
           ) : (
             <>
               <div className="flex-col space-y-2">
-                <div className="flex space-x-2 items-stretch">
+                {!!replyCtx && (
+                  <div className="text-xs text-warm-gray-500 flex space-x-2 justify-between items-center">
+                    <div>replying to {replyCtx?.username} </div>
+                    <JButton
+                      icon="ion:close-circle-outline"
+                      noBg
+                      dense
+                      title="cancel"
+                      onClick={() => setReplyCtx(null)}
+                    />
+                  </div>
+                )}
+                <form className=" flex space-x-2 items-stretch" onSubmit={commentAction}>
                   <JInput
                     value={comment}
                     onInput={setComment}
                     placeholder="comment"
                     className="flex-grow"
                     dense
-                    onEnter={createComment}
                   />
-                </div>
+                  <div className="sm:hidden">
+                    <JButton label="post" noBg sm type="submit" disabled={!comment} />
+                  </div>
+                </form>
 
                 {postComments.map((comment) => {
-                  return <PostComments comment={comment} key={comment.id} />;
+                  return (
+                    <PostComments
+                      comment={comment}
+                      key={comment.id}
+                      setReplyCtx={setReplyCtx}
+                      onRepliesExpand={getRepliesOnComment}
+                    />
+                  );
                 })}
               </div>
             </>

@@ -217,14 +217,14 @@ const getRepliesByCommentId = createRoute<any, { id: string; commentId: string }
 });
 
 const addReplyByCommentId = createRoute<
-  { reply: DocumentDefinition<Comment> },
+  { comment: DocumentDefinition<Comment> },
   { id: string; commentId: string }
 >({
   path: '/:id/comments/:commentId',
   method: 'post',
-  handler: async ({ userId }, res, { reply }, { id, commentId }) => {
+  handler: async ({ userId }, res, { comment }, { id, commentId }) => {
     try {
-      await createReplyOnPost(id, commentId, { ...reply, user: userId as string });
+      await createReplyOnPost(id, commentId, { ...comment, user: userId as string });
 
       res.sendStatus(200);
     } catch (error) {

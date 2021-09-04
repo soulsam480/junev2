@@ -37,6 +37,20 @@ export async function getPostComments(id: string) {
   return api.get<ResponseSchema<Comment[]>>(`/posts/${id}/comments`);
 }
 
-export async function createCommentOnPost(id: string, comment: Comment) {
+export async function createCommentOnPost(id: string, comment: Partial<Comment>) {
   return api.post(`/posts/${id}/comments/`, { comment });
+}
+
+export async function createReplyOnComment(
+  id: string,
+  commentId: string,
+  comment: Partial<Comment>,
+) {
+  return api.post(`/posts/${id}/comments/${commentId}/`, { comment });
+}
+
+export async function getCommentReplies(id: string, commentId: string) {
+  return api.get<ResponseSchema<Omit<Comment, 'replies' | 'total_replies'>[]>>(
+    `/posts/${id}/comments/${commentId}/`,
+  );
 }

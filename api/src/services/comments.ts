@@ -6,13 +6,13 @@ import { getObjectId } from 'src/utils/helpers';
 export async function getCommentsForPost(id: string) {
   try {
     const post = await postModel
-      .findOne({ _id: id })
-      .populate({ path: 'comments', model: Comment })
+      .findOne({ _id: id }, 'comments')
       .populate({ path: 'comments.user', model: User, select: ['name', 'username', 'id', 'image'] })
-      .select(['comments'])
       .exec();
 
-    return post?.comments;
+    return post
+      ?.toObject({ flattenMaps: true, virtuals: true })
+      .comments?.map((el) => ({ ...el, replies: null }));
   } catch (error) {
     Promise.reject(error);
   }
@@ -39,15 +39,24 @@ export async function createCommentOnPost(id: string, comment: DocumentDefinitio
 export async function getRepliesForComment(id: string, commentId: string) {
   try {
     const post = await postModel
-      .findOne({
-        _id: id,
-        comments: { $elemMatch: { _id: getObjectId(commentId) } },
+      .findOne(
+        {
+          _id: id,
+          'comments._id': getObjectId(commentId),
+        },
+        { comments: { $elemMatch: { _id: getObjectId(commentId) } } },
+      )
+      .populate({ path: 'comments.replies', model: Comment })
+      .populate({
+        path: 'comments.replies.user',
+        model: User,
+        select: ['name', 'username', 'id', 'image'],
       })
-      .populate({ path: 'comments.replies' })
-      .select('comments')
       .exec();
 
-    return post?.comments;
+    if (!post) return [];
+
+    return (post?.toObject({ flattenMaps: true, virtuals: true }).comments as Comment[])[0].replies;
   } catch (error) {
     Promise.reject(error);
   }

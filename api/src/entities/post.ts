@@ -26,8 +26,10 @@ export class Comment extends TimeStamps {
   }
 
   public get total_replies() {
-    return this.likes?.length;
+    return this.replies?.length;
   }
+
+  public _id: string;
 }
 
 class Reply extends TimeStamps {
