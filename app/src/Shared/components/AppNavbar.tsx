@@ -14,7 +14,7 @@ import JAvatar from 'src/Lib/JAvatar';
 interface Props {}
 
 const AppNavbar: React.FC<Props> = () => {
-  const { setAlert } = useAlert();
+  const setAlert = useAlert((s) => s.setAlert);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
   const {
     user: { username, image },
@@ -41,10 +41,14 @@ const AppNavbar: React.FC<Props> = () => {
             </Link>
           </div>
           <div className="flex space-x-1 items-center">
-            <div className="hidden sm:block">
-              <JButton noBg icon="ion:heart-outline" size="25px" sm dense />
-            </div>
-            <JButton noBg icon="ion:chatbubble-ellipses-outline" size="25px" dense sm />
+            {isLoggedIn && (
+              <>
+                <div className="hidden sm:block">
+                  <JButton noBg icon="ion:heart-outline" size="25px" sm dense />
+                </div>
+                <JButton noBg icon="ion:chatbubble-ellipses-outline" size="25px" dense sm />
+              </>
+            )}
             <div className="hidden sm:block">
               {isLoggedIn && (
                 <JMenu

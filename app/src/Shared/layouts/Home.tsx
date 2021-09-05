@@ -20,6 +20,7 @@ const Authorized: React.FC<Props> = ({ bottomNavSlot, rightNavSlot, leftNavSlot,
       <UserBottomDrawer />
 
       <aside className="j-layout__leftbar">{leftNavSlot}</aside>
+
       <main className="j-layout__content">
         {!!topNavSlot && <div className="j-layout__topbar"> {topNavSlot} </div>}
         <Outlet />

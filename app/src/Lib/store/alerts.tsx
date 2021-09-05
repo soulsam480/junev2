@@ -21,6 +21,6 @@ export const useAlert = create<AlertState>((set, get) => ({
       lastIdx = null;
 
       clearTimeout(timeout);
-    }, 5000);
+    }, 2000);
   },
 }));

@@ -180,7 +180,7 @@
   }
 
   &-enter-active {
-    @apply transform opacity-100 scale-100 duration-300;
+    @apply transform opacity-100 scale-100 duration-200;
   }
 
   &-exit {
@@ -188,7 +188,7 @@
   }
 
   &-exit-active {
-    @apply transform opacity-0 scale-95 duration-300;
+    @apply transform opacity-0 scale-95 duration-200;
   }
 
   &__backdrop {
