@@ -9,8 +9,8 @@ import { User } from 'src/entities/user';
   },
 })
 export class Comment extends TimeStamps {
-  @prop()
-  public comment: string;
+  @prop({ ref: 'Post' })
+  post_id: Ref<Post>;
 
   @prop({ ref: 'User' })
   public user: Ref<User>;
@@ -18,23 +18,41 @@ export class Comment extends TimeStamps {
   @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
-  @prop({ type: () => Reply, default: [] })
-  public replies?: Reply[];
+  @prop({ ref: 'Reply' })
+  public replies?: Ref<Reply>[];
+
+  @prop()
+  public comment: string;
 
   public get total_likes() {
     return this.likes?.length;
   }
 
-  public get total_replies() {
-    return this.replies?.length;
-  }
+  @prop({ ref: () => Reply, foreignField: 'comment_id', localField: '_id', count: true })
+  public total_replies?: number;
 
-  public _id: string;
+  // @prop({
+  //   ref: () => User,
+  //   foreignField: 'liked_comments',
+  //   localField: '_id',
+  //   count: true,
+  //   match: (doc) => ({ _id: doc._id }),
+  // })
+  // public total_likes?: number;
 }
 
-class Reply extends TimeStamps {
-  @prop()
-  public comment: string;
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    toJSON: { virtuals: true, versionKey: false },
+  },
+})
+export class Reply extends TimeStamps {
+  @prop({ ref: 'Comment' })
+  public comment_id: Ref<Comment>;
+
+  @prop({ ref: 'Post' })
+  public post_id: Ref<Post>;
 
   @prop({ ref: 'User' })
   public user: Ref<User>;
@@ -42,11 +60,10 @@ class Reply extends TimeStamps {
   @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
-  public get total_likes() {
-    return this.likes?.length;
-  }
+  @prop()
+  public comment: string;
 
-  public get total_replies() {
+  public get total_likes() {
     return this.likes?.length;
   }
 }
@@ -70,8 +87,8 @@ export class Post extends TimeStamps {
   @prop({ ref: 'User' })
   public likes?: Ref<User>[];
 
-  @prop({ type: () => Comment })
-  public comments?: Comment[];
+  @prop({ ref: 'Comment' })
+  public comments?: Ref<Comment>[];
 
   @prop({ default: false })
   is_archived?: boolean;
@@ -88,3 +105,5 @@ export class Post extends TimeStamps {
 export const postModel = getModelForClass(Post);
 
 export const commentModel = getModelForClass(Comment);
+
+export const replyModel = getModelForClass(Reply);

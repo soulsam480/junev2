@@ -14,14 +14,21 @@ import {
 import { formatResponse } from 'src/utils/helpers';
 import { Comment } from 'src/entities/post';
 
-export const getCommentsByPostId = createRoute<any, { id: string }>({
+export const getCommentsByPostId = createRoute<
+  any,
+  { id: string },
+  { cursor: string; limit: string }
+>({
   path: '/:id/comments',
   method: 'get',
-  handler: async (_, res, __, { id }) => {
+  handler: async (_, res, __, { id }, { cursor: pagination_cursor, limit: pagination_limit }) => {
     try {
-      const comments = await getCommentsForPost(id);
+      const cursor: number = parseInt(pagination_cursor);
+      const limit: number = parseInt(pagination_limit) || 10;
 
-      res.json(formatResponse(comments));
+      const comments = await getCommentsForPost(id, cursor, limit);
+
+      res.json(comments);
     } catch (error) {
       console.log(error);
       res.sendError(500, error);

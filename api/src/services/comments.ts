@@ -1,21 +1,27 @@
 import { DocumentDefinition } from 'mongoose';
-import { Comment, commentModel, postModel } from 'src/entities/post';
-import { User } from 'src/entities/user';
+import { Comment, commentModel, postModel, replyModel } from 'src/entities/post';
+import { User, userModel } from 'src/entities/user';
 import { getObjectId } from 'src/utils/helpers';
 
 //TODO paginate
-export async function getCommentsForPost(id: string) {
+export async function getCommentsForPost(id: string, cursor: number, limit: number) {
   try {
-    const post = await postModel
-      .findOne({ _id: id })
-      .populate({ path: 'comments', options: { sort: { createdAt: -1 } } })
-      .populate({ path: 'comments.user', model: User, select: ['name', 'username', 'id', 'image'] })
-      .exec();
+    const baseQuery = commentModel
+      .find({ post_id: id })
+      .populate({
+        path: 'user',
+        model: User,
+        select: ['name', 'username', 'id', 'image'],
+      })
+      .populate('total_replies')
+      .select('-replies');
 
-    return post
-      ?.toObject({ flattenMaps: true, virtuals: true })
-      .comments?.map((el) => ({ ...el, replies: null }))
-      .sort((a, b) => ((a as any).createdAt < (b as any).createdAt ? 1 : -1));
+    return await cursorPaginateResponse(
+      baseQuery,
+      cursor,
+      limit,
+      await baseQuery.estimatedDocumentCount(),
+    );
   } catch (error) {
     Promise.reject(error);
   }
@@ -24,14 +30,21 @@ export async function getCommentsForPost(id: string) {
 //TODO: add update and delete
 export async function createCommentOnPost(id: string, comment: DocumentDefinition<Comment>) {
   try {
-    const newComment = await commentModel.create({ ...comment });
+    const newComment = await commentModel.create({ ...comment, post_id: id });
 
     await postModel
       .updateOne(
         { _id: id },
         {
-          $push: { comments: newComment },
+          $push: { comments: getObjectId(newComment._id) },
         },
+      )
+      .exec();
+
+    await userModel
+      .updateOne(
+        { _id: getObjectId(comment.user as string) },
+        { $push: { commented_posts: getObjectId(id) } },
       )
       .exec();
   } catch (error) {
@@ -41,20 +54,17 @@ export async function createCommentOnPost(id: string, comment: DocumentDefinitio
 
 export async function likeOnComment(id: string, commentId: string, userId: string) {
   try {
-    await postModel
+    await commentModel
       .updateOne(
-        { _id: id, 'comments._id': getObjectId(commentId) },
+        { _id: commentId, post_id: getObjectId(id) },
         {
-          $push: { 'comments.$[el].likes': getObjectId(userId) },
-        },
-        {
-          arrayFilters: [
-            {
-              'el._id': getObjectId(commentId),
-            },
-          ],
+          $push: { likes: getObjectId(userId) },
         },
       )
+      .exec();
+
+    await userModel
+      .updateOne({ _id: userId }, { $push: { liked_comments: getObjectId(commentId) } })
       .exec();
   } catch (error) {
     Promise.reject(error);
@@ -63,20 +73,17 @@ export async function likeOnComment(id: string, commentId: string, userId: strin
 
 export async function unLikeOnComment(id: string, commentId: string, userId: string) {
   try {
-    await postModel
+    await commentModel
       .updateOne(
-        { _id: id, 'comments._id': getObjectId(commentId) },
+        { _id: commentId, post_id: getObjectId(id) },
         {
-          $pull: { 'comments.$[el].likes': getObjectId(userId) },
-        },
-        {
-          arrayFilters: [
-            {
-              'el._id': getObjectId(commentId),
-            },
-          ],
+          $pull: { likes: getObjectId(userId) },
         },
       )
+      .exec();
+
+    await userModel
+      .updateOne({ _id: userId }, { $pull: { liked_comments: getObjectId(commentId) } })
       .exec();
   } catch (error) {
     Promise.reject(error);
@@ -84,32 +91,17 @@ export async function unLikeOnComment(id: string, commentId: string, userId: str
 }
 
 //TODO paginate
-export async function getRepliesForComment(id: string, commentId: string) {
+export async function getRepliesForComment(post_id: string, comment_id: string) {
   try {
-    const post = await postModel
-      .findOne(
-        {
-          _id: id,
-          'comments._id': getObjectId(commentId),
-        },
-        { comments: { $elemMatch: { _id: getObjectId(commentId) } } },
-      )
+    return await replyModel
+      .find({ post_id, comment_id })
+      .sort({ createdAt: -1 })
       .populate({
-        path: 'comments.replies',
-      })
-      .populate({
-        path: 'comments.replies.user',
+        path: 'user',
         model: User,
         select: ['name', 'username', 'id', 'image'],
       })
-      .sort({ 'comments.replies.createdAt': 1 })
       .exec();
-
-    if (!post) return [];
-
-    return (
-      post?.toObject({ flattenMaps: true, virtuals: true }).comments as Comment[]
-    )[0].replies?.sort((a, b) => ((a as any).createdAt < (b as any).createdAt ? 1 : -1));
   } catch (error) {
     Promise.reject(error);
   }
@@ -117,53 +109,26 @@ export async function getRepliesForComment(id: string, commentId: string) {
 
 //TODO: add update and delete
 export async function createReplyOnPost(
-  id: string,
-  commentId: string,
+  post_id: string,
+  comment_id: string,
   reply: DocumentDefinition<Comment>,
 ) {
   try {
-    const newReply = await commentModel.create({ ...reply });
+    const newReply = await replyModel.create({ ...reply, comment_id, post_id });
 
-    await postModel.updateOne(
-      { _id: id },
-      {
-        $push: {
-          'comments.$[el].replies': newReply,
-        },
-      },
-      {
-        arrayFilters: [
-          {
-            'el._id': getObjectId(commentId),
-          },
-        ],
-      },
-    );
-  } catch (error) {
-    Promise.reject(error);
-  }
-}
-
-export async function likeOnReply(id: string, commentId: string, replyId: string, userId: string) {
-  try {
-    await postModel
+    await commentModel
       .updateOne(
-        { _id: id },
+        { _id: comment_id, post_id },
         {
-          $push: {
-            'comments.$[c].replies.$[d].likes': getObjectId(userId),
-          },
+          $push: { replies: getObjectId(newReply._id) },
         },
-        {
-          arrayFilters: [
-            {
-              'c._id': getObjectId(commentId),
-            },
-            {
-              'd._id': getObjectId(replyId),
-            },
-          ],
-        },
+      )
+      .exec();
+
+    await userModel
+      .updateOne(
+        { _id: getObjectId(reply.user as string) },
+        { $push: { replied_comments: getObjectId(comment_id) } },
       )
       .exec();
   } catch (error) {
@@ -171,32 +136,48 @@ export async function likeOnReply(id: string, commentId: string, replyId: string
   }
 }
 
-export async function unLikeOnReply(
-  id: string,
-  commentId: string,
+export async function likeOnReply(
+  post_id: string,
+  comment_id: string,
   replyId: string,
   userId: string,
 ) {
   try {
-    await postModel
+    await replyModel
       .updateOne(
-        { _id: id },
+        { _id: replyId, post_id, comment_id },
         {
-          $pull: {
-            'comments.$[c].replies.$[d].likes': getObjectId(userId),
-          },
-        },
-        {
-          arrayFilters: [
-            {
-              'c._id': getObjectId(commentId),
-            },
-            {
-              'd._id': getObjectId(replyId),
-            },
-          ],
+          $push: { likes: getObjectId(userId) },
         },
       )
+      .exec();
+
+    await userModel
+      .updateOne({ _id: userId }, { $push: { liked_replies: getObjectId(replyId) } })
+      .exec();
+  } catch (error) {
+    Promise.reject(error);
+  }
+}
+
+export async function unLikeOnReply(
+  post_id: string,
+  comment_id: string,
+  replyId: string,
+  userId: string,
+) {
+  try {
+    await replyModel
+      .updateOne(
+        { _id: replyId, post_id, comment_id },
+        {
+          $pull: { likes: getObjectId(userId) },
+        },
+      )
+      .exec();
+
+    await userModel
+      .updateOne({ _id: userId }, { $pull: { liked_replies: getObjectId(replyId) } })
       .exec();
   } catch (error) {
     Promise.reject(error);

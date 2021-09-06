@@ -1,7 +1,7 @@
 import { getModelForClass, modelOptions, pre, prop, Ref } from '@typegoose/typegoose';
 import { compare, hash } from 'bcrypt';
 import { parseEnv } from 'src/utils/helpers';
-import { Comment, Post } from 'src/entities/post';
+import { Comment, Post, Reply } from 'src/entities/post';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 @modelOptions({
@@ -9,6 +9,7 @@ import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 })
 @pre<User>('save', async function (next) {
   if (!this.isModified('password')) next();
+
   try {
     this.password = await this.hashPassword(this.password);
     next();
@@ -60,6 +61,12 @@ export class User extends TimeStamps {
 
   @prop({ ref: () => Comment })
   public liked_comments?: Ref<Comment>[];
+
+  @prop({ ref: () => Reply })
+  public replied_posts?: Ref<Post>[];
+
+  @prop({ ref: () => Reply })
+  public liked_replies?: Ref<Reply>[];
 
   public async hashPassword(pass: string) {
     if (!pass) return '';
