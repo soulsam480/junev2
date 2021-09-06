@@ -13,7 +13,8 @@ const PostCommentForm: React.FC<Props> = () => {
   async function handleSubmission(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     await commentAction(comment);
-    // setComment('');
+
+    setComment('');
   }
 
   return (

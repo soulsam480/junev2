@@ -33,8 +33,8 @@ export async function getPost(id: string) {
   return api.get<ResponseSchema<Post>>(`/posts/${id}/`);
 }
 
-export async function getPostComments(id: string) {
-  return api.get<ResponseSchema<Comment[]>>(`/posts/${id}/comments`);
+export async function getPostComments(id: string, opts: PaginationParams) {
+  return api.get<ResponseSchema<Comment[]>>(`/posts/${id}/comments`, { params: { ...opts } });
 }
 
 export async function createCommentOnPost(id: string, comment: Partial<Comment>) {

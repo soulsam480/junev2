@@ -130,6 +130,7 @@ type PaginatedQueryInstance<T, K> = {
   isLoading: boolean;
   isEnd: boolean;
   forceValidate: React.Dispatch<React.SetStateAction<T[]>>;
+  reset(): void;
 };
 
 /**
@@ -160,10 +161,20 @@ export function usePaginatedQuery<T, K = any>(
     setError(null);
   }
 
+  function resetQuery() {
+    cursor.current = null;
+    setData([]);
+    setEnd(false);
+
+    reset();
+  }
+
   async function validate(): Promise<T[]> {
     reset();
+
     return new Promise(async (resolve, reject) => {
       if (isEnd) return;
+
       try {
         setLoading(true);
         const {
@@ -194,6 +205,7 @@ export function usePaginatedQuery<T, K = any>(
     isLoading,
     isEnd,
     forceValidate: setData,
+    reset: resetQuery,
   };
 }
 

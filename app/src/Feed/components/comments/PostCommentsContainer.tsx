@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { CommentApi } from 'src/Feed/context/commentApi';
 import JButton from 'src/Lib/JButton';
 import JContainer from 'src/Lib/JContainer';
-import JSpinner from 'src/Lib/JSpinner';
 import PostComment, { ReplyCtx } from 'src/Feed/components/comments/PostComment';
 import PostCommentForm from 'src/Feed/components/comments/PostCommentForm';
-import { Comment, Reply } from 'src/utils/types';
+import { Comment, PaginationParams, Reply } from 'src/utils/types';
 import { useAlert } from 'src/Lib/store/alerts';
 import {
   createCommentOnPost,
@@ -13,7 +12,7 @@ import {
   getCommentReplies,
   getPostComments,
 } from 'src/Shared/services/post';
-import { useMountedRef } from 'src/utils/hooks';
+import { useObserver, usePaginatedQuery } from 'src/utils/hooks';
 
 const MemoizedPostComment = React.memo(PostComment);
 
@@ -23,16 +22,34 @@ interface Props {
 
 const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   const setAlert = useAlert((s) => s.setAlert);
+  const [observerRef] = useObserver<HTMLDivElement>(observerCb);
 
-  const [postComments, setPostComments] = useState<Comment[]>([]);
+  const {
+    data: postComments,
+    isLoading: isCommentsLoading,
+    forceValidate: setPostComments,
+    validate: getComments,
+    reset,
+    isEnd,
+  } = usePaginatedQuery([], fetcher(postId), { limit: 15 });
+
+  async function observerCb() {
+    if (isEnd) return;
+    if (isCommentsLoading) return;
+    await getComments();
+  }
+
   const [replyCtx, setReplyCtx] = useState<ReplyCtx | null>(null);
-  const [isCommentsLoading, setCommentLoading] = useState(false);
 
   const updateCommentReaction = useCallback((comment: Comment) => {
     setPostComments((p) =>
       p.map((el) => (el.id !== comment.id ? el : { ...el, likes: comment.likes })),
     );
   }, []);
+
+  // function localAddComment() {
+
+  // }
 
   const updateReplyReaction = useCallback((commentId: string, reply: Reply) => {
     setPostComments((p) =>
@@ -49,22 +66,8 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
     );
   }, []);
 
-  const { mountedRef } = useMountedRef();
-
-  async function getComments() {
-    setCommentLoading(true);
-
-    try {
-      const { data } = await getPostComments(postId);
-
-      if (!mountedRef.current) return;
-      setPostComments([...data.data]);
-    } catch (error) {
-      console.log(error);
-      setAlert({ type: 'danger', message: (error as any).message });
-    } finally {
-      setCommentLoading(false);
-    }
+  function fetcher(id: string) {
+    return (opts: PaginationParams) => getPostComments(id, { ...opts });
   }
 
   async function getRepliesOnComment(id: string) {
@@ -81,9 +84,12 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   }
 
   async function createComment(comment: string) {
+    if (isCommentsLoading) return;
+
     try {
       await createCommentOnPost(postId, { comment });
 
+      reset();
       getComments();
     } catch (error) {
       console.log(error);
@@ -92,9 +98,12 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   }
 
   async function createReply(commentId: string, comment: string) {
+    if (isCommentsLoading) return;
+
     try {
       await createReplyOnComment(postId, commentId, { comment });
 
+      reset();
       getComments();
     } catch (error) {
       console.log(error);
@@ -130,38 +139,51 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
       }}
     >
       <JContainer className="mt-3 rounded-md flex flex-col space-y-2">
-        {isCommentsLoading ? (
-          <div className="flex items-center justify-center">
-            <JSpinner size="20px" />
-          </div>
-        ) : (
-          <>
-            <div className="flex-col space-y-2">
-              {!!replyCtx && (
-                <div className="text-xs text-warm-gray-500 flex space-x-2 justify-between items-center">
-                  <div>
-                    replying to <b>{replyCtx?.username}</b>{' '}
-                  </div>
-                  <JButton
-                    icon="ion:close-circle"
-                    noBg
-                    dense
-                    title="cancel"
-                    onClick={() => setReplyCtx(null)}
-                  />
-                </div>
-              )}
-
-              <PostCommentForm />
-
-              {!!postComments.length &&
-                postComments.map((comment) => {
-                  return <MemoizedPostComment comment={comment} key={comment.id} />;
-                })}
+        {!!replyCtx && (
+          <div className="text-xs text-warm-gray-500 flex space-x-2 justify-between items-center">
+            <div>
+              replying to <b>{replyCtx?.username}</b>{' '}
             </div>
-          </>
+            <JButton
+              icon="ion:close-circle"
+              noBg
+              dense
+              title="cancel"
+              onClick={() => setReplyCtx(null)}
+            />
+          </div>
         )}
+
+        <PostCommentForm />
       </JContainer>
+
+      {!!postComments.length ? (
+        <JContainer className="mt-3 rounded-md flex flex-col space-y-2">
+          {postComments.map((comment) => {
+            return <MemoizedPostComment comment={comment} key={comment.id} />;
+          })}
+        </JContainer>
+      ) : (
+        !isCommentsLoading && (
+          <div className="flex justify-center w-full my-2">no comments yet !</div>
+        )
+      )}
+
+      {(!!postComments.length || isCommentsLoading) && (
+        <>
+          <div className="flex flex-col w-full space-y-3 my-3">
+            {/* {isCommentsLoading && Array.from(Array(2)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '} */}
+            <div ref={observerRef} className="flex justify-center">
+              <JButton
+                label={isEnd ? 'no more' : ''}
+                flat
+                disabled={isEnd}
+                loading={isCommentsLoading}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </CommentApi.Provider>
   );
 };

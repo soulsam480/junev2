@@ -1,7 +1,7 @@
 import { DocumentDefinition } from 'mongoose';
 import { Comment, commentModel, postModel, replyModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
-import { getObjectId } from 'src/utils/helpers';
+import { cursorPaginateResponse, getObjectId } from 'src/utils/helpers';
 
 //TODO paginate
 export async function getCommentsForPost(id: string, cursor: number, limit: number) {
@@ -14,7 +14,8 @@ export async function getCommentsForPost(id: string, cursor: number, limit: numb
         select: ['name', 'username', 'id', 'image'],
       })
       .populate('total_replies')
-      .select('-replies');
+      .select('-replies')
+      .sort({ createdAt: -1 });
 
     return await cursorPaginateResponse(
       baseQuery,
