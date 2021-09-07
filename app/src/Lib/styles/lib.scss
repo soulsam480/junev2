@@ -115,8 +115,14 @@
   textarea {
     @apply outline-none ease-in-out transition-all border-none w-full;
     @apply rounded-md focus:(ring-lime-200 ring-2);
-    @apply text-black dark:text-white bg-warm-gray-100 h-full;
-    @apply p-2;
+    @apply text-black dark:text-white bg-warm-gray-100 h-full p-2;
+  }
+
+  &--dense {
+    input,
+    textarea {
+      @apply p-[6px] text-sm;
+    }
   }
 
   &__label {
@@ -174,7 +180,7 @@
   }
 
   &-enter-active {
-    @apply transform opacity-100 scale-100 duration-300;
+    @apply transform opacity-100 scale-100 duration-200;
   }
 
   &-exit {
@@ -182,7 +188,7 @@
   }
 
   &-exit-active {
-    @apply transform opacity-0 scale-95 duration-300;
+    @apply transform opacity-0 scale-95 duration-200;
   }
 
   &__backdrop {

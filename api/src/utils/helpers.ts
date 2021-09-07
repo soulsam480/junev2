@@ -122,7 +122,7 @@ export async function cursorPaginateResponse<K extends TimeStamps>(
       //@ts-ignore
       data = await model
         .find({
-          updatedAt: {
+          createdAt: {
             $lt: new Date(decrypedDate),
           },
         })
@@ -140,7 +140,7 @@ export async function cursorPaginateResponse<K extends TimeStamps>(
 
     if (has_more) {
       const nextCursorRecord = data[limit];
-      var unixTimestamp = Math.floor(nextCursorRecord.updatedAt!.getTime() / 1000);
+      var unixTimestamp = Math.floor(nextCursorRecord.createdAt!.getTime() / 1000);
       next_cursor = unixTimestamp.toString();
       data.pop();
     }

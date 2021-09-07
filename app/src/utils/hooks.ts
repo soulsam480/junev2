@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { PaginationParams, ResponseSchema } from 'src/utils/types';
 
@@ -9,14 +9,16 @@ export function useClickoutside<T extends HTMLElement>(cb: () => any) {
 
   useEffect(() => {
     function handleClickOutside(event: any) {
+      console.log();
+
       if (ref.current && !ref.current.contains(event.target)) {
-        memoCb();
+        return memoCb();
       }
     }
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [ref]);
 
   return [ref];
@@ -128,6 +130,7 @@ type PaginatedQueryInstance<T, K> = {
   isLoading: boolean;
   isEnd: boolean;
   forceValidate: React.Dispatch<React.SetStateAction<T[]>>;
+  reset(): void;
 };
 
 /**
@@ -158,10 +161,20 @@ export function usePaginatedQuery<T, K = any>(
     setError(null);
   }
 
+  function resetQuery() {
+    cursor.current = null;
+    setData([]);
+    setEnd(false);
+
+    reset();
+  }
+
   async function validate(): Promise<T[]> {
     reset();
+
     return new Promise(async (resolve, reject) => {
       if (isEnd) return;
+
       try {
         setLoading(true);
         const {
@@ -192,6 +205,7 @@ export function usePaginatedQuery<T, K = any>(
     isLoading,
     isEnd,
     forceValidate: setData,
+    reset: resetQuery,
   };
 }
 
