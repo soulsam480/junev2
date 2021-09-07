@@ -80,7 +80,7 @@ const JButton: React.FC<JButtonProps> = ({
       <span className={classNames(['j-button__content', ...buttonContentClasses])}>
         <>
           {!!iconSlot ? (
-            iconSlot
+            <span>{iconSlot}</span>
           ) : icon ? (
             <JIcon icon={icon} size={size ? size : sm ? '12px' : '16px'} />
           ) : (

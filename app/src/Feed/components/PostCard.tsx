@@ -14,9 +14,10 @@ import { classNames } from 'src/utils/helpers';
 interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
+  onCommentClick?: () => void;
 }
 
-const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
+const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, ...rest }) => {
   const id = useUserStore((state) => state.user.id);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -32,6 +33,15 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
 
     navigate(`/${post.user.username}/post/${post.id}`);
   }
+
+  function handleCommentClick() {
+    if (!!onCommentClick) {
+      onCommentClick();
+      return;
+    }
+
+    navigate(`/${post.user.username}/post/${post.id}?comments=true`);
+  }
   return (
     <JCard
       onClick={handlePostClick}
@@ -40,11 +50,16 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
       {...rest}
       headerSlot={
         <div className="post-card__header">
-          <Link to={`/@${post.user.username}`}>
+          <Link to={`/@${post.user.username}`} className="flex">
             <div className="flex-none">
-              <JAvatar src="https://cdn.quasar.dev/img/avatar.png" rounded />
+              <JAvatar
+                src={post.user?.image}
+                content={!post.user?.image ? post.user?.username.slice(0, 2) : undefined}
+                contentClass="bg-lime-200 shadow-sm"
+                rounded
+              />{' '}
             </div>
-            <div className="flex flex-col space-y-1 justify-start">
+            <div className="flex flex-col self-start space-y-1 justify-start">
               {post.user.username}
               <div className="text-xs leading-none text-warm-gray-500">{post.user.name}</div>
             </div>
@@ -58,7 +73,13 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, ...rest }) => {
         <div className="post-card__footer">
           <div className="inline-flex">
             <PostReact updatePostReaction={updatePostReaction} post={post} uid={id} />
-            <JButton icon="ion:chatbubble-outline" size="20px" sm noBg />
+            <JButton
+              icon="ion:chatbubble-outline"
+              size="20px"
+              sm
+              noBg
+              onClick={handleCommentClick}
+            />
           </div>
 
           <JButton icon="ion:share-social-outline" size="20px" sm noBg />

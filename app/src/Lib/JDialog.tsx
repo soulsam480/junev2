@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
+import { randomId } from 'src/utils/helpers';
 import { useClickoutside } from 'src/utils/hooks';
+// import { DialogAPI } from 'src/Lib/context/dialog';
 
 interface Props {
   isModal: boolean;
@@ -10,6 +12,9 @@ interface Props {
 
 const JDialog: React.FC<Props> = ({ isModal, setModal, children }) => {
   const [ref] = useClickoutside<HTMLDivElement>(() => setModal(false));
+  const myID = useRef(randomId(10));
+
+  // const { addToDialog, removeFromDialog } = useContext(DialogAPI);
 
   const keyListenersMap = new Map([
     ['Escape', handleEscape],
@@ -59,25 +64,34 @@ const JDialog: React.FC<Props> = ({ isModal, setModal, children }) => {
     !isModal && document.body.classList.remove('body-noscroll');
   }, [isModal]);
 
+  // useEffect(() => {
+  //   isModal && addToDialog({ id: myID.current, close: () => setModal(false) });
+  //   !isModal && removeFromDialog(myID.current);
+  // }, [isModal]);
+
   return createPortal(
     <CSSTransition
       in={isModal}
       timeout={{
-        enter: 300,
-        exit: 300,
+        enter: 200,
+        exit: 200,
       }}
       classNames="j-dialog"
       unmountOnExit
     >
-      <div className="j-dialog__backdrop" role="dialog" aria-modal={isModal}>
+      <div
+        className="j-dialog__backdrop"
+        role="dialog"
+        aria-modal={isModal}
+        id={myID.current}
+        ref={ref}
+      >
         <div className="j-dialog__parent">
-          <div className="j-dialog__content" ref={ref}>
-            {children}
-          </div>
+          <div className="j-dialog__content">{children}</div>
         </div>
       </div>
     </CSSTransition>,
-    document.body,
+    document.getElementById('dialog-root') as HTMLDivElement,
   );
 };
 

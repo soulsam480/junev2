@@ -24,8 +24,12 @@ export interface BaseJButtonProps
   to?: string;
 }
 
-export interface User {
-  id?: string;
+interface TimeStamps {
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+export interface User extends TimeStamps {
+  id: string;
   name: string;
   username: string;
   email: string;
@@ -40,14 +44,18 @@ export interface User {
   liked_comments?: Comment[];
 }
 
-export interface Comment {
-  id?: string;
+export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
+
+export interface Comment extends TimeStamps {
+  id: string;
   comment: string;
-  user?: User;
-  likes?: User[];
-  replies?: Comment[];
+  user: User;
+  likes: string[];
+  replies?: Reply[];
+  total_likes: number;
+  total_replies: number;
 }
-export interface Post {
+export interface Post extends TimeStamps {
   id: string;
   user: User;
   content: string;
