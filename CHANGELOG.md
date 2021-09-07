@@ -6,6 +6,8 @@
 
 **Merged pull requests:**
 
+- Features and fixes [\#11](https://github.com/soulsam480/junev2/pull/11) ([soulsam480](https://github.com/soulsam480))
+- feat: comments, replies and reactions [\#10](https://github.com/soulsam480/junev2/pull/10) ([soulsam480](https://github.com/soulsam480))
 - build\(deps\): bump tar from 6.1.6 to 6.1.11 [\#8](https://github.com/soulsam480/junev2/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Feature/user settings [\#7](https://github.com/soulsam480/junev2/pull/7) ([t-rex777](https://github.com/t-rex777))
 - Routes and posts [\#6](https://github.com/soulsam480/junev2/pull/6) ([soulsam480](https://github.com/soulsam480))
