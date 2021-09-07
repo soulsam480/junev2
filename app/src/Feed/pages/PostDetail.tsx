@@ -18,10 +18,6 @@ const PostDetail: React.FC<Props> = () => {
   const [postData, setPostData] = useState<Post>({} as any);
   const [isLoading, setLoading] = useState(false);
 
-  const [isRenders, setIsRenders] = useState({
-    isComments: false,
-  });
-
   const { mountedRef } = useMountedRef();
 
   const updatePostReaction = useCallback((post: Post) => {
@@ -48,23 +44,16 @@ const PostDetail: React.FC<Props> = () => {
   }
 
   function handleCommentBtnClick() {
-    if (isRenders.isComments) return;
+    const commentInput = document.getElementById('comment-input');
 
-    setIsRenders((p) => ({ ...p, isComments: true }));
+    if (!commentInput) return;
+
+    commentInput.focus();
   }
 
   useEffect(() => {
     getPostDetails();
   }, [postId]);
-
-  useEffect(() => {
-    if (!search) return;
-
-    const isComments = new URLSearchParams(search).get('comments');
-    if (!isComments) return;
-
-    setIsRenders((p) => ({ ...p, isComments: true }));
-  }, [search]);
 
   return !isLoading && !!Object.keys(postData).length ? (
     <div className="post-detail">
@@ -73,8 +62,7 @@ const PostDetail: React.FC<Props> = () => {
         updatePostReaction={updatePostReaction}
         onCommentClick={handleCommentBtnClick}
       />
-
-      {isRenders.isComments && <PostCommentsContainer postId={postId} />}
+      <PostCommentsContainer postId={postId} />{' '}
     </div>
   ) : (
     <div className="flex items-center justify-center pt-5">

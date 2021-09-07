@@ -10,10 +10,15 @@ import formsPlugin from 'windicss/plugin/forms';
 //   ];
 // }
 
+function generateShades(color: string, type: 'text' | 'bg', shaderange: number) {
+  return [...Array(shaderange).keys()]
+    .map((e) => !!e && `${type}-${color}-${e * 100}`)
+    .filter((x) => typeof x === 'string');
+}
+
 export default defineConfig({
   darkMode: 'class',
-  // safelist: [...generateSafeList(COLORS)],
-  safelist: 'fill-current text-red-700',
+  safelist: ['fill-current text-red-700', generateShades('lime', 'text', 10)],
   theme: {
     extend: {},
     shortcuts: {},

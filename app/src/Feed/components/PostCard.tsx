@@ -40,7 +40,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
       return;
     }
 
-    navigate(`/${post.user.username}/post/${post.id}?comments=true`);
+    navigate(`/${post.user.username}/post/${post.id}/`);
   }
   return (
     <JCard

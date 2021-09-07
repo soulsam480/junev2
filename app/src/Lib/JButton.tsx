@@ -22,6 +22,7 @@ const JButton: React.FC<JButtonProps> = ({
   sm,
   iconSlot,
   labelSlot,
+  loadingSlot,
   outline,
   round,
   loading,
@@ -107,13 +108,17 @@ const JButton: React.FC<JButtonProps> = ({
       </span>
       {loading && (
         <span className="j-button__bottom">
-          <span
-            className={classNames([
-              'j-button__loading',
-              `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
-            ])}
-            style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
-          ></span>
+          {!!loadingSlot ? (
+            loadingSlot
+          ) : (
+            <span
+              className={classNames([
+                'j-button__loading',
+                `j-button__loading${flat || outline || noBg ? '--invert' : '--normal'}`,
+              ])}
+              style={{ height: sm ? '16px' : '20px', width: sm ? '16px' : '20px' }}
+            ></span>
+          )}
         </span>
       )}
     </>

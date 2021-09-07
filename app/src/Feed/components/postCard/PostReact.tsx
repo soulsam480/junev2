@@ -55,12 +55,12 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
       onClick={() => handleReaction(post)}
       iconSlot={
         <>
-          <span className={classNames([{ hidden: post.likes.includes(uid) }, 'flex items-center'])}>
-            <JIcon icon="ion:heart" size="20px" className="fill-current text-red-700" />
-          </span>
           <span
             className={classNames([{ hidden: !post.likes.includes(uid) }, 'flex items-center'])}
           >
+            <JIcon icon="ion:heart" size="20px" className="fill-current text-red-700" />
+          </span>
+          <span className={classNames([{ hidden: post.likes.includes(uid) }, 'flex items-center'])}>
             <JIcon icon="ion:heart-outline" size="20px" />
           </span>
         </>

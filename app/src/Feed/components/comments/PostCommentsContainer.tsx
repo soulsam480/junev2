@@ -23,6 +23,7 @@ interface Props {
 const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   const setAlert = useAlert((s) => s.setAlert);
   const [observerRef] = useObserver<HTMLDivElement>(observerCb);
+  const [isCommentAction, setCommentAction] = useState(false);
 
   const {
     data: postComments,
@@ -31,6 +32,7 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
     validate: getComments,
     reset,
     isEnd,
+    error,
   } = usePaginatedQuery([], fetcher(postId), { limit: 15 });
 
   async function observerCb() {
@@ -46,10 +48,6 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
       p.map((el) => (el.id !== comment.id ? el : { ...el, likes: comment.likes })),
     );
   }, []);
-
-  // function localAddComment() {
-
-  // }
 
   const updateReplyReaction = useCallback((commentId: string, reply: Reply) => {
     setPostComments((p) =>
@@ -84,7 +82,8 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   }
 
   async function createComment(comment: string) {
-    if (isCommentsLoading) return;
+    if (isCommentAction || isCommentsLoading) return;
+    setCommentAction(true);
 
     try {
       await createCommentOnPost(postId, { comment });
@@ -94,11 +93,14 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
     } catch (error) {
       console.log(error);
       setAlert({ type: 'danger', message: (error as any).message });
+    } finally {
+      setCommentAction(false);
     }
   }
 
   async function createReply(commentId: string, comment: string) {
-    if (isCommentsLoading) return;
+    if (isCommentAction || isCommentsLoading) return;
+    setCommentAction(true);
 
     try {
       await createReplyOnComment(postId, commentId, { comment });
@@ -110,6 +112,7 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
       setAlert({ type: 'danger', message: (error as any).message });
     } finally {
       setReplyCtx(null);
+      setCommentAction(false);
     }
   }
 
@@ -126,6 +129,12 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
   useEffect(() => {
     getComments();
   }, []);
+
+  useEffect(() => {
+    if (!!error) {
+      setAlert({ type: 'danger', message: error.message });
+    }
+  }, [error]);
 
   return (
     <CommentApi.Provider
@@ -154,11 +163,11 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
           </div>
         )}
 
-        <PostCommentForm />
+        <PostCommentForm isLoading={isCommentAction} />
       </JContainer>
 
       {!!postComments.length ? (
-        <JContainer className="mt-3 rounded-md flex flex-col space-y-2">
+        <JContainer className="mt-3 rounded-md flex flex-col space-y-2 py-3">
           {postComments.map((comment) => {
             return <MemoizedPostComment comment={comment} key={comment.id} />;
           })}
@@ -172,7 +181,6 @@ const PostCommentsContainer: React.FC<Props> = ({ postId }) => {
       {(!!postComments.length || isCommentsLoading) && (
         <>
           <div className="flex flex-col w-full space-y-3 my-3">
-            {/* {isCommentsLoading && Array.from(Array(2)).map((_, i) => <PostSkeletonLoader key={i} />)}{' '} */}
             <div ref={observerRef} className="flex justify-center">
               <JButton
                 label={isEnd ? 'no more' : ''}
