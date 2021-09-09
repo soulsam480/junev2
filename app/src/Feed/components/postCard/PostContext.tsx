@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
 import { useAlert } from 'src/Lib/store/alerts';
@@ -14,6 +15,8 @@ interface Props {
 const PostContext: React.FC<Props> = ({ post }) => {
   const userId = useUserStore((state) => state.user.id);
   const setAlert = useAlert((state) => state.setAlert);
+  const nav = useNavigate();
+  const { pathname } = useLocation();
 
   const setLoader = useLoader((state) => state.setLoader);
 
@@ -42,6 +45,13 @@ const PostContext: React.FC<Props> = ({ post }) => {
 
           {userId === post?.user.id ? (
             <>
+              <JMenuItem
+                closeMenuCallback={cMenu}
+                onClick={() => nav({ pathname, search: '?action=edit' }, { replace: true })}
+              >
+                <span className="flex-grow">edit</span>
+              </JMenuItem>
+
               <JMenuItem closeMenuCallback={cMenu} onClick={archive}>
                 <span className="flex-grow">archive</span>
               </JMenuItem>
