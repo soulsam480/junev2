@@ -48,7 +48,7 @@ import {
 const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
   path: '/',
   method: 'get',
-  handler: async (___, res, _, __, { limit: pagination_limit, cursor: pagination_cursor }) => {
+  handler: async ({ res, query: { limit: pagination_limit, cursor: pagination_cursor } }) => {
     try {
       const cursor: number = parseInt(pagination_cursor);
       const limit: number = parseInt(pagination_limit) || 10;
@@ -66,7 +66,7 @@ const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
 const postsByUserId = createRoute<any, { id: string }>({
   path: '/user/:id',
   method: 'get',
-  handler: async (__, res, _, { id }) => {
+  handler: async ({ res, params: { id } }) => {
     if (!id) return res.sendError(400, createError('User id not found'));
 
     try {
@@ -83,7 +83,7 @@ const postsByUserId = createRoute<any, { id: string }>({
 const create = createRoute<{ post: { [x: string]: any } }>({
   path: '/',
   method: 'post',
-  handler: async ({ userId }, res, { post }) => {
+  handler: async ({ req: { userId }, res, body: { post } }) => {
     if (!Object.keys(post).length) res.sendError(400, createError('Post not found'));
 
     try {
@@ -100,7 +100,7 @@ const create = createRoute<{ post: { [x: string]: any } }>({
 const like = createRoute<any, { id: string }>({
   path: '/:id/like',
   method: 'post',
-  handler: async ({ userId }, res, _, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await likePost(id, userId as string);
 
@@ -115,7 +115,7 @@ const like = createRoute<any, { id: string }>({
 const unlike = createRoute<any, { id: string }>({
   path: '/:id/unlike',
   method: 'post',
-  handler: async ({ userId }, res, _, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await unlikePost(id, userId as string);
 
@@ -130,7 +130,7 @@ const unlike = createRoute<any, { id: string }>({
 const update = createRoute<UpdateQuery<Post>, { id: string }>({
   path: '/:id',
   method: 'patch',
-  handler: async ({ userId }, res, postBody, { id }) => {
+  handler: async ({ req: { userId }, res, body: postBody, params: { id } }) => {
     try {
       if (!postBody || !Object.keys(postBody).length)
         return res.sendError(400, 'Post body not found !');
@@ -148,7 +148,7 @@ const update = createRoute<UpdateQuery<Post>, { id: string }>({
 const getById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'get',
-  handler: async (_, res, __, { id }) => {
+  handler: async ({ res, params: { id } }) => {
     try {
       const post = await getPostById(id);
 
@@ -163,7 +163,7 @@ const getById = createRoute<any, { id: string }>({
 const deleteById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'delete',
-  handler: async ({ userId }, res, __, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await deletePostById(id, userId as string);
 

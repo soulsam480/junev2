@@ -255,7 +255,7 @@
 }
 
 .j-spinner {
-  @apply origin-center align-middle text-lime-400;
+  @apply origin-center align-middle;
   animation: rotate 2s linear infinite;
 
   &__path {

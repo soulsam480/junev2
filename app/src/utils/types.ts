@@ -13,6 +13,8 @@ export interface BaseJButtonProps
   round?: boolean;
   outline?: boolean;
   iconSlot?: React.ReactNode;
+  loadingSlot?: React.ReactNode;
+
   /**
    * should be prefixed with icn: for icon or img: for image when avatar prop is used
    */

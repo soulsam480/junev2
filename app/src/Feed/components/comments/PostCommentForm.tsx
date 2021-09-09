@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useComment } from 'src/Feed/context/commentApi';
 import JButton from 'src/Lib/JButton';
 import JInput from 'src/Lib/JInput';
+import JSpinner from 'src/Lib/JSpinner';
 
-interface Props {}
+interface Props {
+  isLoading: boolean;
+}
 
-const PostCommentForm: React.FC<Props> = () => {
+const PostCommentForm: React.FC<Props> = ({ isLoading }) => {
   const [comment, setComment] = useState('');
 
   const { commentAction } = useComment();
@@ -19,15 +22,21 @@ const PostCommentForm: React.FC<Props> = () => {
 
   return (
     <form className=" flex space-x-2 items-stretch" onSubmit={handleSubmission}>
-      <JInput
-        value={comment}
-        onInput={setComment}
-        placeholder="comment"
-        className="flex-grow"
-        dense
-      />
+      <div className="relative flex flex-grow items-center">
+        <JInput
+          value={comment}
+          onInput={setComment}
+          placeholder="comment"
+          className="flex-grow"
+          dense
+          id="comment-input"
+        />
+        <div className="absolute right-2 hidden sm:block">
+          {isLoading && <JSpinner size="24px" thickness="5" limeShade="600" />}{' '}
+        </div>
+      </div>
       <div className="sm:hidden">
-        <JButton label="post" noBg sm type="submit" disabled={!comment} />
+        <JButton label="post" sm type="submit" disabled={!comment} loading={isLoading} />
       </div>
     </form>
   );
