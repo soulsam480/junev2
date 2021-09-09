@@ -1,4 +1,4 @@
-import React, { HTMLProps, memo, useMemo } from 'react';
+import React, { HTMLProps, memo, useEffect, useMemo, useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
@@ -8,6 +8,7 @@ import { useComment } from 'src/Feed/context/commentApi';
 import { likeComment, likeReply, unLikeComment, unLikeReply } from 'src/Shared/services/post';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAlert } from 'src/Lib/store/alerts';
+import JSpinner from 'src/Lib/JSpinner';
 
 export interface ReplyCtx {
   user: string;
@@ -18,10 +19,11 @@ interface Props extends HTMLProps<HTMLDivElement> {
   comment: Comment;
 }
 
-const PostComment: React.FC<Props> = ({ className, comment }) => {
+const PostComment: React.FC<Props> = ({ className, comment, ...rest }) => {
   const { onRepliesExpand, setReplyCtx, postId, updateCommentReaction } = useComment();
 
   const userId = useUserStore((s) => s.user.id);
+  const [repliesLoading, setRepliesLoading] = useState(false);
 
   const setAlert = useAlert((state) => state.setAlert);
 
@@ -62,10 +64,35 @@ const PostComment: React.FC<Props> = ({ className, comment }) => {
     }
   }
 
+  function handleReplyClick() {
+    const commentInput = document.getElementById('comment-input');
+
+    setReplyCtx({
+      id: comment.id,
+      user: comment.user.id,
+      username: comment.user.username,
+    });
+
+    if (!commentInput) return;
+
+    commentInput.focus();
+  }
+
   const getTimeAgo = useMemo(() => timeAgo, []);
 
+  function handleRepliesExpand() {
+    onRepliesExpand(comment.id);
+    setRepliesLoading(true);
+  }
+
+  useEffect(() => {
+    if (repliesLoading && !!comment.replies?.length) {
+      setRepliesLoading(false);
+    }
+  }, [comment.replies]);
+
   return (
-    <div className={classNames(['flex-col space-y-2', className || ''])}>
+    <div className={classNames(['flex-col space-y-2', className || ''])} {...rest}>
       <div className="flex space-x-2 items-start">
         <div className="flex-none">
           <JAvatar
@@ -94,13 +121,7 @@ const PostComment: React.FC<Props> = ({ className, comment }) => {
               label="reply"
               dense
               noBg
-              onClick={() =>
-                setReplyCtx({
-                  id: comment.id,
-                  user: comment.user.id,
-                  username: comment.user.username,
-                })
-              }
+              onClick={handleReplyClick}
               title={`reply to ${comment.user.username}`}
             />
           </div>
@@ -113,7 +134,9 @@ const PostComment: React.FC<Props> = ({ className, comment }) => {
                 noBg
                 dense
                 sm
-                onClick={() => onRepliesExpand(comment.id)}
+                onClick={handleRepliesExpand}
+                loading={repliesLoading}
+                loadingSlot={<JSpinner size="20px" thickness="4" limeShade="600" />}
               />
             </div>
           ) : null}
