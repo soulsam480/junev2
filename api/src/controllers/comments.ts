@@ -21,7 +21,11 @@ export const getCommentsByPostId = createRoute<
 >({
   path: '/:id/comments',
   method: 'get',
-  handler: async (_, res, __, { id }, { cursor: pagination_cursor, limit: pagination_limit }) => {
+  handler: async ({
+    res,
+    params: { id },
+    query: { cursor: pagination_cursor, limit: pagination_limit },
+  }) => {
     try {
       const cursor: number = parseInt(pagination_cursor);
       const limit: number = parseInt(pagination_limit) || 10;
@@ -42,7 +46,7 @@ export const addCommentByPostId = createRoute<
 >({
   path: '/:id/comments',
   method: 'post',
-  handler: async ({ userId }, res, { comment }, { id }) => {
+  handler: async ({ req: { userId }, res, body: { comment }, params: { id } }) => {
     try {
       await createCommentOnPost(id, { ...comment, user: userId as string });
 
@@ -57,7 +61,7 @@ export const addCommentByPostId = createRoute<
 export const getRepliesByCommentId = createRoute<any, { id: string; commentId: string }>({
   path: '/:id/comments/:commentId',
   method: 'get',
-  handler: async (_, res, __, { id, commentId }) => {
+  handler: async ({ res, params: { id, commentId } }) => {
     try {
       const replies = await getRepliesForComment(id, commentId);
 
@@ -75,7 +79,7 @@ export const addReplyByCommentId = createRoute<
 >({
   path: '/:id/comments/:commentId',
   method: 'post',
-  handler: async ({ userId }, res, { comment }, { id, commentId }) => {
+  handler: async ({ req: { userId }, res, body: { comment }, params: { id, commentId } }) => {
     try {
       await createReplyOnPost(id, commentId, { ...comment, user: userId as string });
 
@@ -90,7 +94,7 @@ export const addReplyByCommentId = createRoute<
 export const likeComment = createRoute<any, { id: string; commentId: string }>({
   path: '/:id/comments/:commentId/like',
   method: 'post',
-  handler: async ({ userId }, res, _, { id, commentId }) => {
+  handler: async ({ req: { userId }, res, params: { id, commentId } }) => {
     try {
       await likeOnComment(id, commentId, userId as string);
 
@@ -105,7 +109,7 @@ export const likeComment = createRoute<any, { id: string; commentId: string }>({
 export const unLikeComment = createRoute<any, { id: string; commentId: string }>({
   path: '/:id/comments/:commentId/unlike',
   method: 'post',
-  handler: async ({ userId }, res, _, { id, commentId }) => {
+  handler: async ({ req: { userId }, res, params: { id, commentId } }) => {
     try {
       await unLikeOnComment(id, commentId, userId as string);
 
@@ -120,7 +124,7 @@ export const unLikeComment = createRoute<any, { id: string; commentId: string }>
 export const likeReply = createRoute<any, { id: string; commentId: string; replyId: string }>({
   path: '/:id/comments/:commentId/replies/:replyId/like',
   method: 'post',
-  handler: async ({ userId }, res, _, { commentId, id, replyId }) => {
+  handler: async ({ req: { userId }, res, params: { commentId, id, replyId } }) => {
     try {
       await likeOnReply(id, commentId, replyId, userId as string);
 
@@ -135,7 +139,7 @@ export const likeReply = createRoute<any, { id: string; commentId: string; reply
 export const unLikeReply = createRoute<any, { id: string; commentId: string; replyId: string }>({
   path: '/:id/comments/:commentId/replies/:replyId/unlike',
   method: 'post',
-  handler: async ({ userId }, res, _, { commentId, id, replyId }) => {
+  handler: async ({ req: { userId }, res, params: { commentId, id, replyId } }) => {
     try {
       await unLikeOnReply(id, commentId, replyId, userId as string);
 
