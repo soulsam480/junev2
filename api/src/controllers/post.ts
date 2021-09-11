@@ -1,7 +1,7 @@
 import { createController, createRoute } from 'dango-core';
-import { DocumentDefinition, UpdateQuery } from 'mongoose';
+import { UpdateQuery } from 'mongoose';
 import { createError, formatResponse } from 'src/utils/helpers';
-import { Comment, Post } from 'src/entities/post';
+import { Post } from 'src/entities/post';
 import {
   createPost,
   deletePostById,
@@ -13,11 +13,15 @@ import {
   updatePostById,
 } from 'src/services/post';
 import {
-  createCommentOnPost,
-  createReplyOnPost,
-  getCommentsForPost,
-  getRepliesForComment,
-} from 'src/services/comments';
+  getCommentsByPostId,
+  addCommentByPostId,
+  getRepliesByCommentId,
+  addReplyByCommentId,
+  likeComment,
+  unLikeComment,
+  likeReply,
+  unLikeReply,
+} from 'src/controllers/comments';
 
 /**
  * @private only for seeding once
@@ -44,7 +48,7 @@ import {
 const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
   path: '/',
   method: 'get',
-  handler: async (___, res, _, __, { limit: pagination_limit, cursor: pagination_cursor }) => {
+  handler: async ({ res, query: { limit: pagination_limit, cursor: pagination_cursor } }) => {
     try {
       const cursor: number = parseInt(pagination_cursor);
       const limit: number = parseInt(pagination_limit) || 10;
@@ -62,7 +66,7 @@ const getPosts = createRoute<any, any, { cursor: string; limit: string }>({
 const postsByUserId = createRoute<any, { id: string }>({
   path: '/user/:id',
   method: 'get',
-  handler: async (__, res, _, { id }) => {
+  handler: async ({ res, params: { id } }) => {
     if (!id) return res.sendError(400, createError('User id not found'));
 
     try {
@@ -79,7 +83,7 @@ const postsByUserId = createRoute<any, { id: string }>({
 const create = createRoute<{ post: { [x: string]: any } }>({
   path: '/',
   method: 'post',
-  handler: async ({ userId }, res, { post }) => {
+  handler: async ({ req: { userId }, res, body: { post } }) => {
     if (!Object.keys(post).length) res.sendError(400, createError('Post not found'));
 
     try {
@@ -96,7 +100,7 @@ const create = createRoute<{ post: { [x: string]: any } }>({
 const like = createRoute<any, { id: string }>({
   path: '/:id/like',
   method: 'post',
-  handler: async ({ userId }, res, _, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await likePost(id, userId as string);
 
@@ -111,7 +115,7 @@ const like = createRoute<any, { id: string }>({
 const unlike = createRoute<any, { id: string }>({
   path: '/:id/unlike',
   method: 'post',
-  handler: async ({ userId }, res, _, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await unlikePost(id, userId as string);
 
@@ -126,7 +130,7 @@ const unlike = createRoute<any, { id: string }>({
 const update = createRoute<UpdateQuery<Post>, { id: string }>({
   path: '/:id',
   method: 'patch',
-  handler: async ({ userId }, res, postBody, { id }) => {
+  handler: async ({ req: { userId }, res, body: postBody, params: { id } }) => {
     try {
       if (!postBody || !Object.keys(postBody).length)
         return res.sendError(400, 'Post body not found !');
@@ -144,7 +148,7 @@ const update = createRoute<UpdateQuery<Post>, { id: string }>({
 const getById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'get',
-  handler: async (_, res, __, { id }) => {
+  handler: async ({ res, params: { id } }) => {
     try {
       const post = await getPostById(id);
 
@@ -159,72 +163,9 @@ const getById = createRoute<any, { id: string }>({
 const deleteById = createRoute<any, { id: string }>({
   path: '/:id',
   method: 'delete',
-  handler: async ({ userId }, res, __, { id }) => {
+  handler: async ({ req: { userId }, res, params: { id } }) => {
     try {
       await deletePostById(id, userId as string);
-
-      res.sendStatus(200);
-    } catch (error) {
-      console.log(error);
-      res.sendError(500, error);
-    }
-  },
-});
-
-const getCommentsByPostId = createRoute<any, { id: string }>({
-  path: '/:id/comments',
-  method: 'get',
-  handler: async (_, res, __, { id }) => {
-    try {
-      const comments = await getCommentsForPost(id);
-
-      res.json(formatResponse(comments));
-    } catch (error) {
-      console.log(error);
-      res.sendError(500, error);
-    }
-  },
-});
-
-const addCommentByPostId = createRoute<{ comment: DocumentDefinition<Comment> }, { id: string }>({
-  path: '/:id/comments',
-  method: 'post',
-  handler: async ({ userId }, res, { comment }, { id }) => {
-    try {
-      await createCommentOnPost(id, { ...comment, user: userId as string });
-
-      res.sendStatus(200);
-    } catch (error) {
-      console.log(error);
-      res.sendError(500, error);
-    }
-  },
-});
-
-const getRepliesByCommentId = createRoute<any, { id: string; commentId: string }>({
-  path: '/:id/comments/:commentId',
-  method: 'get',
-  handler: async (_, res, __, { id, commentId }) => {
-    try {
-      const replies = await getRepliesForComment(id, commentId);
-
-      res.json(formatResponse(replies));
-    } catch (error) {
-      console.log(error);
-      res.sendError(500, error);
-    }
-  },
-});
-
-const addReplyByCommentId = createRoute<
-  { reply: DocumentDefinition<Comment> },
-  { id: string; commentId: string }
->({
-  path: '/:id/comments/:commentId',
-  method: 'post',
-  handler: async ({ userId }, res, { reply }, { id, commentId }) => {
-    try {
-      await createReplyOnPost(id, commentId, { ...reply, user: userId as string });
 
       res.sendStatus(200);
     } catch (error) {
@@ -247,6 +188,10 @@ const postController = createController('/posts', [
   addCommentByPostId,
   getRepliesByCommentId,
   addReplyByCommentId,
+  likeComment,
+  unLikeComment,
+  likeReply,
+  unLikeReply,
 ]);
 
 export { postController };

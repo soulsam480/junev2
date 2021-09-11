@@ -7,7 +7,7 @@ interface Props {
   user?: UserProfile;
 }
 
-const Header: React.FC<Props> = () => {
+const Header: React.FC<Props> = ({ user }) => {
   return (
     <div className="user-profile__header">
       <div className="user-profile__header-cover">
@@ -18,7 +18,14 @@ const Header: React.FC<Props> = () => {
         />
       </div>
       <div className="user-profile__header-profile">
-        <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="120px" rounded />
+        <JAvatar
+          src={user?.image}
+          content={!user?.image ? user?.username.slice(0, 2) : undefined}
+          contentClass="bg-lime-200 shadow-sm"
+          rounded
+          size="120px"
+          iconSize="50px"
+        />{' '}
       </div>
     </div>
   );

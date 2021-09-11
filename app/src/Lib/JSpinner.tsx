@@ -5,13 +5,14 @@ interface Props {
   className?: string;
   size?: string;
   thickness?: string | number;
+  limeShade?: string;
 }
 
-const JSpinner: React.FC<Props> = ({ className, size, thickness }) => {
+const JSpinner: React.FC<Props> = ({ className, size, thickness, limeShade }) => {
   return (
     <svg
       viewBox="25 25 50 50"
-      className={classNames(['j-spinner', className || ''])}
+      className={classNames(['j-spinner', className || '', `text-lime-${limeShade || 400}`])}
       height={size}
       width={size}
     >

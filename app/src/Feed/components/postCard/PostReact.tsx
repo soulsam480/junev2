@@ -4,6 +4,7 @@ import { likePost, unlikePost } from 'src/Shared/services/post';
 import { classNames } from 'src/utils/helpers';
 import { Post } from 'src/utils/types';
 import { useAlert } from 'src/Lib/store/alerts';
+import JIcon from 'src/Lib/JIcon';
 interface Props {
   updatePostReaction(post: Post): void;
   uid: string;
@@ -50,11 +51,20 @@ const PostReact: React.FC<Props> = ({ updatePostReaction, uid, post }) => {
   return (
     <JButton
       noBg
-      icon="ion:heart"
-      size="20px"
       sm
       onClick={() => handleReaction(post)}
-      className={classNames([{ 'fill-current text-red-700': post.likes.includes(uid) }])}
+      iconSlot={
+        <>
+          <span
+            className={classNames([{ hidden: !post.likes.includes(uid) }, 'flex items-center'])}
+          >
+            <JIcon icon="ion:heart" size="20px" className="fill-current text-red-700" />
+          </span>
+          <span className={classNames([{ hidden: post.likes.includes(uid) }, 'flex items-center'])}>
+            <JIcon icon="ion:heart-outline" size="20px" />
+          </span>
+        </>
+      }
     />
   );
 };

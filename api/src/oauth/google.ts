@@ -16,9 +16,12 @@ export function setupGoogleOauth(passportInstance: PassportStatic) {
         passReqToCallback: true,
       },
       async (_: any, __: any, ___: any, profile: Record<string, string>, done: any) => {
-        const user = await userModel.findOne({
-          $or: [{ email: profile.email }, { ga_id: profile.id }],
-        });
+        const user = await userModel
+          .findOne({
+            $or: [{ email: profile.email }, { ga_id: profile.id }],
+          })
+          .select('id _id');
+
         if (!user) {
           userModel
             .create({
@@ -46,7 +49,7 @@ export function setupGoogleOauth(passportInstance: PassportStatic) {
   });
 
   passportInstance.deserializeUser(async (id: string, cb) => {
-    const user = await userModel.findOne({ id });
+    const user = await userModel.findOne({ id }).select('id _id');
     if (!user) return;
     cb(null, user.toJSON());
   });

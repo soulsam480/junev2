@@ -1,50 +1,72 @@
-import React, { CSSProperties } from 'react';
+import React, { HTMLProps, useMemo } from 'react';
 import { classNames } from 'src/utils/helpers';
 
+type InputElement = HTMLInputElement | HTMLTextAreaElement;
 interface Props {
   onInput: (e: string) => void;
-  value?: string | number | readonly string[];
-  type?: string;
   className?: string;
-  id?: string;
-  placeholder?: string;
   is?: 'input' | 'textarea';
   contentClass?: string;
   label?: string;
+  dense?: boolean;
+  onEnter?: (e: React.KeyboardEvent<InputElement>) => void;
 }
 
-const JInput: React.FC<Props> = ({
-  value,
+const JInput: React.FC<Props & Omit<HTMLProps<InputElement>, 'onInput'>> = ({
   onInput,
-  type,
   className,
-  id,
-  placeholder,
   is = 'input',
   contentClass,
   label,
+  dense,
+  onEnter,
+  onKeyDown,
+  ...rest
 }) => {
+  const inputClasses = useMemo(
+    () => [
+      {
+        'j-input--dense': dense,
+      },
+      className || '',
+      'j-input',
+    ],
+    [dense],
+  );
+
+  function handleKeyDown(e: React.KeyboardEvent<InputElement>) {
+    if (!!onKeyDown) {
+      onKeyDown(e);
+    }
+
+    if (!!onEnter) {
+      if (e.key !== 'Enter') return;
+      onEnter(e);
+    }
+  }
+
   return (
-    <div className={classNames(['j-input', className || ''])}>
-      {label && <label children={label} htmlFor={id} className="j-input__label" />}
+    <div className={classNames([...inputClasses])}>
+      {label && <label children={label} htmlFor={rest.id} className="j-input__label" />}
       {is === 'input' ? (
+        //@ts-ignore
         <input
           onChange={(e) => onInput(e.target.value)}
-          id={id}
-          type={type || 'text'}
           className={classNames([`${contentClass || ''}`])}
-          value={value}
-          placeholder={placeholder}
           tabIndex={0}
+          onKeyDown={handleKeyDown}
+          //@ts-ignore
+          {...rest}
         />
       ) : (
+        //@ts-ignore
         <textarea
           onChange={(e) => onInput(e.target.value)}
-          id={id}
           className={classNames([`${contentClass || ''}`])}
-          value={value}
-          placeholder={placeholder}
           tabIndex={0}
+          onKeyDown={handleKeyDown}
+          //@ts-ignore
+          {...rest}
         />
       )}
     </div>
