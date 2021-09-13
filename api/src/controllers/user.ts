@@ -1,7 +1,8 @@
 import { createController, createRoute } from 'dango-core';
-import { userModel } from 'src/entities/user';
-import { getUserPosts, getUserProfile } from 'src/services/user';
+import { User, userModel } from 'src/entities/user';
+import { getUserPosts, getUserProfile, updateUser } from 'src/services/user';
 import { filterFromQuery } from 'src/utils/helpers';
+import { UpdateQuery } from 'mongoose';
 
 const searchUser = createRoute({
   path: '/search',
@@ -54,6 +55,23 @@ const userPosts = createRoute<any, { id: string }, { cursor: string; limit: stri
   },
 });
 
-const userController = createController('/users', [searchUser, userData, userPosts]);
+const userDetailsUpdate = createRoute<UpdateQuery<User>, { userId: string }>({
+  path: '/:userId',
+  method: 'patch',
+  handler: async ({ body, res, params: { userId } }) => {
+    try {
+      if (!body) return res.sendError(400, {
+        message: "No user data provided"
+      })
+
+      const data = await updateUser(userId, body);
+      res.json(data);
+    } catch (error) {
+      res.sendError(500, { message: 'Internal server error', error });
+    }
+  },
+});
+
+const userController = createController('/users', [searchUser, userData, userPosts, userDetailsUpdate]);
 
 export { userController };

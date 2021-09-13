@@ -5,6 +5,10 @@ import JContainer from 'src/Lib/JContainer';
 // import JImage from 'src/Lib/JImage';
 import JInput from 'src/Lib/JInput';
 import { useUserStore } from 'src/User/store/useUserStore';
+import { useAlert } from 'src/Lib/store/alerts';
+import { updateUserById } from '../services/users';
+import { UpdateUserData } from 'src/utils/types';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {}
 interface UserDetails {
@@ -17,10 +21,12 @@ interface UserDetails {
 
 const Settings: React.FC<Props> = () => {
   const user = useUserStore((state) => state.user);
-
+  const setAlert = useAlert((state) => state.setAlert);
+  const navigate = useNavigate();
+  console.log(user);
   const inputFile = useRef<HTMLInputElement>(null);
 
-  const [userDetails, setUserDetails] = useState<UserDetails>({
+  const [userDetails, setUserDetails] = useState<UpdateUserData>({
     name: user.name,
     email: user.email,
     bio: user.bio,
@@ -28,8 +34,31 @@ const Settings: React.FC<Props> = () => {
     username: user.username,
   });
 
-  const updateUserDetails = (e: FormEvent) => {
+  function diffMatcher<T extends Record<string, any>>(
+    newData: { [x in keyof T]: T[x] },
+    toMatch: T,
+  ): Partial<T> {
+    return Object.entries(newData).reduce<Partial<T>>((acc, [key, value]) => {
+      acc = { ...acc, [key]: value !== toMatch[key] && value.length > 0 && value };
+      return acc;
+    }, {});
+    // let diffedData: Partial<T> = {};
+    // Object.keys(newData).forEach((key) => {
+    //   newData[key] !== toMatch[key] && newData[key].length > 0 && (diffedData[key] = newData[key]);
+    // });
+    // return Object.entries(diffedData).length > 0 ? diffedData : null;
+  }
+
+  const updateUserDetails = async (e: FormEvent) => {
     e.preventDefault();
+    try {
+      const data = diffMatcher(userDetails, user);
+      await updateUserById(user.id, data);
+      setAlert({ type: 'success', message: 'Updated successfully' });
+      navigate('/');
+    } catch (error) {
+      setAlert({ type: 'danger', message: 'Unable to update user' });
+    }
   };
   return (
     <div>

@@ -1,5 +1,5 @@
 import { api } from 'src/utils/helpers';
-import { PaginationParams, Post, ResponseSchema } from 'src/utils/types';
+import { PaginationParams, Post, ResponseSchema, UpdateUserData, User } from 'src/utils/types';
 import { UserProfile } from 'src/User/store/useUserStore';
 
 export interface SearchUserResponse {
@@ -19,5 +19,9 @@ export function getUserProfileByUsername(username: string) {
 }
 
 export function getUserPostsById(id: string, opts: PaginationParams) {
-  return api.get<ResponseSchema<Post[]>>(`users/${id}/posts/`, { params: { ...opts } });
+  return api.get<ResponseSchema<Post[]>>(`/users/${id}/posts/`, { params: { ...opts } });
+}
+
+export function updateUserById(id: string, userData: UpdateUserData) {
+  return api.patch<ResponseSchema<User>>(`/users/${id}`, { ...userData })
 }

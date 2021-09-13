@@ -46,6 +46,15 @@ export interface User extends TimeStamps {
   liked_comments?: Comment[];
 }
 
+export interface UpdateUserData{
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+}
+
+
 export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
 
 export interface Comment extends TimeStamps {

@@ -49,7 +49,7 @@ export const addCommentByPostId = createRoute<
   handler: async ({ req: { userId }, res, body: { comment }, params: { id } }) => {
     try {
       await createCommentOnPost(id, { ...comment, user: userId as string });
-
+        
       res.sendStatus(200);
     } catch (error) {
       console.log(error);

@@ -1,6 +1,7 @@
 import { postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
 import { cursorPaginateResponse, formatResponse, getObjectId } from 'src/utils/helpers';
+import { UpdateQuery } from 'mongoose';
 
 export async function getUserProfile(username: string) {
   try {
@@ -33,5 +34,15 @@ export async function getUserPosts(id: string, cursor: number, limit: number) {
     );
   } catch (error) {
     Promise.reject(error);
+  }
+}
+
+export async function updateUser(userId: string, updatedUser: UpdateQuery<User>) {
+  try {
+    await userModel.updateOne({ _id: userId }, {
+      ...updatedUser
+    }).exec();
+  } catch (error) {
+    Promise.reject(error)
   }
 }
