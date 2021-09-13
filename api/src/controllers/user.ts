@@ -60,9 +60,10 @@ const userDetailsUpdate = createRoute<UpdateQuery<User>, { userId: string }>({
   method: 'patch',
   handler: async ({ body, res, params: { userId } }) => {
     try {
-      if (!body) return res.sendError(400, {
-        message: "No user data provided"
-      })
+      if (!body)
+        return res.sendError(400, {
+          message: 'No user data provided',
+        });
 
       const data = await updateUser(userId, body);
       res.json(data);
@@ -72,6 +73,11 @@ const userDetailsUpdate = createRoute<UpdateQuery<User>, { userId: string }>({
   },
 });
 
-const userController = createController('/users', [searchUser, userData, userPosts, userDetailsUpdate]);
+const userController = createController('/users', [
+  searchUser,
+  userData,
+  userPosts,
+  userDetailsUpdate,
+]);
 
 export { userController };

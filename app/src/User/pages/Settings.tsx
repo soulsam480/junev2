@@ -15,6 +15,7 @@ interface Props {}
 
 const Settings: React.FC<Props> = () => {
   const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((s) => s.setUser);
   const setAlert = useAlert((state) => state.setAlert);
   const setLoader = useLoader((s) => s.setLoader);
   const navigate = useNavigate();
@@ -37,7 +38,11 @@ const Settings: React.FC<Props> = () => {
 
     setLoader(true);
     try {
-      await updateUserById(user.id, data);
+      const {
+        data: { data: userFromResponse },
+      } = await updateUserById(user.id, data);
+
+      setUser({ ...userFromResponse });
 
       setAlert({ type: 'success', message: 'Updated successfully' });
     } catch (error) {

@@ -37,12 +37,23 @@ export async function getUserPosts(id: string, cursor: number, limit: number) {
   }
 }
 
-export async function updateUser(userId: string, updatedUser: UpdateQuery<User>) {
+export async function updateUser(userId: string, updatedUserData: UpdateQuery<User>) {
   try {
-    await userModel.updateOne({ _id: userId }, {
-      ...updatedUser
-    }).exec();
+    await userModel
+      .updateOne(
+        { _id: userId },
+        {
+          ...updatedUserData,
+        },
+      )
+      .exec();
+
+    const userFromDb = await userModel
+      .findOne({ _id: userId })
+      .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
+
+    return formatResponse(userFromDb);
   } catch (error) {
-    Promise.reject(error)
+    Promise.reject(error);
   }
 }

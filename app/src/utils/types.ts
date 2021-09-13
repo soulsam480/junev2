@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, HTMLProps } from 'react';
+import React, { HTMLProps } from 'react';
 
 export interface BaseJButtonProps
   extends Omit<HTMLProps<HTMLButtonElement>, 'size' | 'onInput' | 'type'> {
