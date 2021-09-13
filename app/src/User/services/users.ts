@@ -23,5 +23,5 @@ export function getUserPostsById(id: string, opts: PaginationParams) {
 }
 
 export function updateUserById(id: string, userData: UpdateUserData) {
-  return api.patch<ResponseSchema<User>>(`/users/${id}`, { ...userData })
+  return api.patch(`/users/${id}`, { ...userData });
 }
