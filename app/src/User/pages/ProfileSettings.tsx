@@ -13,7 +13,7 @@ import { diffMatcher } from 'src/utils/helpers';
 
 interface Props {}
 
-const Settings: React.FC<Props> = () => {
+const ProfileSettings: React.FC<Props> = () => {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((s) => s.setUser);
   const setAlert = useAlert((state) => state.setAlert);
@@ -117,4 +117,4 @@ const Settings: React.FC<Props> = () => {
     </div>
   );
 };
-export default Settings;
+export default ProfileSettings;

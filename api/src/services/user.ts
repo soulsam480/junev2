@@ -57,3 +57,43 @@ export async function updateUser(userId: string, updatedUserData: UpdateQuery<Us
     Promise.reject(error);
   }
 }
+
+export async function updatePassword(userId: string, updatedPassword: UpdateQuery<User>) {
+  try {
+
+    const user = await userModel.findById(userId);
+    console.log("/////////////////////////////////////////////////////////////////////////////")
+    console.log({ user });
+    if (!user.password) {
+      await userModel
+        .updateOne(
+          { _id: userId },
+          {
+            password: updatedPassword.newPassword,
+          },
+        )
+        .exec();
+    } else {
+      if (user.password !== updatedPassword.oldPassword) {
+        return Promise.reject("Wrong old password!");
+      } else {
+        await userModel
+          .updateOne(
+            { _id: userId },
+            {
+              password: updatedPassword.newPassword,
+            },
+          )
+          .exec();
+      }
+    }
+
+    const userFromDb = await userModel
+      .findOne({ _id: userId })
+    // .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
+
+    return formatResponse(userFromDb);
+  } catch (error) {
+    Promise.reject(error);
+  }
+}

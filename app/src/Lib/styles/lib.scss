@@ -114,7 +114,7 @@
   input,
   textarea {
     @apply outline-none ease-in-out transition-all border-none w-full;
-    @apply rounded-md focus:(ring-lime-200 ring-2);
+    @apply rounded-md  focus:(ring-gray-600 ring-2);
     @apply text-black dark:text-white bg-warm-gray-100 h-full p-2;
   }
 

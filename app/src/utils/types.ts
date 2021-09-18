@@ -54,6 +54,10 @@ export interface UpdateUserData {
   image?: string;
 }
 
+export interface UpdatePassword {
+  oldPassword: string,
+  newPassword: string
+}
 export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
 
 export interface Comment extends TimeStamps {
