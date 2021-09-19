@@ -3,6 +3,7 @@ import { User, userModel } from 'src/entities/user';
 import { getUserPosts, getUserProfile, updatePassword, updateUser } from 'src/services/user';
 import { filterFromQuery } from 'src/utils/helpers';
 import { UpdateQuery } from 'mongoose';
+import { UpdatePasswordDto } from 'src/utils/dtos';
 
 const searchUser = createRoute({
   path: '/search',
@@ -73,12 +74,12 @@ const userDetailsUpdate = createRoute<UpdateQuery<User>, { userId: string }>({
   },
 });
 
-const userPasswordUpdate = createRoute<UpdateQuery<User>, { userId: string }>({
+const userPasswordUpdate = createRoute<UpdatePasswordDto, { userId: string }>({
   path: '/:userId/password',
-  method: 'patch',
+  method: 'post',
   handler: async ({ body, res, params: { userId } }) => {
     try {
-      if (!body)
+      if (!Object.values(body).every((val) => !!val))
         return res.sendError(400, {
           message: 'No user data provided',
         });
@@ -96,7 +97,7 @@ const userController = createController('/users', [
   userData,
   userPosts,
   userDetailsUpdate,
-  userPasswordUpdate
+  userPasswordUpdate,
 ]);
 
 export { userController };

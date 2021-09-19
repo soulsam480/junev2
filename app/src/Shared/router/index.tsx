@@ -10,10 +10,11 @@ const UserProfile = React.lazy(() => import('src/User/pages/Index'));
 const ProfileSettings = React.lazy(() => import('src/User/pages/ProfileSettings'));
 const PasswordSettings = React.lazy(() => import('src/User/pages/PasswordSettings'));
 const SettingsNav = React.lazy(() => import('src/User/pages/SettingsNav'));
-const BottomNav = React.lazy(() => import('src/Shared/components/BottomNav'));
 const FeedLeftNav = React.lazy(() => import('src/Feed/components/LeftNav'));
 const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
 const PostDetails = React.lazy(() => import('src/Feed/pages/PostDetail'));
+
+import BottomNav from 'src/Shared/components/BottomNav';
 
 export enum JunePaths {
   Root = '/',
@@ -123,31 +124,40 @@ export function useJuneRouter() {
               path: JunePaths.PasswordSettings,
               element: <PasswordSettings />,
             },
+            {
+              path: JunePaths.UserProfile,
+              element: <UserProfile />,
+            },
+            {
+              path: JunePaths.Post,
+              element: <PostDetails />,
+            },
           ],
           isLoggedIn,
         ),
       ],
     },
-    {
-      path: JunePaths.Root,
-      element: (
-        <Home
-          leftNavSlot={<FeedLeftNav />}
-          rightNavSlot={isLoggedIn ? <FeedRightNav /> : null}
-          bottomNavSlot={isLoggedIn ? <BottomNav /> : null}
-        />
-      ),
-      children: [
-        {
-          path: JunePaths.UserProfile,
-          element: <UserProfile />,
-        },
-        {
-          path: JunePaths.Post,
-          element: <PostDetails />,
-        },
-      ],
-    },
+    //TODO: fix this
+    // {
+    //   path: JunePaths.Root,
+    //   element: (
+    //     <Home
+    //       leftNavSlot={<FeedLeftNav />}
+    //       rightNavSlot={isLoggedIn ? <FeedRightNav /> : null}
+    //       bottomNavSlot={isLoggedIn ? <BottomNav /> : null}
+    //     />
+    //   ),
+    //   children: [
+    //     {
+    //       path: JunePaths.UserProfile,
+    //       element: <UserProfile />,
+    //     },
+    //     {
+    //       path: JunePaths.Post,
+    //       element: <PostDetails />,
+    //     },
+    //   ],
+    // },
     {
       path: JunePaths.Lib,
       element: <Lib />,

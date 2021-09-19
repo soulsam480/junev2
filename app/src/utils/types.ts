@@ -24,6 +24,7 @@ export interface BaseJButtonProps
   dense?: boolean;
   noBg?: boolean;
   to?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
 interface TimeStamps {
@@ -55,8 +56,8 @@ export interface UpdateUserData {
 }
 
 export interface UpdatePassword {
-  oldPassword: string,
-  newPassword: string
+  oldPassword: string;
+  newPassword: string;
 }
 export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
 

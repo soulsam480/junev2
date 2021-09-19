@@ -1,27 +1,35 @@
-import * as React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import JContainer from 'src/Lib/JContainer';
+import JIcon from 'src/Lib/JIcon';
 
+interface Props {}
 
-export default function App() {
+const SettingsNav: React.FC<Props> = () => {
   return (
     <div className="flex flex-col my-2">
-      <h1 className="text-center text-4xl font-bold">Settings</h1>
-      <div className="flex justify-evenly flex-wrap mt-20">
+      <div className="text-2xl">settings</div>
+      <hr className="my-2 border-lime-400" />
+
+      <JContainer className="flex flex-col space-y-2 rounded-md">
         <Link
           to="/settings/profile"
-          className="flex items-center justify-center rounded-lg 
-        bg-lime-300 hover:bg-lime-200 w-40 h-40 m-5"
+          className="flex p-2 sm:hover:bg-warm-gray-300 bg-warm-gray-300 sm:bg-transparent rounded-md justify-between items-center"
         >
-          <p>Edit Profile</p>
+          <span>edit Profile</span>
+          <JIcon icon="ion:arrow-forward-circle-outline" size="18px" />
         </Link>
+
         <Link
           to="/settings/password"
-          className="flex items-center justify-center rounded-lg bg-lime-300 
-        hover:bg-lime-200 w-40 h-40 m-5"
+          className="flex p-2 sm:hover:bg-warm-gray-300 bg-warm-gray-300 sm:bg-transparent rounded-md justify-between items-center"
         >
-          <p>Change Password</p>
+          <span>change Password</span>
+          <JIcon icon="ion:arrow-forward-circle-outline" size="18px" />
         </Link>
-      </div>
+      </JContainer>
     </div>
   );
-}
+};
+
+export default SettingsNav;

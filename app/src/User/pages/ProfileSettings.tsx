@@ -45,18 +45,18 @@ const ProfileSettings: React.FC<Props> = () => {
       setUser({ ...userFromResponse });
 
       setAlert({ type: 'success', message: 'Updated successfully' });
+      navigate('/');
     } catch (error) {
       setAlert({ type: 'danger', message: 'Unable to update user' });
     } finally {
-      navigate('/');
-
       setLoader(false);
     }
   };
   return (
     <div>
-      <div className="text-2xl">settings</div>
+      <div className="text-2xl">profile settings</div>
       <hr className="my-2 border-lime-400" />
+
       <form className="flex flex-col space-y-4" onSubmit={updateUserDetails}>
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
@@ -110,7 +110,7 @@ const ProfileSettings: React.FC<Props> = () => {
           />
 
           <div className="flex justify-end">
-            <JButton type="submit">save</JButton>
+            <JButton type="submit" label="save" />
           </div>
         </JContainer>
       </form>

@@ -2,6 +2,7 @@ import { postModel } from 'src/entities/post';
 import { User, userModel } from 'src/entities/user';
 import { cursorPaginateResponse, formatResponse, getObjectId } from 'src/utils/helpers';
 import { UpdateQuery } from 'mongoose';
+import { UpdatePasswordDto } from 'src/utils/dtos';
 
 export async function getUserProfile(username: string) {
   try {
@@ -58,41 +59,40 @@ export async function updateUser(userId: string, updatedUserData: UpdateQuery<Us
   }
 }
 
-export async function updatePassword(userId: string, updatedPassword: UpdateQuery<User>) {
+export async function updatePassword(userId: string, updatedPassword: UpdatePasswordDto) {
   try {
+    const userFromDb = await userModel.findById(userId);
 
-    const user = await userModel.findById(userId);
-    console.log("/////////////////////////////////////////////////////////////////////////////")
-    console.log({ user });
-    if (!user.password) {
+    if (!userFromDb) return Promise.reject('User not found');
+
+    if (!userFromDb.password) {
       await userModel
         .updateOne(
           { _id: userId },
           {
-            password: updatedPassword.newPassword,
+            password: await userFromDb.hashPassword(updatedPassword.newPassword),
           },
         )
         .exec();
     } else {
-      if (user.password !== updatedPassword.oldPassword) {
-        return Promise.reject("Wrong old password!");
-      } else {
-        await userModel
-          .updateOne(
-            { _id: userId },
-            {
-              password: updatedPassword.newPassword,
-            },
-          )
-          .exec();
-      }
+      if (!(await userFromDb.comparePassword(updatedPassword.oldPassword)))
+        return Promise.reject('Password in incorrect !');
+
+      await userModel
+        .updateOne(
+          { _id: userId },
+          {
+            password: await userFromDb.hashPassword(updatedPassword.newPassword),
+          },
+        )
+        .exec();
     }
 
-    const userFromDb = await userModel
+    const updatedUser = await userModel
       .findOne({ _id: userId })
-    // .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
+      .select('-followers -followings -liked_posts -commented_posts -liked_comments -password');
 
-    return formatResponse(userFromDb);
+    return formatResponse(updatedUser);
   } catch (error) {
     Promise.reject(error);
   }

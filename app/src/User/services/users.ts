@@ -1,5 +1,11 @@
 import { api } from 'src/utils/helpers';
-import { PaginationParams, Post, ResponseSchema, UpdatePassword, UpdateUserData } from 'src/utils/types';
+import {
+  PaginationParams,
+  Post,
+  ResponseSchema,
+  UpdatePassword,
+  UpdateUserData,
+} from 'src/utils/types';
 import { User, UserProfile } from 'src/User/store/useUserStore';
 
 export interface SearchUserResponse {
@@ -26,5 +32,5 @@ export function updateUserById(id: string, userData: UpdateUserData) {
   return api.patch<ResponseSchema<User>>(`/users/${id}`, { ...userData });
 }
 export function updateUserPassword(id: string, passwords: UpdatePassword) {
-  return api.patch<ResponseSchema<User>>(`/users/${id}/password`, { ...passwords });
+  return api.post<ResponseSchema<User>>(`/users/${id}/password`, { ...passwords });
 }
