@@ -34,6 +34,7 @@ const JButton: React.FC<JButtonProps> = ({
   noBg,
   className,
   to,
+  align,
   onClick,
   ...rest
 }) => {
@@ -61,6 +62,7 @@ const JButton: React.FC<JButtonProps> = ({
       {
         'w-full': !!block,
       },
+      align === 'left' ? 'justify-left' : align === 'right' ? 'justify-right' : 'justify-center',
     ],
     [noBg, invert, flat, outline, dense, sm, round, className, block],
   );

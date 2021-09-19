@@ -68,7 +68,6 @@ const Login: React.FC<Props> = () => {
       setApiToken(data.token as string);
       delete (data as any).refresh;
       delete (data as any).token;
-
       setUser({ ...data });
       setLogin(true);
       tokenWatcher();
