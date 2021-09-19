@@ -5,7 +5,7 @@ import JIcon from 'src/Lib/JIcon';
 
 interface Props {}
 
-const SettingsNav: React.FC<Props> = () => {
+const Settings: React.FC<Props> = () => {
   return (
     <div className="flex flex-col my-2">
       <div className="text-2xl">settings</div>
@@ -32,4 +32,4 @@ const SettingsNav: React.FC<Props> = () => {
   );
 };
 
-export default SettingsNav;
+export default Settings;

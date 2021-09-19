@@ -7,9 +7,9 @@ const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
 const Login = React.lazy(() => import('src/User/pages/Login'));
 const Lib = React.lazy(() => import('src/Shared/pages/Lib'));
 const UserProfile = React.lazy(() => import('src/User/pages/Index'));
-const ProfileSettings = React.lazy(() => import('src/User/pages/ProfileSettings'));
-const PasswordSettings = React.lazy(() => import('src/User/pages/PasswordSettings'));
-const SettingsNav = React.lazy(() => import('src/User/pages/SettingsNav'));
+const ProfileSettings = React.lazy(() => import('src/User/pages/settings/ProfileSettings'));
+const PasswordSettings = React.lazy(() => import('src/User/pages/settings/PasswordSettings'));
+const Settings = React.lazy(() => import('src/User/pages/Settings'));
 const FeedLeftNav = React.lazy(() => import('src/Feed/components/LeftNav'));
 const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
 const PostDetails = React.lazy(() => import('src/Feed/pages/PostDetail'));
@@ -114,7 +114,7 @@ export function useJuneRouter() {
             },
             {
               path: JunePaths.Settings,
-              element: <SettingsNav />,
+              element: <Settings />,
             },
             {
               path: JunePaths.ProfileSettings,
