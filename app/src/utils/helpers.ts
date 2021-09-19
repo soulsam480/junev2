@@ -130,3 +130,15 @@ export function randomId(len?: number) {
   window.crypto.getRandomValues(arr);
   return Array.from(arr, dec2hex).join('');
 }
+
+export function diffMatcher<T extends Record<string, any>, K>(
+  toMatch: T,
+  newData: { [x in keyof T]?: T[x] },
+): Partial<T> {
+  return Object.entries(newData).reduce<Partial<T>>((acc, [key, value]) => {
+    if (!(value !== toMatch[key] && value.length > 0)) return acc;
+    acc = { ...acc, [key]: value };
+
+    return acc;
+  }, {});
+}

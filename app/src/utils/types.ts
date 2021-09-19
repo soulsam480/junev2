@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, HTMLProps } from 'react';
+import React, { HTMLProps } from 'react';
 
 export interface BaseJButtonProps
   extends Omit<HTMLProps<HTMLButtonElement>, 'size' | 'onInput' | 'type'> {
@@ -24,6 +24,7 @@ export interface BaseJButtonProps
   dense?: boolean;
   noBg?: boolean;
   to?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
 interface TimeStamps {
@@ -46,6 +47,18 @@ export interface User extends TimeStamps {
   liked_comments?: Comment[];
 }
 
+export interface UpdateUserData {
+  name?: string;
+  username?: string;
+  email?: string;
+  bio?: string;
+  image?: string;
+}
+
+export interface UpdatePassword {
+  oldPassword: string;
+  newPassword: string;
+}
 export type Reply = Omit<Comment, 'replies' | 'total_replies'>;
 
 export interface Comment extends TimeStamps {
