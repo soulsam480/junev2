@@ -22,6 +22,7 @@ import {
   likeReply,
   unLikeReply,
 } from 'src/controllers/comments';
+import { auth } from 'src/middlewares/auth';
 
 /**
  * @private only for seeding once
@@ -175,23 +176,27 @@ const deleteById = createRoute<any, { id: string }>({
   },
 });
 
-const postController = createController('/posts', [
-  getPosts,
-  postsByUserId,
-  create,
-  like,
-  unlike,
-  update,
-  getById,
-  deleteById,
-  getCommentsByPostId,
-  addCommentByPostId,
-  getRepliesByCommentId,
-  addReplyByCommentId,
-  likeComment,
-  unLikeComment,
-  likeReply,
-  unLikeReply,
-]);
+const postController = createController(
+  '/posts',
+  [
+    getPosts,
+    postsByUserId,
+    create,
+    like,
+    unlike,
+    update,
+    getById,
+    deleteById,
+    getCommentsByPostId,
+    addCommentByPostId,
+    getRepliesByCommentId,
+    addReplyByCommentId,
+    likeComment,
+    unLikeComment,
+    likeReply,
+    unLikeReply,
+  ],
+  [auth],
+);
 
 export { postController };
