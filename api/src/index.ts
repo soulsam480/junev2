@@ -12,11 +12,11 @@ import { createExpressServer } from 'dango-core';
 import { createConnection } from 'src/db';
 import { parseEnv } from 'src/utils/helpers';
 import { authRouter } from 'src/controllers/auth';
+import { cdnRouter } from './controllers/cdn';
 import { setupOauth } from './oauth';
 // import { serve, setup } from 'swagger-ui-express';
 // import specs from '../swagger-spec.json';
 import { postController } from './controllers/post';
-import { auth } from './middlewares/auth';
 import { userController } from './controllers/user';
 import { CORS_ORIGINS } from './utils/constants';
 
@@ -39,16 +39,17 @@ async function main() {
     }),
   );
   app.use(helmet());
+  app.enable('etag'); // use strong etags
 
   setupOauth(app);
 
   app.use('/auth', authRouter);
+  app.use('/cdn', cdnRouter);
 
   // app.use('/api-docs', serve, setup(specs));
 
   createExpressServer(app, {
     controllers: [postController, userController],
-    middlewares: [auth],
   });
 
   try {
