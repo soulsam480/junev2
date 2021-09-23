@@ -104,7 +104,6 @@ export interface Result {
 export type hookType = 'start' | 'cancel' | 'typing';
 
 export interface ResponseSchema<T = any> {
-  key: string | undefined;
   data: T;
   total_count?: number;
   has_more?: boolean;
