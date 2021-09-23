@@ -1,74 +1,87 @@
 import { useUserStore } from 'src/User/store/useUserStore';
-import { api, setApiToken } from 'src/utils/helpers';
+import { api, getToken, intervalRef, setApiToken } from 'src/utils/helpers';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserData } from 'src/User/services/auth';
+import { useAlert } from 'src/Lib/store/alerts';
 
-const jtoken = () => localStorage.getItem('__token');
+export async function getTokens() {
+  try {
+    const {
+      data: { token, refresh },
+    } = await api.get('/auth/token', {
+      headers: {
+        token: `Bearer ${getToken()}`,
+      },
+    });
+
+    setApiToken(token);
+    localStorage.setItem('__auth', refresh);
+
+    return { token, refresh };
+  } catch (error) {
+    console.log(error);
+    setApiToken(null);
+    localStorage.removeItem('__auth');
+
+    throw new Error('failed to get token');
+  }
+}
+
+export function tokenWatcher() {
+  const interval = setInterval(async () => {
+    localStorage.removeItem('__watcher');
+
+    if (!!getToken()) {
+      try {
+        await getTokens();
+      } catch (error) {
+        console.log(error);
+
+        useUserStore.setState({ user: {} as any, isLoggedIn: false });
+      }
+    } else {
+      intervalRef() && clearInterval(intervalRef() as number);
+    }
+  }, 840000);
+
+  intervalRef('set', interval);
+}
 
 export function useAuth() {
   const [isLoading, setLoading] = useState(false);
-  const intervalRef = useRef<number | null>(null);
-
-  function tokenWatcher() {
-    intervalRef.current = setInterval(async () => {
-      if (jtoken()) {
-        try {
-          const {
-            data: { token, refresh },
-          } = await api.get('/auth/token', {
-            headers: {
-              token: `Bearer ${jtoken()}`,
-            },
-          });
-
-          localStorage.setItem('__token', refresh);
-          setApiToken(token);
-        } catch (error) {
-          console.log(error);
-          useUserStore.setState({ user: {} as any, isLoggedIn: false });
-          localStorage.removeItem('__token');
-        }
-      } else {
-        clearInterval(intervalRef.current as number);
-      }
-    }, 840000);
-  }
+  const navigate = useNavigate();
 
   return {
     isLoading,
-    tokenWatcher,
     auth: async () => {
-      if (!!jtoken()) {
-        setLoading(true);
+      if (!getToken()) return;
 
-        try {
-          const {
-            data: { token },
-          } = await api.get('/auth/token', {
-            headers: {
-              token: `Bearer ${jtoken()}`,
-            },
-          });
+      setLoading(true);
 
-          setApiToken(token);
-          const { data } = await getUserData();
+      try {
+        await getTokens();
 
-          localStorage.setItem('__token', data.refresh);
-          setApiToken(data.token as string);
-          delete (data as any).refresh;
-          delete (data as any).access;
+        const { data } = await getUserData();
 
-          useUserStore.setState({ user: { ...data }, isLoggedIn: true });
-        } catch (error) {
-          console.log(error);
-          localStorage.removeItem('__token');
-          useUserStore.setState({ user: {} as any, isLoggedIn: false });
-        } finally {
-          setLoading(false);
-        }
+        localStorage.setItem('__auth', data.refresh);
+        setApiToken(data.token as string);
+        delete (data as any).refresh;
+        delete (data as any).token;
+
+        useUserStore.setState({ user: { ...data }, isLoggedIn: true });
 
         tokenWatcher();
+      } catch (error) {
+        console.log(error);
+
+        localStorage.removeItem('__auth');
+        useUserStore.setState({ user: {} as any, isLoggedIn: false });
+
+        if (!!intervalRef()) clearInterval(intervalRef() as number);
+        navigate('/login');
+      } finally {
+        setLoading(false);
       }
     },
   };
@@ -79,24 +92,29 @@ export function useAuthRedirect() {
   const { search } = useLocation();
   const { setUser, setLogin } = useUserStore();
   const [isLoading, setLoading] = useState(false);
+  const setAlert = useAlert((s) => s.setAlert);
 
   useEffect(() => {
     if (!search) return;
     const tok = search.split('?auth_success=')[1];
     if (!tok) return navigate('/');
+
     (async () => {
       setLoading(true);
       try {
         setApiToken(tok);
         const { data } = await getUserData();
 
-        localStorage.setItem('__token', data.refresh);
+        localStorage.setItem('__auth', data.refresh);
         setApiToken(data.token as string);
         delete (data as any).refresh;
-        delete (data as any).access;
+        delete (data as any).token;
 
         setUser({ ...data });
         setLogin(true);
+
+        tokenWatcher();
+        setAlert({ type: 'success', message: 'Logged in' });
 
         navigate('/home');
       } catch (error) {
@@ -104,7 +122,8 @@ export function useAuthRedirect() {
 
         setUser({} as any);
         setLogin(false);
-        localStorage.removeItem('__token');
+        setApiToken(null);
+        localStorage.removeItem('__auth');
 
         navigate('/');
       } finally {
