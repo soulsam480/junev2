@@ -6,6 +6,10 @@
 
 **Merged pull requests:**
 
+- refactor\(app\): use localstorage for routing logic for sync. ops [\#19](https://github.com/soulsam480/junev2/pull/19) ([soulsam480](https://github.com/soulsam480))
+- feat: user profile pic [\#18](https://github.com/soulsam480/junev2/pull/18) ([t-rex777](https://github.com/t-rex777))
+- central image endpoint and image features in FE [\#17](https://github.com/soulsam480/junev2/pull/17) ([soulsam480](https://github.com/soulsam480))
+- feat: s3 cdn [\#16](https://github.com/soulsam480/junev2/pull/16) ([soulsam480](https://github.com/soulsam480))
 - Settings improvements [\#15](https://github.com/soulsam480/junev2/pull/15) ([soulsam480](https://github.com/soulsam480))
 - Feat/post crud [\#14](https://github.com/soulsam480/junev2/pull/14) ([soulsam480](https://github.com/soulsam480))
 - comments and replies upgrades [\#13](https://github.com/soulsam480/junev2/pull/13) ([soulsam480](https://github.com/soulsam480))
