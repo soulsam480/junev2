@@ -2,8 +2,17 @@ import axios from 'axios';
 
 export const api = axios.create({ baseURL: import.meta.env.VITE_API });
 
-export function setApiToken(token: string) {
-  api.defaults.headers['authorization'] = `Bearer ${token}`;
+export function setApiToken(token: string | null) {
+  api.defaults.headers['authorization'] = !!token ? `Bearer ${token}` : null;
+}
+
+export const getToken = () => localStorage.getItem('__auth');
+
+export function intervalRef(op: 'get' | 'set' = 'get', val?: number) {
+  const watcher = localStorage.getItem('__watcher');
+  if (op === 'get') return !!watcher ? parseInt(watcher) : null;
+
+  localStorage.setItem('__watcher', `${val}`);
 }
 
 export function classNames(

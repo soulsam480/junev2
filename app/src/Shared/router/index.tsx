@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRoutes, Navigate, useLocation } from 'react-router-dom';
-import { useUserStore } from 'src/User/store/useUserStore';
 import Index from 'src/Shared/layouts/Index';
 const Home = React.lazy(() => import('src/Shared/layouts/Home'));
 const Feed = React.lazy(() => import('src/Feed/pages/Feed'));
@@ -15,6 +14,7 @@ const FeedRightNav = React.lazy(() => import('src/Feed/components/RightNav'));
 const PostDetails = React.lazy(() => import('src/Feed/pages/PostDetail'));
 
 import BottomNav from 'src/Shared/components/BottomNav';
+import { getToken } from 'src/utils/helpers';
 
 export enum JunePaths {
   Root = '/',
@@ -72,7 +72,7 @@ function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteO
 }
 
 export function useJuneRouter() {
-  const isLoggedIn = useUserStore((s) => s.isLoggedIn);
+  const isLoggedIn = !!getToken();
 
   const { search } = useLocation();
 
