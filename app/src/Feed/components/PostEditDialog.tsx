@@ -22,7 +22,7 @@ const PostEditDialog: React.FC<Props> = ({ postContent, completionHandler }) => 
 
     setLoading(true);
     try {
-      await updatePost(postId, { content: postData });
+      await updatePost(postId as string, { content: postData });
       completionHandler(true);
 
       setAlert({ message: 'Post updated!', type: 'success' });

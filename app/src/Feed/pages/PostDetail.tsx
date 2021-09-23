@@ -41,7 +41,7 @@ const PostDetail: React.FC<Props> = () => {
     try {
       const {
         data: { data },
-      } = await getPost(postId);
+      } = await getPost(postId as string);
 
       if (!mountedRef.current) return;
 
@@ -91,7 +91,7 @@ const PostDetail: React.FC<Props> = () => {
         updatePostReaction={updatePostReaction}
         onCommentClick={handleCommentBtnClick}
       />
-      <PostCommentsContainer postId={postId} />{' '}
+      <PostCommentsContainer postId={postId as string} />{' '}
     </div>
   ) : (
     <div className="flex items-center justify-center pt-5">
