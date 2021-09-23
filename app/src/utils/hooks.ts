@@ -7,19 +7,11 @@ export function useClickoutside<T extends HTMLElement>(cb: () => any) {
   const ref = useRef<T>(null);
   const memoCb = useCallback(cb, []);
 
-  useEffect(() => {
-    function handleClickOutside(event: any) {
-      console.log();
-
-      if (ref.current && !ref.current.contains(event.target)) {
-        return memoCb();
-      }
+  useWindowEvent('mousedown', (e) => {
+    if (ref.current && !ref.current.contains(e.target as any)) {
+      memoCb();
     }
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [ref]);
+  });
 
   return [ref];
 }
@@ -33,14 +25,9 @@ export function useScreenWidth() {
   }
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  useWindowEvent('resize', () => {
+    setWindowDimensions(getWindowDimensions());
+  });
 
   return windowDimensions;
 }
@@ -49,25 +36,18 @@ export const useHideOnScroll = () => {
   const [isHidden, setIsHidden] = useState(false);
   const prevScrollY = useRef<number>();
 
-  useEffect(() => {
-    const onScroll = () => {
-      const scrolledDown = window.scrollY > prevScrollY.current!;
-      const scrolledUp = !scrolledDown;
+  useWindowEvent('scroll', (e) => {
+    const scrolledDown = window.scrollY > prevScrollY.current!;
+    const scrolledUp = !scrolledDown;
 
-      if (scrolledDown && !isHidden) {
-        setIsHidden(true);
-      } else if (scrolledUp && isHidden) {
-        setIsHidden(false);
-      }
+    if (scrolledDown && !isHidden) {
+      setIsHidden(true);
+    } else if (scrolledUp && isHidden) {
+      setIsHidden(false);
+    }
 
-      prevScrollY.current = window.scrollY;
-    };
-
-    window.addEventListener('scroll', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, [isHidden]);
+    prevScrollY.current = window.scrollY;
+  });
 
   return isHidden;
 };
@@ -310,4 +290,25 @@ export function useMountedRef() {
   }, []);
 
   return { mountedRef };
+}
+
+/**
+ * @borrows https://github.com/tailwindlabs/headlessui/blob/main/packages/@headlessui-react/src/hooks/use-window-event.ts
+ */
+export function useWindowEvent<TType extends keyof WindowEventMap>(
+  type: TType,
+  listener: (this: Window, ev: WindowEventMap[TType]) => any,
+  options?: boolean | AddEventListenerOptions,
+) {
+  let listenerRef = useRef(listener);
+  listenerRef.current = listener;
+
+  useEffect(() => {
+    function handler(event: WindowEventMap[TType]) {
+      listenerRef.current.call(window, event);
+    }
+
+    window.addEventListener(type, handler, options);
+    return () => window.removeEventListener(type, handler, options);
+  }, [type, options]);
 }
