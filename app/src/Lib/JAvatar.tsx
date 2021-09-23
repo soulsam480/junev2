@@ -76,6 +76,7 @@ const JAvatar: React.FC<Props> = ({
               style={{ borderRadius: 'inherit', height: 'inherit', width: 'inherit' }}
               src={src}
               alt={src}
+              className="object-cover"
             />
           ) : icon ? (
             <JIcon icon={icon} size={iconSize} />

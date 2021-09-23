@@ -5,11 +5,11 @@ import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAlert } from 'src/Lib/store/alerts';
-import { updateUserById } from '../../services/users';
+import { updateUserById, uploadImage } from 'src/User/services/users';
 import { UpdateUserData } from 'src/utils/types';
 import { useNavigate } from 'react-router-dom';
 import { useLoader } from 'src/Shared/store/loader';
-import { diffMatcher } from 'src/utils/helpers';
+import { diffMatcher, getFileUrl, getUserInitials } from 'src/utils/helpers';
 
 interface Props {}
 
@@ -21,6 +21,7 @@ const ProfileSettings: React.FC<Props> = () => {
   const navigate = useNavigate();
 
   const inputFile = useRef<HTMLInputElement>(null);
+  const uploadFile = useRef<File | null>(null);
 
   const [userDetails, setUserDetails] = useState<UpdateUserData>({
     name: user.name,
@@ -30,21 +31,54 @@ const ProfileSettings: React.FC<Props> = () => {
     username: user.username,
   });
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      uploadFile.current = e.target.files[0];
+    }
+  }
+
+  async function uploadProfileImage() {
+    if (!uploadFile.current) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', uploadFile.current);
+
+      const {
+        data: {
+          data: { key: image },
+        },
+      } = await uploadImage(formData);
+
+      uploadFile.current = null;
+
+      return image;
+    } catch (error) {
+      throw 'Unable to upload profile picture.';
+    }
+  }
+
   const updateUserDetails = async (e: FormEvent) => {
     e.preventDefault();
 
-    const data = diffMatcher(user, userDetails);
-    if (!Object.keys(data).length) return;
+    let diffData = diffMatcher(user, userDetails);
 
-    setLoader(true);
     try {
+      setLoader(true);
+
+      const image = await uploadProfileImage();
+
+      diffData = { ...diffData, image };
+
+      if (!Object.keys(diffData).length) return;
+
       const {
         data: { data: userFromResponse },
-      } = await updateUserById(user.id, data);
+      } = await updateUserById(user.id, diffData);
 
       setUser({ ...userFromResponse });
-
       setAlert({ type: 'success', message: 'Updated successfully' });
+
       navigate('/');
     } catch (error) {
       setAlert({ type: 'danger', message: 'Unable to update user' });
@@ -60,27 +94,40 @@ const ProfileSettings: React.FC<Props> = () => {
       <form className="flex flex-col space-y-4" onSubmit={updateUserDetails}>
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
-            <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="150px" rounded />
+            <JAvatar
+              src={!!user.image ? getFileUrl(user.image) : ''}
+              content={getUserInitials(user)}
+              contentClass={`bg-lime-200`}
+              size="150px"
+              rounded
+              iconSize="50px"
+            />
           </div>
 
           <JButton
             icon="ion:camera-outline"
-            onClick={() => {
-              inputFile.current?.click();
-            }}
+            onClick={() => inputFile.current?.click()}
             sm
             round
             size="20px"
           />
         </div>
 
-        <input type="file" id="file" ref={inputFile} style={{ display: 'none' }} />
+        <input
+          type="file"
+          id="file"
+          ref={inputFile}
+          className="hidden invisible"
+          multiple={false}
+          onChange={handleFileChange}
+        />
+
         <JContainer className="flex flex-col space-y-4 rounded-lg py-5">
           <JInput
             label="name"
             id="name"
             value={userDetails.name}
-            onInput={(name) => setUserDetails({ ...userDetails, name })}
+            onInput={(name) => setUserDetails((u) => ({ ...u, name }))}
             type="text"
           />
 
@@ -88,7 +135,7 @@ const ProfileSettings: React.FC<Props> = () => {
             label="username"
             id="username"
             value={userDetails.username}
-            onInput={(username) => setUserDetails({ ...userDetails, username })}
+            onInput={(username) => setUserDetails((u) => ({ ...u, username }))}
             type="text"
           />
 
@@ -97,15 +144,15 @@ const ProfileSettings: React.FC<Props> = () => {
             label="Email"
             id="email"
             value={userDetails.email}
-            onInput={(email) => setUserDetails({ ...userDetails, email })}
-            type="text"
+            onInput={(email) => setUserDetails((u) => ({ ...u, email }))}
+            type="email"
           />
 
           <JInput
             label="bio"
             id="bio"
             value={userDetails.bio}
-            onInput={(bio) => setUserDetails({ ...userDetails, bio })}
+            onInput={(bio) => setUserDetails((u) => ({ ...u, bio }))}
             is="textarea"
           />
 
@@ -117,4 +164,5 @@ const ProfileSettings: React.FC<Props> = () => {
     </div>
   );
 };
+
 export default ProfileSettings;

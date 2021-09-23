@@ -7,7 +7,7 @@ import { useAlert } from 'src/Lib/store/alerts';
 import { JunePaths } from 'src/Shared/router';
 import { googleLogin, login, LoginUserDto, register } from 'src/User/services/auth';
 import { useUserStore } from 'src/User/store/useUserStore';
-import { useAuth } from 'src/utils/auth';
+import { tokenWatcher } from 'src/utils/auth';
 import { setApiToken } from 'src/utils/helpers';
 
 interface Props {}
@@ -15,7 +15,6 @@ interface Props {}
 const Login: React.FC<Props> = () => {
   const { setUser, setLogin } = useUserStore();
   const naviagte = useNavigate();
-  const { tokenWatcher } = useAuth();
   const { setAlert } = useAlert();
 
   const [user, setUSerDto] = useState<LoginUserDto>({
@@ -37,15 +36,17 @@ const Login: React.FC<Props> = () => {
       setLoginLoading(true);
       const { data } = await login(user);
 
-      localStorage.setItem('__token', data.refresh);
+      localStorage.setItem('__auth', data.refresh);
       setApiToken(data.token as string);
       delete (data as any).refresh;
       delete (data as any).token;
 
       setUser({ ...data });
       setLogin(true);
+
       tokenWatcher();
       setAlert({ type: 'success', message: 'Logged in' });
+
       naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);
@@ -64,14 +65,17 @@ const Login: React.FC<Props> = () => {
       setLoginLoading(true);
       const { data } = await register(user);
 
-      localStorage.setItem('__token', data.refresh);
+      localStorage.setItem('__auth', data.refresh);
       setApiToken(data.token as string);
       delete (data as any).refresh;
       delete (data as any).token;
+
       setUser({ ...data });
       setLogin(true);
+
       tokenWatcher();
       setAlert({ type: 'success', message: 'Registered and logged in' });
+
       naviagte(JunePaths.User);
     } catch (error) {
       console.log(error);

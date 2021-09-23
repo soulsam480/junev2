@@ -6,7 +6,7 @@ import JMenu from 'src/Lib/JMenu';
 import JMenuItem from 'src/Lib/JMenuItem';
 import { useAlert } from 'src/Lib/store/alerts';
 import { useUserStore } from 'src/User/store/useUserStore';
-import { classNames } from 'src/utils/helpers';
+import { classNames, getFileUrl, getUserInitials } from 'src/utils/helpers';
 import { logout } from 'src/utils/hooks';
 import { JunePaths } from 'src/Shared/router';
 import JAvatar from 'src/Lib/JAvatar';
@@ -16,9 +16,7 @@ interface Props {}
 const AppNavbar: React.FC<Props> = () => {
   const setAlert = useAlert((s) => s.setAlert);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
-  const {
-    user: { username, image },
-  } = useUserStore();
+  const { user } = useUserStore();
 
   function handlelogout() {
     logout();
@@ -58,8 +56,8 @@ const AppNavbar: React.FC<Props> = () => {
                   noBg
                   iconSlot={
                     <JAvatar
-                      src={image}
-                      content={!image ? username.slice(0, 2) : undefined}
+                      src={!!user.image ? getFileUrl(user.image) : ''}
+                      content={getUserInitials(user)}
                       contentClass="bg-lime-200 shadow-sm"
                       rounded
                       size="35px"
@@ -83,7 +81,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <JMenuItem
                         className="flex space-x-2 items-center"
                         closeMenuCallback={cMenu}
-                        to={`/@${username}/`}
+                        to={`/@${user.username}/`}
                       >
                         <span className="flex-none">
                           <JIcon size="18px" icon="ion:person-circle-outline" />

@@ -4,6 +4,7 @@ import { getUserPosts, getUserProfile, updatePassword, updateUser } from 'src/se
 import { filterFromQuery } from 'src/utils/helpers';
 import { UpdateQuery } from 'mongoose';
 import { UpdatePasswordDto } from 'src/utils/dtos';
+import { auth } from 'src/middlewares/auth';
 
 const searchUser = createRoute({
   path: '/search',
@@ -92,12 +93,10 @@ const userPasswordUpdate = createRoute<UpdatePasswordDto, { userId: string }>({
   },
 });
 
-const userController = createController('/users', [
-  searchUser,
-  userData,
-  userPosts,
-  userDetailsUpdate,
-  userPasswordUpdate,
-]);
+const userController = createController(
+  '/users',
+  [searchUser, userData, userPosts, userDetailsUpdate, userPasswordUpdate],
+  [auth],
+);
 
 export { userController };

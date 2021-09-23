@@ -1,9 +1,44 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { useLoader } from 'src/Shared/store/loader';
+import { StrippedUser } from 'src/User/store/useUserStore';
+import { getTokens } from './auth';
+
+const HEADER_NAME = 'authorization';
 
 export const api = axios.create({ baseURL: import.meta.env.VITE_API });
 
-export function setApiToken(token: string) {
-  api.defaults.headers['authorization'] = `Bearer ${token}`;
+api.interceptors.response.use(undefined, async (err: AxiosError) => {
+  // return if not 401 or no token
+  if (err.response?.status !== 401 || !getToken()) return Promise.reject(err);
+
+  try {
+    useLoader.setState({ isLoader: true });
+    //get tokens
+    await getTokens();
+    useLoader.setState({ isLoader: false });
+
+    // recover config
+    const config = err.config;
+    delete config.headers[HEADER_NAME];
+
+    // retry the call
+    return api.request(config);
+  } catch (error) {
+    Promise.reject(err);
+  }
+});
+
+export function setApiToken(token: string | null) {
+  api.defaults.headers[HEADER_NAME] = !!token ? `Bearer ${token}` : null;
+}
+
+export const getToken = () => localStorage.getItem('__auth');
+
+export function intervalRef(op: 'get' | 'set' = 'get', val?: number) {
+  const watcher = localStorage.getItem('__watcher');
+  if (op === 'get') return !!watcher ? parseInt(watcher) : null;
+
+  localStorage.setItem('__watcher', `${val}`);
 }
 
 export function classNames(
@@ -141,4 +176,18 @@ export function diffMatcher<T extends Record<string, any>, K>(
 
     return acc;
   }, {});
+}
+
+export function getUserInitials(user: StrippedUser) {
+  return !!user.name
+    ? user.name.slice(0, 2)
+    : !!user.username
+    ? user.username.slice(0.2)
+    : !!user.email
+    ? user.email.slice(0, 2)
+    : '';
+}
+
+export function getFileUrl(filename?: string) {
+  return `${import.meta.env.VITE_API}/cdn/file?file_name=${filename}`;
 }

@@ -16,7 +16,7 @@ export interface BaseJButtonProps
   loadingSlot?: React.ReactNode;
 
   /**
-   * should be prefixed with icn: for icon or img: for image when avatar prop is used
+   * should be prefixed with icn: for icon or img: for image or con: for text when avatar prop is used
    */
   avatar?: string;
   avatarRound?: boolean;

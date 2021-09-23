@@ -2,6 +2,7 @@ import React from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JImage from 'src/Lib/JImage';
 import { UserProfile } from 'src/User/store/useUserStore';
+import { getFileUrl, getUserInitials } from 'src/utils/helpers';
 
 interface Props {
   user?: UserProfile;
@@ -17,10 +18,11 @@ const Header: React.FC<Props> = ({ user }) => {
           height="100%"
         />
       </div>
+
       <div className="user-profile__header-profile">
         <JAvatar
-          src={user?.image}
-          content={!user?.image ? user?.username.slice(0, 2) : undefined}
+          src={!!user?.image ? getFileUrl(user.image) : ''}
+          content={getUserInitials(user as any)}
           contentClass="bg-lime-200 shadow-sm"
           rounded
           size="120px"
