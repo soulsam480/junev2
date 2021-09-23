@@ -17,7 +17,11 @@ const BottomNav: React.FC<Props> = () => {
       <JButton noBg icon="ion:heart-outline" size="25px" sm />
       <JButton
         noBg
-        avatar={`img:${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`}
+        avatar={
+          user.image
+            ? `img:${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`
+            : user.name.slice(0, 2)
+        }
         avatarRound
         size="25px"
         sm

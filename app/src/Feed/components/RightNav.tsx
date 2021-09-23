@@ -26,7 +26,14 @@ const RightNav: React.FC<Props> = () => {
       <div className="h-32 relative mb-10">
         <div className="absolute inset-0 h-full w-full rounded-md bg-cover bg-no-repeat z-0 bg-warm-gray-300" />
         <div className="absolute -bottom-[40px] z-10 left-1/2 transform -translate-x-1/2 mx-auto">
-          <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="70px" rounded />
+          <JAvatar
+            src={user?.image ? `${import.meta.env.VITE_API}/cdn/file?file_name=${user?.image}` : ''}
+            content={!user?.image ? user?.username.slice(0, 2) : undefined}
+            contentClass={`bg-lime-200`}
+            iconSize="40px"
+            size="70px"
+            rounded
+          />
         </div>
       </div>
       <div className="flex flex-col pt-2 items-center space-y-2">

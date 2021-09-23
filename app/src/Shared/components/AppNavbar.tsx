@@ -58,7 +58,7 @@ const AppNavbar: React.FC<Props> = () => {
                   noBg
                   iconSlot={
                     <JAvatar
-                      src={`${import.meta.env.VITE_API}/cdn/file?file_name=${image}`}
+                      src={image ? `${import.meta.env.VITE_API}/cdn/file?file_name=${image}` : ''}
                       content={!image ? username.slice(0, 2) : undefined}
                       contentClass="bg-lime-200 shadow-sm"
                       rounded

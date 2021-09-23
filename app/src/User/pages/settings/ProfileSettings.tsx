@@ -63,7 +63,11 @@ const ProfileSettings: React.FC<Props> = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
             <JAvatar
-              src={`${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`}
+              src={user.image ? `${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}` : ''}
+              content={user.name.slice(0, 2)}
+              contentClass={`bg-lime-200`}
+              iconSize={`2rem `}
+              
               size="150px"
               rounded
             />
