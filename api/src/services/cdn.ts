@@ -6,7 +6,6 @@ import {
   PutObjectCommandInput,
 } from '@aws-sdk/client-s3';
 import { s3 } from 'src/db/s3';
-import { userModel } from 'src/entities/user';
 import { parseEnv, streamToString } from 'src/utils/helpers';
 
 const BUCKET = parseEnv<string>('BUCKET_NAME');

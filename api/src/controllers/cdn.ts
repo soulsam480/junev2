@@ -2,7 +2,7 @@ import { GetObjectCommandInput, PutObjectCommandInput } from '@aws-sdk/client-s3
 import { v4 as uuid } from 'uuid';
 import { upload } from 'src/middlewares/multer';
 import { getObject, getObjects, putObject } from 'src/services/cdn';
-import { normalize, parseEnv } from 'src/utils/helpers';
+import { formatResponse, normalize, parseEnv } from 'src/utils/helpers';
 import { Router } from 'express';
 import { auth } from 'src/middlewares/auth';
 
@@ -40,14 +40,13 @@ cdnRouter.post('/', upload, async (req, res) => {
 
     await putObject(objectParams);
 
-    return res.json({ key: file_name });
+    return res.json(formatResponse({ key: file_name }));
   } catch (error) {
     console.log(error);
 
     return res.status(500).send('Internal server error !');
   }
 });
-
 
 //TODO: send file_name in query
 // e.g. http://localhost:3000/cdn/file?file_name=4df12050-a54f-46b7-99e0-42730d9d4127--June_logo.svg
