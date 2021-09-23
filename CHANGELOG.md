@@ -7,6 +7,7 @@
 **Merged pull requests:**
 
 - Settings improvements [\#15](https://github.com/soulsam480/junev2/pull/15) ([soulsam480](https://github.com/soulsam480))
+- Feat/post crud [\#14](https://github.com/soulsam480/junev2/pull/14) ([soulsam480](https://github.com/soulsam480))
 - comments and replies upgrades [\#13](https://github.com/soulsam480/junev2/pull/13) ([soulsam480](https://github.com/soulsam480))
 - Feat/post comments [\#12](https://github.com/soulsam480/junev2/pull/12) ([soulsam480](https://github.com/soulsam480))
 - Features and fixes [\#11](https://github.com/soulsam480/junev2/pull/11) ([soulsam480](https://github.com/soulsam480))
