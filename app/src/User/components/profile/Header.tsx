@@ -8,6 +8,7 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ user }) => {
+  
   return (
     <div className="user-profile__header">
       <div className="user-profile__header-cover">
@@ -19,7 +20,7 @@ const Header: React.FC<Props> = ({ user }) => {
       </div>
       <div className="user-profile__header-profile">
         <JAvatar
-          src={user?.image}
+          src={`${import.meta.env.VITE_API}/cdn/file?file_name=${user?.image}`}
           content={!user?.image ? user?.username.slice(0, 2) : undefined}
           contentClass="bg-lime-200 shadow-sm"
           rounded

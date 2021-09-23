@@ -3,10 +3,12 @@ import JButton from 'src/Lib/JButton';
 
 import { useDrawers } from 'src/Shared/store/drawers';
 import { JunePaths } from 'src/Shared/router';
+import { useUserStore } from 'src/User/store/useUserStore';
 interface Props {}
 
 const BottomNav: React.FC<Props> = () => {
   const setUserDrawer = useDrawers((state) => state.setDrawer);
+  const user = useUserStore((state) => state.user);
 
   return (
     <div className="flex space-x-1 h-full items-center justify-around text-gray-600 border-t border-t-warm-gray-300 shadow">
@@ -15,7 +17,7 @@ const BottomNav: React.FC<Props> = () => {
       <JButton noBg icon="ion:heart-outline" size="25px" sm />
       <JButton
         noBg
-        avatar="img:https://cdn.quasar.dev/img/avatar.png"
+        avatar={`img:${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`}
         avatarRound
         size="25px"
         sm

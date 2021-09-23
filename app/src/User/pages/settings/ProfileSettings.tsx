@@ -5,8 +5,8 @@ import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAlert } from 'src/Lib/store/alerts';
-import { updateUserById } from '../../services/users';
-import { UpdateUserData } from 'src/utils/types';
+import { updateUserById, uploadImage } from '../../services/users';
+import { UpdateUserData, User } from 'src/utils/types';
 import { useNavigate } from 'react-router-dom';
 import { useLoader } from 'src/Shared/store/loader';
 import { diffMatcher } from 'src/utils/helpers';
@@ -21,6 +21,7 @@ const ProfileSettings: React.FC<Props> = () => {
   const navigate = useNavigate();
 
   const inputFile = useRef<HTMLInputElement>(null);
+  const uploadFile = useRef<File | null>(null); //React.RefObject<HTMLInputElement>
 
   const [userDetails, setUserDetails] = useState<UpdateUserData>({
     name: user.name,
@@ -29,21 +30,22 @@ const ProfileSettings: React.FC<Props> = () => {
     image: user.image,
     username: user.username,
   });
-
   const updateUserDetails = async (e: FormEvent) => {
     e.preventDefault();
-
-    const data = diffMatcher(user, userDetails);
-    if (!Object.keys(data).length) return;
-
-    setLoader(true);
+    let diffData = diffMatcher(user, userDetails);
     try {
+      setLoader(true);
+      if (uploadFile.current) {
+        const formData = new FormData();
+        formData.append('file', uploadFile.current);
+        const imageKey = await uploadImage(formData);
+        diffData = { ...diffData, image: imageKey.data.key };
+      }
+      if (!Object.keys(diffData).length) return;
       const {
         data: { data: userFromResponse },
-      } = await updateUserById(user.id, data);
-
+      } = await updateUserById(user.id, diffData);
       setUser({ ...userFromResponse });
-
       setAlert({ type: 'success', message: 'Updated successfully' });
       navigate('/');
     } catch (error) {
@@ -60,7 +62,11 @@ const ProfileSettings: React.FC<Props> = () => {
       <form className="flex flex-col space-y-4" onSubmit={updateUserDetails}>
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
-            <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="150px" rounded />
+            <JAvatar
+              src={`${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`}
+              size="150px"
+              rounded
+            />
           </div>
 
           <JButton
@@ -74,7 +80,17 @@ const ProfileSettings: React.FC<Props> = () => {
           />
         </div>
 
-        <input type="file" id="file" ref={inputFile} style={{ display: 'none' }} />
+        <input
+          type="file"
+          id="file"
+          ref={inputFile}
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            if (e.target.files) {
+              uploadFile.current = e.target.files[0];
+            }
+          }}
+        />
         <JContainer className="flex flex-col space-y-4 rounded-lg py-5">
           <JInput
             label="name"
