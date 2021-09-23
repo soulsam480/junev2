@@ -9,7 +9,7 @@ import { updateUserById, uploadImage } from 'src/User/services/users';
 import { UpdateUserData } from 'src/utils/types';
 import { useNavigate } from 'react-router-dom';
 import { useLoader } from 'src/Shared/store/loader';
-import { diffMatcher } from 'src/utils/helpers';
+import { diffMatcher, getFileUrl, getUserInitials } from 'src/utils/helpers';
 
 interface Props {}
 
@@ -95,21 +95,18 @@ const ProfileSettings: React.FC<Props> = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
             <JAvatar
-              src={user.image ? `${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}` : ''}
-              content={user.name.slice(0, 2)}
+              src={!!user.image ? getFileUrl(user.image) : ''}
+              content={getUserInitials(user)}
               contentClass={`bg-lime-200`}
-              iconSize={`2rem `}
-              
               size="150px"
               rounded
+              iconSize="50px"
             />
           </div>
 
           <JButton
             icon="ion:camera-outline"
-            onClick={() => {
-              inputFile.current?.click();
-            }}
+            onClick={() => inputFile.current?.click()}
             sm
             round
             size="20px"

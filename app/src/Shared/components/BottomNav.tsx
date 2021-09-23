@@ -4,6 +4,7 @@ import JButton from 'src/Lib/JButton';
 import { useDrawers } from 'src/Shared/store/drawers';
 import { JunePaths } from 'src/Shared/router';
 import { useUserStore } from 'src/User/store/useUserStore';
+import { getFileUrl, getUserInitials } from 'src/utils/helpers';
 interface Props {}
 
 const BottomNav: React.FC<Props> = () => {
@@ -15,14 +16,12 @@ const BottomNav: React.FC<Props> = () => {
       <JButton noBg icon="ion:home-outline" size="25px" sm to={JunePaths.User} />
       <JButton noBg icon="ion:search-outline" size="25px" sm />
       <JButton noBg icon="ion:heart-outline" size="25px" sm />
+
       <JButton
-        noBg
-        avatar={
-          user.image
-            ? `img:${import.meta.env.VITE_API}/cdn/file?file_name=${user.image}`
-            : user.name.slice(0, 2)
-        }
+        avatar={user.image ? `img:${getFileUrl(user.image)}` : `con:${getUserInitials(user)}`}
         avatarRound
+        round
+        dense
         size="25px"
         sm
         onClick={() => setUserDrawer('isUserDrawer', true)}

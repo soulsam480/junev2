@@ -11,6 +11,8 @@ export interface User {
   refresh: string;
 }
 
+export type StrippedUser = Omit<User, 'refresh' | 'token'>;
+
 export interface UserProfile extends Omit<User, 'token' | 'refresh'> {
   total_followers?: number;
   total_followings?: number;

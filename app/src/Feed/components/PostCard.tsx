@@ -10,7 +10,7 @@ import PostReact from 'src/Feed/components/postCard/PostReact';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
 import 'src/Feed/styles/postcard.scss';
-import { classNames } from 'src/utils/helpers';
+import { classNames, getFileUrl, getUserInitials } from 'src/utils/helpers';
 interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -53,8 +53,8 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
           <Link to={`/@${post.user.username}`} className="flex">
             <div className="flex-none">
               <JAvatar
-                src={post.user?.image}
-                content={!post.user?.image ? post.user?.username.slice(0, 2) : undefined}
+                src={!!post.user?.image ? getFileUrl(post.user.image) : ''}
+                content={getUserInitials(post.user as any)}
                 contentClass="bg-lime-200 shadow-sm"
                 rounded
               />{' '}

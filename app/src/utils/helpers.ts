@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { useLoader } from 'src/Shared/store/loader';
+import { StrippedUser } from 'src/User/store/useUserStore';
 import { getTokens } from './auth';
 
 const HEADER_NAME = 'authorization';
@@ -175,4 +176,18 @@ export function diffMatcher<T extends Record<string, any>, K>(
 
     return acc;
   }, {});
+}
+
+export function getUserInitials(user: StrippedUser) {
+  return !!user.name
+    ? user.name.slice(0, 2)
+    : !!user.username
+    ? user.username.slice(0.2)
+    : !!user.email
+    ? user.email.slice(0, 2)
+    : '';
+}
+
+export function getFileUrl(filename?: string) {
+  return `${import.meta.env.VITE_API}/cdn/file?file_name=${filename}`;
 }
