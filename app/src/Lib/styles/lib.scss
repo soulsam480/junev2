@@ -151,7 +151,7 @@
 
   &__editor {
     @apply outline-none ease-in-out transition-all border-none w-full;
-    @apply rounded-md focus:(ring-lime-200 ring-2) p-3;
+    @apply rounded-md focus:(ring-transparent ring-0) p-3;
     @apply text-black dark:text-white bg-warm-gray-200 min-h-52 resize-none;
 
     &::-webkit-scrollbar {

@@ -18,6 +18,7 @@ const RightNav: React.FC<Props> = () => {
 
   function handlelogout() {
     logout();
+
     setAlert({ type: 'success', message: 'Logged out' });
   }
 

@@ -6,10 +6,13 @@
 
 **Merged pull requests:**
 
+- Settings improvements [\#15](https://github.com/soulsam480/junev2/pull/15) ([soulsam480](https://github.com/soulsam480))
+- Feat/post crud [\#14](https://github.com/soulsam480/junev2/pull/14) ([soulsam480](https://github.com/soulsam480))
 - comments and replies upgrades [\#13](https://github.com/soulsam480/junev2/pull/13) ([soulsam480](https://github.com/soulsam480))
 - Feat/post comments [\#12](https://github.com/soulsam480/junev2/pull/12) ([soulsam480](https://github.com/soulsam480))
 - Features and fixes [\#11](https://github.com/soulsam480/junev2/pull/11) ([soulsam480](https://github.com/soulsam480))
 - feat: comments, replies and reactions [\#10](https://github.com/soulsam480/junev2/pull/10) ([soulsam480](https://github.com/soulsam480))
+- Feature/user settings [\#9](https://github.com/soulsam480/junev2/pull/9) ([soulsam480](https://github.com/soulsam480))
 - build\(deps\): bump tar from 6.1.6 to 6.1.11 [\#8](https://github.com/soulsam480/junev2/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Feature/user settings [\#7](https://github.com/soulsam480/junev2/pull/7) ([t-rex777](https://github.com/t-rex777))
 - Routes and posts [\#6](https://github.com/soulsam480/junev2/pull/6) ([soulsam480](https://github.com/soulsam480))

@@ -32,7 +32,7 @@ const Index: React.FC<Props> = () => {
     try {
       const {
         data: { data },
-      } = await getUserProfileByUsername(username.split('@')[1]);
+      } = await getUserProfileByUsername((username as string).split('@')[1]);
 
       if (!mountedRef.current) return;
 

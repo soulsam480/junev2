@@ -182,6 +182,7 @@ const AppPostEditor: React.FC<Props> = ({
           onChange={(e) => setValue(e.target.value)}
           onKeyUp={handleCtrlEnter}
           {...rest}
+          autoFocus
         ></textarea>
       </AppInputTrigger>
       <EditorToolbar onPost={onPost} disabled={!value || isLoading} isLoading={isLoading} />
