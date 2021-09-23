@@ -89,11 +89,14 @@ const JButton: React.FC<JButtonProps> = ({
           ) : (
             avatar && (
               <JAvatar
-                icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : undefined}
-                src={avatar.startsWith('img:') ? avatar.split('img:')[1] : undefined}
+                icon={avatar.startsWith('icn:') ? avatar.split('icn:')[1] : ''}
+                src={avatar.startsWith('img:') ? avatar.split('img:')[1] : ''}
                 size={size || '16px'}
                 content={
-                  !avatar.startsWith('img:') || !avatar.startsWith('icn:') ? avatar : undefined
+                  (!avatar.startsWith('img:') || !avatar.startsWith('icn:')) &&
+                  avatar.startsWith('con:')
+                    ? avatar.split('con:')[1]
+                    : avatar
                 }
                 rounded={avatarRound}
               />

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
 import { useAlert } from 'src/Lib/store/alerts';
 import { JunePaths } from 'src/Shared/router';
 import { useUserStore } from 'src/User/store/useUserStore';
+import { getFileUrl, getUserInitials } from 'src/utils/helpers';
 
 import { logout } from 'src/utils/hooks';
 interface Props {}
@@ -27,7 +28,14 @@ const RightNav: React.FC<Props> = () => {
       <div className="h-32 relative mb-10">
         <div className="absolute inset-0 h-full w-full rounded-md bg-cover bg-no-repeat z-0 bg-warm-gray-300" />
         <div className="absolute -bottom-[40px] z-10 left-1/2 transform -translate-x-1/2 mx-auto">
-          <JAvatar src="https://cdn.quasar.dev/img/boy-avatar.png" size="70px" rounded />
+          <JAvatar
+            src={!!user?.image ? getFileUrl(user.image) : ''}
+            content={getUserInitials(user)}
+            contentClass={`bg-lime-200`}
+            iconSize="40px"
+            size="70px"
+            rounded
+          />
         </div>
       </div>
       <div className="flex flex-col pt-2 items-center space-y-2">

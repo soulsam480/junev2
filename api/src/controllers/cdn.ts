@@ -2,7 +2,7 @@ import { GetObjectCommandInput, PutObjectCommandInput } from '@aws-sdk/client-s3
 import { v4 as uuid } from 'uuid';
 import { upload } from 'src/middlewares/multer';
 import { getObject, getObjects, putObject } from 'src/services/cdn';
-import { normalize, parseEnv } from 'src/utils/helpers';
+import { formatResponse, normalize, parseEnv } from 'src/utils/helpers';
 import { Router } from 'express';
 import { auth } from 'src/middlewares/auth';
 
@@ -40,7 +40,7 @@ cdnRouter.post('/', upload, async (req, res) => {
 
     await putObject(objectParams);
 
-    return res.json({ key: file_name });
+    return res.json(formatResponse({ key: file_name }));
   } catch (error) {
     console.log(error);
 
