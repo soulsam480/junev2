@@ -1,9 +1,34 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { useLoader } from 'src/Shared/store/loader';
+import { getTokens } from './auth';
+
+const HEADER_NAME = 'authorization';
 
 export const api = axios.create({ baseURL: import.meta.env.VITE_API });
 
+api.interceptors.response.use(undefined, async (err: AxiosError) => {
+  // return if not 401 or no token
+  if (err.response?.status !== 401 || !getToken()) return Promise.reject(err);
+
+  try {
+    useLoader.setState({ isLoader: true });
+    //get tokens
+    await getTokens();
+    useLoader.setState({ isLoader: false });
+
+    // recover config
+    const config = err.config;
+    delete config.headers[HEADER_NAME];
+
+    // retry the call
+    return api.request(config);
+  } catch (error) {
+    Promise.reject(err);
+  }
+});
+
 export function setApiToken(token: string | null) {
-  api.defaults.headers['authorization'] = !!token ? `Bearer ${token}` : null;
+  api.defaults.headers[HEADER_NAME] = !!token ? `Bearer ${token}` : null;
 }
 
 export const getToken = () => localStorage.getItem('__auth');
