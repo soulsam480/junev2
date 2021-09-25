@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- fix\(app\): show user profile image in comments [\#21](https://github.com/soulsam480/junev2/pull/21) ([soulsam480](https://github.com/soulsam480))
 - build\(api\): fix tsc-alias path mapping [\#20](https://github.com/soulsam480/junev2/pull/20) ([soulsam480](https://github.com/soulsam480))
 - refactor\(app\): use localstorage for routing logic for sync. ops [\#19](https://github.com/soulsam480/junev2/pull/19) ([soulsam480](https://github.com/soulsam480))
 - feat: user profile pic [\#18](https://github.com/soulsam480/junev2/pull/18) ([t-rex777](https://github.com/t-rex777))
