@@ -33,6 +33,9 @@ export class User extends TimeStamps {
   @prop({ default: '' })
   public image?: string;
 
+  @prop({ default: '' })
+  public cover?: string;
+
   @prop({ ref: () => User })
   public followers?: Ref<User>[];
 
