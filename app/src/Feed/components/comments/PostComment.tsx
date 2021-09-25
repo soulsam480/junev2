@@ -2,7 +2,7 @@ import React, { HTMLProps, memo, useEffect, useMemo, useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JIcon from 'src/Lib/JIcon';
-import { classNames, timeAgo } from 'src/utils/helpers';
+import { classNames, getFileUrl, getUserInitials, timeAgo } from 'src/utils/helpers';
 import { Comment, Reply } from 'src/utils/types';
 import { useComment } from 'src/Feed/context/commentApi';
 import { likeComment, likeReply, unLikeComment, unLikeReply } from 'src/Shared/services/post';
@@ -96,8 +96,8 @@ const PostComment: React.FC<Props> = ({ className, comment, ...rest }) => {
       <div className="flex space-x-2 items-start">
         <div className="flex-none">
           <JAvatar
-            src={comment?.user?.image}
-            content={!comment?.user?.image ? comment?.user?.username.slice(0, 2) : undefined}
+            src={!!comment.user?.image ? getFileUrl(comment.user.image) : ''}
+            content={getUserInitials(comment.user as any)}
             contentClass="bg-lime-200 shadow-sm"
             rounded
             size="35px"
@@ -227,8 +227,8 @@ export const PostReply: React.FC<{
     <div className={classNames(['flex space-x-2 items-start'])}>
       <div className="flex-none">
         <JAvatar
-          src={reply?.user?.image}
-          content={!reply?.user?.image ? reply?.user?.username.slice(0, 2) : undefined}
+          src={!!reply.user?.image ? getFileUrl(reply.user.image) : ''}
+          content={getUserInitials(reply.user as any)}
           contentClass="bg-lime-200 shadow-sm"
           rounded
           size="35px"
