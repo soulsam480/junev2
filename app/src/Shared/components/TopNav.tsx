@@ -15,7 +15,7 @@ const TopNav: React.FC<Props> = () => {
 
   return (
     <div>
-      {screenWidth < 768 && isLoggedIn && pathname !== JunePaths.User ? (
+      {screenWidth < 768 && isLoggedIn && pathname !== `/${JunePaths.User}` ? (
         <JButton
           noBg
           icon="ion:arrow-back-circle-outline"

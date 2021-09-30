@@ -47,7 +47,7 @@ const Login: React.FC<Props> = () => {
       tokenWatcher();
       setAlert({ type: 'success', message: 'Logged in' });
 
-      naviagte(JunePaths.User);
+      naviagte(`/${JunePaths.User}`);
     } catch (error) {
       console.log(error);
       setLoginLoading(false);
@@ -76,7 +76,7 @@ const Login: React.FC<Props> = () => {
       tokenWatcher();
       setAlert({ type: 'success', message: 'Registered and logged in' });
 
-      naviagte(JunePaths.User);
+      naviagte(`/${JunePaths.User}`);
     } catch (error) {
       console.log(error);
       setLoginLoading(false);

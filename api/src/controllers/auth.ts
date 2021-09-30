@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { sign, verify } from 'jsonwebtoken';
-import { authenticate } from 'passport';
+import passport from 'passport';
 import { userModel } from 'src/entities/user';
 import { auth } from 'src/middlewares/auth';
 import { createTokens } from 'src/services/auth';
@@ -60,9 +60,9 @@ authRouter.post('/login', async (req, res) => {
   }
 });
 
-authRouter.get('/google', authenticate('google', { scope: ['profile', 'email'] }));
+authRouter.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-authRouter.get('/google/redirect', authenticate('google'), (req, res) => {
+authRouter.get('/google/redirect', passport.authenticate('google'), (req, res) => {
   const uid = (req?.user as any).id;
 
   const token = sign({ userId: uid }, parseEnv<string>('ACCESS_TOKEN_SECRET'), {

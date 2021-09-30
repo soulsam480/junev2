@@ -7,6 +7,7 @@ import { mongoose, setLogLevel } from '@typegoose/typegoose';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import { createExpressServer } from 'dango-core';
 
 import { createConnection } from 'src/db';
@@ -39,6 +40,7 @@ async function main() {
     }),
   );
   app.use(helmet());
+  app.use(morgan('short'));
   app.enable('etag'); // use strong etags
 
   setupOauth(app);
