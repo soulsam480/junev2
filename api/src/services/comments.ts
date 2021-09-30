@@ -17,11 +17,22 @@ export async function getCommentsForPost(id: string, cursor: number, limit: numb
       .select('-replies')
       .sort({ createdAt: -1 });
 
+    const estimateCount = commentModel
+      .find({ post_id: id })
+      .populate({
+        path: 'user',
+        model: User,
+        select: ['name', 'username', 'id', 'image'],
+      })
+      .populate('total_replies')
+      .select('-replies')
+      .sort({ createdAt: -1 });
+
     return await cursorPaginateResponse(
       baseQuery,
       cursor,
       limit,
-      await baseQuery.estimatedDocumentCount(),
+      await estimateCount.estimatedDocumentCount(),
     );
   } catch (error) {
     Promise.reject(error);

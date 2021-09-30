@@ -50,7 +50,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
       {...rest}
       headerSlot={
         <div className="post-card__header">
-          <Link to={`/@${post.user.username}`} className="flex">
+          <Link to={`/${post.user.username}`} className="flex">
             <div className="flex-none">
               <JAvatar
                 src={!!post.user?.image ? getFileUrl(post.user.image) : ''}

@@ -21,6 +21,9 @@ export async function getUserProfile(username: string) {
 export async function getUserPosts(id: string, cursor: number, limit: number) {
   try {
     const query = postModel.find({ user: getObjectId(id), is_archived: false });
+
+    const estimateCount = postModel.find({ user: getObjectId(id), is_archived: false });
+
     return cursorPaginateResponse(
       query
         .populate({
@@ -31,7 +34,7 @@ export async function getUserPosts(id: string, cursor: number, limit: number) {
         .sort({ createdAt: -1 }),
       cursor,
       limit,
-      await query.count(),
+      await estimateCount.count(),
     );
   } catch (error) {
     Promise.reject(error);

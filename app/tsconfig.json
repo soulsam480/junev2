@@ -16,6 +16,7 @@
     "jsx": "react",
     "baseUrl": ".",
     "typeRoots": ["types"],
+    "useUnknownInCatchVariables": false,
     "paths": {
       "src": ["/src"]
     }

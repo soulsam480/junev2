@@ -7,19 +7,24 @@ export async function createPost(post: DocumentDefinition<Post>) {
   try {
     const newPost = await postModel.create({ ...post });
 
-    return await newPost
-      .populate({
-        path: 'user',
-        model: 'User',
-        select: ['username', 'id', 'name', 'image'],
-      })
-      .execPopulate();
+    return await newPost.populate({
+      path: 'user',
+      model: 'User',
+      select: ['username', 'id', 'name', 'image'],
+    });
   } catch (error) {
     Promise.reject(error);
   }
 }
 
 export async function getAllPosts(cursor: number, limit: number) {
+  // new in mongoose 6x, a query can't be re-run
+
+  const estimateCount = postModel
+    .find({ is_archived: false })
+    .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
+    .sort({ createdAt: -1 });
+
   const baseQuery = postModel
     .find({ is_archived: false })
     .populate({ path: 'user', model: User, select: ['username', 'id', 'name', 'image'] })
@@ -30,7 +35,7 @@ export async function getAllPosts(cursor: number, limit: number) {
       baseQuery,
       cursor,
       limit,
-      await baseQuery.estimatedDocumentCount(),
+      await estimateCount.estimatedDocumentCount(),
     );
   } catch (error) {
     Promise.reject(error);

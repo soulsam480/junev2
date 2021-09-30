@@ -3,12 +3,7 @@ import { parseEnv } from 'src/utils/helpers';
 
 export async function createConnection() {
   try {
-    await mongoose.connect(parseEnv('MONGO_URI'), {
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useFindAndModify: false,
-    });
+    await mongoose.connect(parseEnv('MONGO_URI'));
 
     console.log('DB connected !');
   } catch (err) {

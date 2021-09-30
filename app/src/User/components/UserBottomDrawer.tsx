@@ -38,7 +38,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to={`/@${username}/`}
+          to={`/${username}/`}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:person-circle-outline" />

@@ -74,13 +74,11 @@ export async function cursorPaginateResponse<K extends TimeStamps>(
             $lt: new Date(decrypedDate),
           },
         })
-        .limit(limit + 1)
-        .exec();
+        .limit(limit + 1);
+      // .exec();
     } else {
-      data = await model
-        .find()
-        .limit(limit + 1)
-        .exec();
+      data = await model.find().limit(limit + 1);
+      // .exec();
     }
 
     const has_more = data.length === limit + 1;

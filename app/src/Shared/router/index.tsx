@@ -18,14 +18,14 @@ import { getToken } from 'src/utils/helpers';
 
 export enum JunePaths {
   Root = '/',
-  Lib = '/lib',
-  Login = '/login',
-  User = '/home',
-  Settings = '/settings',
-  ProfileSettings = '/settings/profile',
-  PasswordSettings = '/settings/password',
-  UserProfile = '/:username',
-  Post = '/:username/post/:postId',
+  Lib = 'lib',
+  Login = 'login',
+  User = 'home',
+  Settings = 'settings',
+  ProfileSettings = 'settings/profile',
+  PasswordSettings = 'settings/password',
+  UserProfile = ':username/',
+  Post = ':username/post/:postId',
 }
 
 interface RouteObject {
@@ -38,25 +38,12 @@ interface PrivateRouteProps extends Record<string, any> {
   component: (props: any) => React.ReactNode;
   isSignedIn: boolean;
   redirect: string;
-  from?: string;
-  search?: string;
 }
 
 const PrivateRoute = (props: PrivateRouteProps) => {
-  const { component, isSignedIn, redirect, from, ...rest } = props;
+  const { component, isSignedIn, redirect, ...rest } = props;
 
-  return isSignedIn ? component(rest) : <Navigate to={`${redirect}?r=${from}`} />;
-};
-
-const LoginRoute = (props: Omit<PrivateRouteProps, 'redirect'>) => {
-  const { component, isSignedIn, from, search, ...rest } = props;
-
-  if (isSignedIn) {
-    const r = new URLSearchParams(search).get('r');
-    return <Navigate to={r || JunePaths.User} />;
-  }
-
-  return component(rest);
+  return isSignedIn ? component(rest) : <Navigate to={redirect} />;
 };
 
 function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteObject[] {
@@ -64,9 +51,8 @@ function spreadPrivateRoutes(routes: RouteObject[], isLoggedin: boolean): RouteO
     path,
     element: PrivateRoute({
       component: () => Element,
-      redirect: JunePaths.Login,
+      redirect: `/${JunePaths.Login}`,
       isSignedIn: isLoggedin,
-      from: path,
     }),
   }));
 }
@@ -91,23 +77,27 @@ export function useJuneRouter() {
       children: [
         //TODO: replace this with landing page
         {
-          path: JunePaths.Root,
-          element: LoginRoute({
+          path: '',
+          element: PrivateRoute({
             component: (props: any) => <Login {...props} />,
-            isSignedIn: isLoggedIn,
-            search,
+            isSignedIn: !isLoggedIn,
+            redirect: `/${JunePaths.User}`,
           }),
         },
         {
           path: JunePaths.Login,
-          element: LoginRoute({
+          element: PrivateRoute({
             component: (props: any) => <Login {...props} />,
-            isSignedIn: isLoggedIn,
-            search,
+            isSignedIn: !isLoggedIn,
+            redirect: `/${JunePaths.User}`,
           }),
         },
         ...spreadPrivateRoutes(
           [
+            {
+              path: JunePaths.UserProfile,
+              element: <UserProfile />,
+            },
             {
               path: JunePaths.User,
               element: <Feed />,
@@ -123,10 +113,6 @@ export function useJuneRouter() {
             {
               path: JunePaths.PasswordSettings,
               element: <PasswordSettings />,
-            },
-            {
-              path: JunePaths.UserProfile,
-              element: <UserProfile />,
             },
             {
               path: JunePaths.Post,
