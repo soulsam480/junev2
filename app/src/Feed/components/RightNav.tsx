@@ -50,7 +50,7 @@ const RightNav: React.FC<Props> = () => {
               block
               sm
               size="16px"
-              onClick={() => navigate(JunePaths.Settings)}
+              onClick={() => navigate(`/${JunePaths.Settings}`)}
             />
           </div>
           <div className="flex-auto">

@@ -17,7 +17,7 @@ const PostDetail: React.FC<Props> = () => {
   const { postId } = useParams();
   const { search, pathname } = useLocation();
   const nav = useNavigate();
-  const isPost = useMatch(JunePaths.Post);
+  const isPost = useMatch(`/${JunePaths.Post}`);
   const setAlert = useAlert((s) => s.setAlert);
 
   const isEditModal = useMemo(() => {

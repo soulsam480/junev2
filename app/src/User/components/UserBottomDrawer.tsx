@@ -27,7 +27,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to={JunePaths.User}
+          to={`/${JunePaths.User}`}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:home-outline" />
@@ -49,7 +49,7 @@ const UserBottomDrawer: React.FC<Props> = () => {
         <JMenuItem
           className="flex space-x-2 items-center"
           closeMenuCallback={() => setUserDrawer('isUserDrawer', false)}
-          to={JunePaths.Settings}
+          to={`/${JunePaths.Settings}`}
         >
           <span className="flex-none">
             <JIcon size="18px" icon="ion:gear-a" />

@@ -70,7 +70,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <JMenuItem
                         className="flex space-x-2 items-center"
                         closeMenuCallback={cMenu}
-                        to={JunePaths.User}
+                        to={`/${JunePaths.User}`}
                       >
                         <span className="flex-none">
                           <JIcon icon="ion:home-outline" />
@@ -92,7 +92,7 @@ const AppNavbar: React.FC<Props> = () => {
                       <JMenuItem
                         className="flex space-x-2 items-center"
                         closeMenuCallback={cMenu}
-                        to={JunePaths.Settings}
+                        to={`/${JunePaths.Settings}`}
                       >
                         <span className="flex-none">
                           <JIcon icon="ion:gear-a" />
