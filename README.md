@@ -51,11 +51,11 @@ __APP__:
 - typescript
 
 #### Run it locally
-> You need to have yarn installed as this repo is a `Yarn Workspace`.
+> You need to have pnpm installed as this repo is a `PNPM Workspace`.
 
 - Clone/fork repo
 ```bash
-yarn # install deps
+pnpm i # install deps
 ```
 - Add `env` variables.
 ```bash
@@ -73,7 +73,7 @@ PORT=3003
 ```
 - Run
 ```bash
-yarn dev # devserver
-yarn build # build 
+pnpm dev # devserver
+pnpm build # build 
 ```
 Any contributions are welcome. reach me on [soulsam480@hotmail.com](mailto:soulsam480@hotmail.com)

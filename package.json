@@ -7,15 +7,15 @@
   "scripts": {
     "prebuild": "test \"$CI\" = true && npx pnpm install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
     "dev:app": "pnpm dev --filter app",
-    "build:app": "yarn workspace app build",
-    "start:app": "yarn workspace app serve",
+    "build:app": "pnpm build --filter app",
+    "start:app": "pnpm serve --filter app",
     "dev:api": "pnpm dev --filter api",
-    "build:api": "yarn workspace api build",
-    "start:api": "yarn workspace api start",
-    "build:api:swagger": "yarn workspace api build:swagger",
-    "build:api:types": "yarn workspace api build:types",
+    "build:api": "pnpm build --filter api",
+    "start:api": "pnpm start --filter api",
+    "build:api:swagger": "pnpm build:swagger --filter api",
+    "build:api:types": "pnpm build:types --filter api",
     "dev": "concurrently --kill-others-on-fail \"pnpm dev:app\"  \"pnpm dev:api\"",
-    "build": "concurrently --kill-others-on-fail \"yarn build:app\"  \"yarn build:api\""
+    "build": "concurrently --kill-others-on-fail \"pnpm build:app\"  \"pnpm build:api\""
   },
   "dependencies": {
     "concurrently": "^6.1.0"
