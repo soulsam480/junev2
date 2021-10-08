@@ -11,8 +11,8 @@ Object.keys(dependencies)
     try {
       console.info('updating' + key);
 
-      execSync(`yarn remove ${key}`, { encoding: 'utf-8' });
-      execSync(`yarn add ${key}`, { encoding: 'utf-8' });
+      execSync(`pnpm remove ${key}`, { encoding: 'utf-8' });
+      execSync(`pnpm add ${key}`, { encoding: 'utf-8' });
     } catch (error) {
       console.log(error);
     } finally {
@@ -24,8 +24,8 @@ Object.keys(devDependencies).forEach((key) => {
   try {
     console.info('updating' + key);
 
-    execSync(`yarn remove ${key}`, { encoding: 'utf-8' });
-    execSync(`yarn add ${key} -D`, { encoding: 'utf-8' });
+    execSync(`pnpm remove ${key}`, { encoding: 'utf-8' });
+    execSync(`pnpm add ${key} -D`, { encoding: 'utf-8' });
   } catch (error) {
     console.log(error);
   } finally {
@@ -36,8 +36,8 @@ Object.keys(devDependencies).forEach((key) => {
 if (syncIgnore) {
   syncIgnore.forEach((el) => {
     console.info('updating' + el);
-    execSync(`yarn remove ${el}`, { encoding: 'utf-8' });
-    execSync(`yarn add ${el}@next`, { encoding: 'utf-8' });
+    execSync(`pnpm remove ${el}`, { encoding: 'utf-8' });
+    execSync(`pnpm add ${el}@next`, { encoding: 'utf-8' });
     console.info('updated' + el);
   });
 }

@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules --files -- src/index.ts",
-    "build": "rm -rf dist && yarn && tsc && tsc-alias",
+    "build": "rm -rf dist && tsc && tsc-alias",
     "build:swagger": "node swagger.js",
     "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./types && tsc-alias",
     "start": "cd dist && PORT=3002 PROD=true node index.js",

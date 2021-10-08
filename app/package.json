@@ -11,10 +11,11 @@
   "dependencies": {
     "@iconify/iconify": "^2.0.4",
     "autolinker": "^3.14.3",
+    "axios": "^0.21.4",
     "history": "^5.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-router-dom": "^6.0.0-beta.5",
+    "react-router-dom": "^6.0.0-beta.6",
     "react-transition-group": "^4.4.2",
     "textarea-caret": "^3.1.0",
     "uuid": "^8.3.2",
@@ -34,7 +35,8 @@
     "vite-plugin-purge-icons": "^0.7.0",
     "vite-plugin-pwa": "^0.11.2",
     "vite-plugin-windicss": "^1.4.8",
-    "windicss": "^3.1.8"
+    "windicss": "^3.1.8",
+    "workbox-window": "^6.3.0"
   },
   "syncIgnore": [
     "react-router-dom"
