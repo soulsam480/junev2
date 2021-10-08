@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- chore: migrate to pnpm [\#23](https://github.com/soulsam480/junev2/pull/23) ([soulsam480](https://github.com/soulsam480))
 - chore: upgrade deps and fix breaking changes [\#22](https://github.com/soulsam480/junev2/pull/22) ([soulsam480](https://github.com/soulsam480))
 - fix\(app\): show user profile image in comments [\#21](https://github.com/soulsam480/junev2/pull/21) ([soulsam480](https://github.com/soulsam480))
 - build\(api\): fix tsc-alias path mapping [\#20](https://github.com/soulsam480/junev2/pull/20) ([soulsam480](https://github.com/soulsam480))
