@@ -5,17 +5,16 @@
   "license": "MIT",
   "author": "soulsam480 <soulsam480@hotmail.com>",
   "scripts": {
-    "prebuild": "test \"$CI\" = true && npx pnpm install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
-    "dev:app": "pnpm dev --filter app",
-    "build:app": "pnpm build --filter app",
-    "start:app": "pnpm serve --filter app",
-    "dev:api": "pnpm dev --filter api",
-    "build:api": "pnpm build --filter api",
-    "start:api": "pnpm start --filter api",
-    "build:api:swagger": "pnpm build:swagger --filter api",
-    "build:api:types": "pnpm build:types --filter api",
-    "dev": "concurrently --kill-others-on-fail \"pnpm dev:app\"  \"pnpm dev:api\"",
-    "build": "concurrently --kill-others-on-fail \"pnpm build:app\"  \"pnpm build:api\""
+    "dev:app": "cd app && npm run dev",
+    "build:app": "cd app && npm run build",
+    "start:app": "cd app && npm run serve",
+    "dev:api": "cd api && npm run dev",
+    "build:api": "cd api && npm run build",
+    "start:api": "cd api && npm run start",
+    "build:api:swagger": "cd api && npm run build:swagger",
+    "build:api:types": "cd api && npm run build:types",
+    "dev": "concurrently --kill-others-on-fail \"npm run dev:app\"  \"npm run dev:api\"",
+    "build": "concurrently --kill-others-on-fail \"npm run build:app\"  \"npm run build:api\""
   },
   "dependencies": {
     "concurrently": "^6.1.0"
