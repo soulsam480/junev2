@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import JButton from 'src/Lib/JButton';
 import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';

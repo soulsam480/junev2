@@ -4,25 +4,21 @@
   "private": "true",
   "license": "MIT",
   "author": "soulsam480 <soulsam480@hotmail.com>",
-  "workspaces": [
-    "app",
-    "api"
-  ],
   "scripts": {
-    "dev:app": "yarn workspace app dev",
+    "prebuild": "test \"$CI\" = true && npx pnpm install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
+    "dev:app": "pnpm dev --filter app",
     "build:app": "yarn workspace app build",
     "start:app": "yarn workspace app serve",
-    "dev:api": "yarn workspace api dev",
+    "dev:api": "pnpm dev --filter api",
     "build:api": "yarn workspace api build",
     "start:api": "yarn workspace api start",
     "build:api:swagger": "yarn workspace api build:swagger",
     "build:api:types": "yarn workspace api build:types",
-    "dev": "concurrently --kill-others-on-fail \"yarn dev:app\"  \"yarn dev:api\"",
+    "dev": "concurrently --kill-others-on-fail \"pnpm dev:app\"  \"pnpm dev:api\"",
     "build": "concurrently --kill-others-on-fail \"yarn build:app\"  \"yarn build:api\""
   },
   "dependencies": {
-    "concurrently": "^6.1.0",
-    "dango-core": "^1.3.0"
+    "concurrently": "^6.1.0"
   },
   "devDependencies": {
     "typescript": "^4.4.3"
