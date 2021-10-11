@@ -11,6 +11,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
 import 'src/Feed/styles/postcard.scss';
 import { classNames, getFileUrl, getUserInitials } from 'src/utils/helpers';
+
 interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -89,8 +90,10 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
         <>
           <div className="py-2 px-3 break-all">
             <AppLinkifier
-              linkEl={({ match, key, href }) =>
-                match.startsWith('@') ? (
+              linkEl={({ match, key, href, isImage }) =>
+                isImage ? (
+                  <JImage src={href} loading="lazy" key={key} minHeight="300px" />
+                ) : match.startsWith('@') ? (
                   <Link
                     to={`/${match}/`}
                     key={key}
