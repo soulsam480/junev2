@@ -9,7 +9,7 @@ import { updateUserById, uploadImage } from 'src/User/services/users';
 import { UpdateUserData } from 'src/utils/types';
 import { useNavigate } from 'react-router-dom';
 import { useLoader } from 'src/Shared/store/loader';
-import { diffMatcher, getFileUrl, getUserInitials } from 'src/utils/helpers';
+import { compressImage, diffMatcher, getFileUrl, getUserInitials } from 'src/utils/helpers';
 
 interface Props {}
 
@@ -42,13 +42,13 @@ const ProfileSettings: React.FC<Props> = () => {
 
     try {
       const formData = new FormData();
-      formData.append('file', uploadFile.current);
+      formData.append('file', await compressImage(uploadFile.current));
 
       const {
         data: {
           data: { key: image },
         },
-      } = await uploadImage(formData);
+      } = await uploadImage(formData, user.id);
 
       uploadFile.current = null;
 
@@ -120,6 +120,7 @@ const ProfileSettings: React.FC<Props> = () => {
           className="hidden invisible"
           multiple={false}
           onChange={handleFileChange}
+          accept="image/*"
         />
 
         <JContainer className="flex flex-col space-y-4 rounded-lg py-5">

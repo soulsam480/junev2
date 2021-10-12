@@ -36,6 +36,6 @@ export function updateUserPassword(id: string, passwords: UpdatePassword) {
   return api.post<ResponseSchema<User>>(`/users/${id}/password`, { ...passwords });
 }
 
-export function uploadImage(file: FormData) {
-  return api.post<ResponseSchema<{ key?: string }>>(`/cdn`, file);
+export function uploadImage(file: FormData, scope?: string) {
+  return api.post<ResponseSchema<{ key?: string }>>(`/cdn`, file, { params: { scope } });
 }

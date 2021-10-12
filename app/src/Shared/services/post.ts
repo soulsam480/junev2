@@ -1,7 +1,7 @@
 import { api } from 'src/utils/helpers';
 import { Comment, PaginationParams, Post, Reply, ResponseSchema } from 'src/utils/types';
 
-export async function createPost(params: { content: string }) {
+export async function createPost(params: Partial<Post>) {
   return api.post<ResponseSchema<Post>>('/posts/', { post: { ...params } });
 }
 

@@ -100,6 +100,7 @@ importers:
       '@vitejs/plugin-react-refresh': ^1.3.6
       autolinker: ^3.14.3
       axios: ^0.21.4
+      compressorjs: ^1.1.1
       history: ^5.0.1
       react: ^17.0.2
       react-dom: ^17.0.2
@@ -120,6 +121,7 @@ importers:
       '@iconify/iconify': 2.0.4
       autolinker: 3.14.3
       axios: 0.21.4
+      compressorjs: 1.1.1
       history: 5.0.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -2690,6 +2692,10 @@ packages:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
 
+  /blueimp-canvas-to-blob/3.29.0:
+    resolution: {integrity: sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==}
+    dev: false
+
   /body-parser/1.19.0:
     resolution: {integrity: sha512-dhEPs72UPbDnAQJ9ZKMNTP6ptJaionhP5cBb541nXPlW60Jepo9RV/a4fX4XWW9CuFNK22krhrj1+rgzifNCsw==}
     engines: {node: '>= 0.8'}
@@ -2898,6 +2904,13 @@ packages:
     resolution: {integrity: sha512-6P6g0uetGpW/sdyUy/iQQCbFF0kWVMSIVSyYz7Zgjcgh8mgw8PQzDNZeyZ5DQ2gM7LBoZPHmnjz8rUthkBG5tw==}
     engines: {node: '>=4.0.0'}
     dev: true
+
+  /compressorjs/1.1.1:
+    resolution: {integrity: sha512-SysRuUPfmUNoq+RviE0iMFVUmoX2q/x+7PkEPUmk6NGkd85hDrmvujx0Qtp8UCGA6KMe5kuodsylPQcNaLf60w==}
+    dependencies:
+      blueimp-canvas-to-blob: 3.29.0
+      is-blob: 2.1.0
+    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
@@ -3792,6 +3805,11 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       binary-extensions: 2.2.0
+
+  /is-blob/2.1.0:
+    resolution: {integrity: sha512-SZ/fTft5eUhQM6oF/ZaASFDEdbFVe89Imltn9uZr03wdKMcWNVYSMjQPFtg05QuNkt5l5c135ElvXEQG0rk4tw==}
+    engines: {node: '>=6'}
+    dev: false
 
   /is-core-module/2.7.0:
     resolution: {integrity: sha512-ByY+tjCciCr+9nLryBYcSD50EOGWt95c7tIsKTG1J2ixKKXPvF7Ej3AVd+UfDydAJom3biBGDBALaO79ktwgEQ==}

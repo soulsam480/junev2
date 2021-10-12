@@ -1,5 +1,6 @@
 import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { WhatIsIt } from '@typegoose/typegoose/lib/internal/constants';
 import { User } from 'src/entities/user';
 
 @modelOptions({
@@ -81,8 +82,8 @@ export class Post extends TimeStamps {
   @prop({ default: '' })
   public content: string;
 
-  @prop({ default: '' })
-  public url?: string;
+  @prop({ default: [], type: () => [String] }, WhatIsIt.ARRAY)
+  public images?: string[];
 
   @prop({ ref: 'User' })
   public likes?: Ref<User>[];

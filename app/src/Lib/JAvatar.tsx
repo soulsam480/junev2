@@ -55,7 +55,7 @@ const JAvatar: React.FC<Props> = ({
       ])}
       style={{
         fontSize: size || '40px',
-        borderRadius: rounded ? '50%' : 'unset',
+        borderRadius: rounded ? '50%' : undefined,
         height: '1em',
         width: '1em',
       }}

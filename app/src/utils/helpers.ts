@@ -2,6 +2,8 @@ import axios, { AxiosError } from 'axios';
 import { useLoader } from 'src/Shared/store/loader';
 import { StrippedUser } from 'src/User/store/useUserStore';
 import { getTokens } from './auth';
+import CompressorJs from 'compressorjs';
+ 
 
 const HEADER_NAME = 'authorization';
 
@@ -191,3 +193,19 @@ export function getUserInitials(user: StrippedUser) {
 export function getFileUrl(filename?: string) {
   return `${import.meta.env.VITE_API}/cdn/file?file_name=${filename}`;
 }
+
+/**
+ * @method compressImage Compress image to a specific quality
+ * @param file
+ * @param quality `@default 0.6`
+ * @returns Promise with the compressed image file
+ */
+export const compressImage = (file: File, quality = 0.6): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    new CompressorJs(file, {
+      quality: quality,
+      success: (result) => resolve(new File([result], file.name, { type: file.type })),
+      error: reject,
+    });
+  });
+};
