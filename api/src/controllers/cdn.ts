@@ -1,19 +1,19 @@
 import { GetObjectCommandInput, PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
 import { upload } from 'src/middlewares/multer';
-import { getObject, getObjects, putObject } from 'src/services/cdn';
+import { getObject, putObject } from 'src/services/cdn';
 import { formatResponse, normalize, parseEnv } from 'src/utils/helpers';
 import { Router } from 'express';
-import { auth } from 'src/middlewares/auth';
+// import { auth } from 'src/middlewares/auth';
 
 const BUCKET = parseEnv<string>('BUCKET_NAME');
 
 export const cdnRouter = Router();
 
 //TODO: dont use this, this won't be deployed to prod
-cdnRouter.get('/', auth, async (_, res) => {
-  return res.json(await getObjects());
-});
+// cdnRouter.get('/', auth, async (_, res) => {
+//   return res.json(await getObjects());
+// });
 
 //TODO: send file as FormData use new FormData to construct form
 // with a key file: File

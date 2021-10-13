@@ -6,6 +6,7 @@ import JButton from 'src/Lib/JButton';
 import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
 import JAvatar from 'src/Lib/JAvatar';
 import JIcon from 'src/Lib/JIcon';
+import { Post } from 'src/utils/types';
 
 interface Props {
   className?: string;
@@ -14,21 +15,22 @@ interface Props {
   placeholder?: string;
   onPost: (files: File[] | null) => void;
   isLoading: boolean;
+  post?: Post;
 }
 
 interface PostAPI {
   selectFile(): void;
-  onPost: (files: File[] | null) => void;
+  removeFileFromAray(file: { url: string; name: string }): void;
   isLoading: boolean;
-  files: File[] | null;
-  removeFile(name: string): void;
+  imageUrls: { url: string; name: string }[];
+  post?: Post;
 }
 
 const EditorContext = createContext<PostAPI>(null as any);
 
 const useEditorContext = () => useContext(EditorContext);
 
-const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) => {
+const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, post }) => {
   const [files, setFiles] = useState<File[]>([]);
 
   function selectFile() {
@@ -49,10 +51,6 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) 
     });
   }
 
-  function removeFile(name: string) {
-    setFiles((o) => (!o.length ? [] : o.filter((file) => file.name !== name)));
-  }
-
   async function findUserByUsername(query: string, callback: (data: SuggestionDataItem[]) => void) {
     if (!query) return callback([]);
 
@@ -67,6 +65,22 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) 
     }
   }
 
+  const imageUrls = useMemo(() => {
+    return files && files.map((file) => ({ url: URL.createObjectURL(file), name: file.name }));
+  }, [files]);
+
+  function removeFileFromAray(file: { url: string; name: string }) {
+    URL.revokeObjectURL(file.url);
+    setFiles((o) => (!o.length ? [] : o.filter((f) => f.name !== file.name)));
+  }
+
+  async function submitPost(files: File[]) {
+    onPost(files);
+
+    imageUrls.forEach((file) => URL.revokeObjectURL(file.url));
+    setFiles([]);
+  }
+
   const handleCtrlEnter = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       if (!value) return;
@@ -76,16 +90,15 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) 
       if (key === 'Enter' && ctrlKey) {
         e.preventDefault();
 
-        onPost(files);
-        setFiles([]);
+        submitPost(files);
       }
     },
-    [onPost],
+    [submitPost],
   );
 
   const debounced = useDebounceCallback(findUserByUsername, 300);
   return (
-    <EditorContext.Provider value={{ selectFile, onPost, isLoading, files: files, removeFile }}>
+    <EditorContext.Provider value={{ selectFile, isLoading, imageUrls, removeFileFromAray, post }}>
       <div className="j-rich">
         <MentionsInput
           value={value}
@@ -105,7 +118,8 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) 
             markup="@__display__ "
           />
         </MentionsInput>
-        <EditorToolbar disabled={!value || isLoading} />
+
+        <EditorToolbar disabled={!value || isLoading} onPost={() => submitPost(files)} />
       </div>
     </EditorContext.Provider>
   );
@@ -113,25 +127,11 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading }) 
 
 interface EditorToolbarProps {
   disabled?: boolean;
+  onPost: () => void;
 }
 
-const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled }) => {
-  const { selectFile, onPost, files, isLoading, removeFile } = useEditorContext();
-
-  const imageUrls = useMemo(() => {
-    return files && files.map((file) => ({ url: URL.createObjectURL(file), name: file.name }));
-  }, [files]);
-
-  function removeFileFromAray(file: { url: string; name: string }) {
-    URL.revokeObjectURL(file.url);
-    removeFile(file.name);
-  }
-
-  function handleSubmit() {
-    onPost(files);
-
-    imageUrls?.forEach((file) => URL.revokeObjectURL(file.url));
-  }
+const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled, onPost }) => {
+  const { selectFile, imageUrls, isLoading, removeFileFromAray } = useEditorContext();
 
   return (
     <div className="j-rich__toolbar">
@@ -162,7 +162,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled }) => {
           sm
           invert
           title="Create post"
-          onClick={handleSubmit}
+          onClick={onPost}
           disabled={disabled}
           loading={isLoading}
         />
