@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from 'react';
+import React, { FormEvent, useMemo, useRef, useState } from 'react';
 import JAvatar from 'src/Lib/JAvatar';
 import JButton from 'src/Lib/JButton';
 import JContainer from 'src/Lib/JContainer';
@@ -21,8 +21,7 @@ const ProfileSettings: React.FC<Props> = () => {
   const setLoader = useLoader((s) => s.setLoader);
   const navigate = useNavigate();
 
-  const inputFile = useRef<HTMLInputElement>(null);
-  const uploadFile = useRef<File | null>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
 
   const [userDetails, setUserDetails] = useState<UpdateUserData>({
     name: user.name,
@@ -32,18 +31,41 @@ const ProfileSettings: React.FC<Props> = () => {
     username: user.username,
   });
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      uploadFile.current = e.target.files[0];
+  const userImage = useMemo(() => {
+    if (!!uploadFile && uploadFile instanceof File) return URL.createObjectURL(uploadFile);
+
+    if (!!user.image) return getFileUrl(user.image);
+
+    return '';
+  }, [user.image, uploadFile]);
+
+  function selectFile() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = false;
+    fileInput.click();
+
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files) return;
+      revokeObjectURL();
+
+      setUploadFile(fileInput.files[0]);
+    });
+  }
+
+  function revokeObjectURL() {
+    if (uploadFile instanceof File) {
+      URL.revokeObjectURL(userImage);
     }
   }
 
   async function uploadProfileImage() {
-    if (!uploadFile.current) return;
+    if (!uploadFile) return;
 
     try {
       const formData = new FormData();
-      formData.append('file', await compressImage(uploadFile.current));
+      formData.append('file', await compressImage(uploadFile));
 
       const {
         data: {
@@ -51,7 +73,9 @@ const ProfileSettings: React.FC<Props> = () => {
         },
       } = await uploadImage(formData, user.id);
 
-      uploadFile.current = null;
+      revokeObjectURL();
+
+      setUploadFile(null);
 
       return image;
     } catch (error) {
@@ -96,7 +120,7 @@ const ProfileSettings: React.FC<Props> = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="py-2">
             <JAvatar
-              src={!!user.image ? getFileUrl(user.image) : ''}
+              src={userImage}
               content={getUserInitials(user)}
               contentClass={`bg-lime-200`}
               size="150px"
@@ -105,24 +129,8 @@ const ProfileSettings: React.FC<Props> = () => {
             />
           </div>
 
-          <JButton
-            icon="ion:camera-outline"
-            onClick={() => inputFile.current?.click()}
-            sm
-            round
-            size="20px"
-          />
+          <JButton icon="ion:camera-outline" onClick={selectFile} sm round size="20px" />
         </div>
-
-        <input
-          type="file"
-          id="file"
-          ref={inputFile}
-          className="hidden invisible"
-          multiple={false}
-          onChange={handleFileChange}
-          accept="image/*"
-        />
 
         <JContainer className="flex flex-col space-y-4 rounded-lg py-5">
           <JInput
