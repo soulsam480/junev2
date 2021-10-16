@@ -5,11 +5,12 @@ import JContainer from 'src/Lib/JContainer';
 import JInput from 'src/Lib/JInput';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { useAlert } from 'src/Lib/store/alerts';
-import { updateUserById, uploadImage } from 'src/User/services/users';
+import { updateUserById } from 'src/User/services/users';
 import { UpdateUserData } from 'src/utils/types';
 import { useNavigate } from 'react-router-dom';
 import { useLoader } from 'src/Shared/store/loader';
 import { compressImage, diffMatcher, getFileUrl, getUserInitials } from 'src/utils/helpers';
+import { uploadImage } from 'src/Shared/services/cdn';
 
 interface Props {}
 

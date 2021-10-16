@@ -6,9 +6,9 @@ import AppPostEditor from 'src/Shared/components/PostEditor';
 import { createPost } from 'src/Shared/services/post';
 import { useAlert } from 'src/Lib/store/alerts';
 import PostFeed from 'src/Feed/components/PostFeed';
-import { uploadImage } from 'src/User/services/users';
 import { useUserStore } from 'src/User/store/useUserStore';
 import { compressImage } from 'src/utils/helpers';
+import { uploadImage } from 'src/Shared/services/cdn';
 
 interface Props {}
 

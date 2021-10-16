@@ -4,7 +4,7 @@ import { upload } from 'src/middlewares/multer';
 import { getObject, putObject } from 'src/services/cdn';
 import { formatResponse, normalize, parseEnv } from 'src/utils/helpers';
 import { Router } from 'express';
-// import { auth } from 'src/middlewares/auth';
+import { auth } from 'src/middlewares/auth';
 
 const BUCKET = parseEnv<string>('BUCKET_NAME');
 
@@ -17,7 +17,7 @@ export const cdnRouter = Router();
 
 //TODO: send file as FormData use new FormData to construct form
 // with a key file: File
-cdnRouter.post('/', upload, async (req, res) => {
+cdnRouter.post('/', auth, upload, async (req, res) => {
   const {
     file,
     query: { scope = '' },
