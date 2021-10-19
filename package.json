@@ -15,7 +15,9 @@
     "build:api:types": "cd api && npm run build:types",
     "dev": "concurrently --kill-others-on-fail \"npm run dev:app\"  \"npm run dev:api\"",
     "build": "concurrently --kill-others-on-fail \"npm run build:app\"  \"npm run build:api\"",
-    "changelog": "npx auto-changelog --output CHANGELOG.md --template keepachangelog --commit-limit false -u --sort-commits date-desc --hide-credit"
+    "changelog": "npx auto-changelog --output CHANGELOG.md --template keepachangelog --commit-limit false -u --sort-commits date-desc --hide-credit",
+    "test:api": "ad api && npm run test",
+    "test:open:api": "ad api && npm run test:open"
   },
   "dependencies": {
     "concurrently": "^6.1.0"

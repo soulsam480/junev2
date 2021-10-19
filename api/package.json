@@ -10,10 +10,14 @@
     "build:swagger": "node swagger.js",
     "build:types": "tsc --declaration --emitDeclarationOnly --declarationDir ./types && tsc-alias",
     "start": "cd dist && PORT=3002 PROD=true node index.js",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "test": "peeky run",
+    "test:open": "node -r tsconfig-paths/register node_modules/@peeky/cli/dist/index.js open"
   },
   "license": "MIT",
   "devDependencies": {
+    "@peeky/cli": "^0.4.2",
+    "@peeky/runner": "^0.4.2",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
