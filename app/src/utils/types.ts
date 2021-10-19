@@ -74,7 +74,7 @@ export interface Post extends TimeStamps {
   id: string;
   user: User;
   content: string;
-  url?: string;
+  images?: string[];
   likes: string[];
   comments: Comment[];
   total_comments?: number;

@@ -27,9 +27,18 @@ if (!parseEnv<boolean>('PROD')) {
   setLogLevel('TRACE');
   mongoose.set('debug', true);
 }
+function runMongo() {
+  try {
+    createConnection();
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+}
 
 async function main() {
   const app = express();
+  runMongo();
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -54,14 +63,7 @@ async function main() {
     controllers: [postController, userController],
   });
 
-  try {
-    await createConnection();
-
-    app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
+  app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
 }
 
 main();

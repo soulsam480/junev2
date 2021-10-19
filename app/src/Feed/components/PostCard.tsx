@@ -11,6 +11,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PostContext from './postCard/PostContext';
 import 'src/Feed/styles/postcard.scss';
 import { classNames, getFileUrl, getUserInitials } from 'src/utils/helpers';
+
 interface Props extends JCardProps {
   post: Post;
   updatePostReaction: (post: Post) => void;
@@ -42,6 +43,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
 
     navigate(`/${post.user.username}/post/${post.id}/`);
   }
+
   return (
     <JCard
       onClick={handlePostClick}
@@ -92,7 +94,7 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
               linkEl={({ match, key, href }) =>
                 match.startsWith('@') ? (
                   <Link
-                    to={`/${match}/`}
+                    to={`/${match.split('@')[1]}/`}
                     key={key}
                     className="j-link"
                     rel="noopener noreferrer nofollow"
@@ -109,7 +111,115 @@ const PostCard: React.FC<Props> = ({ post, updatePostReaction, onCommentClick, .
               {post.content}
             </AppLinkifier>
           </div>
-          {!!post.url && <JImage src={post.url || ''} loading="lazy" minHeight="300px" />}
+
+          {/* //! Really trash gallery below */}
+
+          {!!post.images?.length &&
+            (post.images.length === 1 ? (
+              <div className="flex">
+                <JImage
+                  src={getFileUrl(post.images[0])}
+                  minHeight="300px"
+                  width="100%"
+                  loading="lazy"
+                />
+              </div>
+            ) : post.images.length === 2 ? (
+              <div className="flex space-x-2">
+                {post.images.map((image) => {
+                  return (
+                    <JImage
+                      src={getFileUrl(image)}
+                      key={image}
+                      minHeight="200px"
+                      width="50%"
+                      loading="lazy"
+                    />
+                  );
+                })}
+              </div>
+            ) : post.images.length === 3 ? (
+              <div className="flex space-x-2">
+                <div className="w-1/2">
+                  <div
+                    className="h-full w-full bg-cover rounded"
+                    style={{ backgroundImage: `url(${getFileUrl(post.images[0])})` }}
+                  ></div>
+                </div>
+
+                <div className="w-1/2 h-auto px-1">
+                  <div className="mb-8">
+                    <JImage src={getFileUrl(post.images[1])} minHeight="200px" loading="lazy" />
+                  </div>
+
+                  <div>
+                    <JImage src={getFileUrl(post.images[2])} minHeight="200px" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+            ) : post.images.length === 4 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {post.images.map((image) => {
+                  return (
+                    <JImage src={getFileUrl(image)} key={image} minHeight="200px" loading="lazy" />
+                  );
+                })}
+              </div>
+            ) : post.images.length === 5 ? (
+              <div className="flex space-x-1">
+                <div className="grid grid-cols-1 gap-1 w-1/2">
+                  {post.images.slice(0, 2).map((image) => {
+                    return (
+                      <JImage
+                        src={getFileUrl(image)}
+                        key={image}
+                        minHeight="200px"
+                        loading="lazy"
+                      />
+                    );
+                  })}
+                </div>
+                <div className="grid grid-cols-1 gap-1 w-1/2">
+                  {post.images.slice(2).map((image) => {
+                    return (
+                      <JImage
+                        src={getFileUrl(image)}
+                        key={image}
+                        minHeight="200px"
+                        loading="lazy"
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="grid grid-cols-3 gap-2">
+                  {post.images.slice(0, 3).map((image) => {
+                    return (
+                      <JImage
+                        src={getFileUrl(image)}
+                        key={image}
+                        minHeight="200px"
+                        loading="lazy"
+                      />
+                    );
+                  })}
+                </div>
+                <div className="grid grid-cols-3 gap-2 py-1">
+                  {post.images.slice(3).map((image) => {
+                    return (
+                      <JImage
+                        src={getFileUrl(image)}
+                        key={image}
+                        minHeight="200px"
+                        loading="lazy"
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
         </>
       }
     ></JCard>

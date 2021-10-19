@@ -1,41 +1,42 @@
 import React, { useCallback, useMemo } from 'react';
 import autolinker from 'autolinker';
 
+// const IMAGE_REGEXP = new RegExp(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|svg|jpeg)/, 'g');
+
 interface Props {
   children: string;
-  linkEl: (args: { match: string; key: number; href?: string }) => React.ReactNode;
+  linkEl: (args: { match: string; key: number; href: string }) => React.ReactNode;
 }
 
 const AppLinkifier: React.FC<Props> = ({ children, linkEl }) => {
-  const text = children;
   const linker = useMemo(
     () =>
       new autolinker({
         urls: true,
         mention: 'instagram',
+        sanitizeHtml: true,
       }),
     [],
   );
 
   const parse = useCallback(() => {
-    const matches = linker.parse(text);
-    if (matches.length === 0) return text;
+    const matches = linker.parse(children);
+    if (matches.length === 0) return children;
 
-    const elements = [];
+    let elements = [];
     let lastIndex = 0;
 
     matches.forEach((match, index) => {
-      // Push text located before matched string
       if (match.getOffset() > lastIndex) {
-        elements.push(text.substring(lastIndex, match.getOffset()));
+        elements.push(children.substring(lastIndex, match.getOffset()));
       }
 
       // Push Link component
       elements.push(
         linkEl({
           match: match.getMatchedText(),
-          key: index,
           href: match.getMatchedText(),
+          key: index,
         }),
       );
 
@@ -43,16 +44,16 @@ const AppLinkifier: React.FC<Props> = ({ children, linkEl }) => {
     });
 
     // Push remaining text
-    if (text.length > lastIndex) {
-      elements.push(text.substring(lastIndex));
+    if (children.length > lastIndex) {
+      elements.push(children.substring(lastIndex));
     }
 
-    return elements.length === 1 ? elements[0] : elements;
-  }, [text]);
+    elements = elements;
 
-  const parsedText = useMemo(() => parse(), [parse]);
+    return elements;
+  }, [children, linkEl]);
 
-  return <div className="break-all">{parsedText}</div>;
+  return <div className="break-all">{parse()}</div>;
 };
 
 export default AppLinkifier;

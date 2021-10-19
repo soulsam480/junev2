@@ -1,259 +1,174 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { CSSTransition } from 'react-transition-group';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { classNames } from 'src/utils/helpers';
-import AppInputTrigger from './InputTrigger';
-import { Result } from 'src/utils/types';
 import { useDebounceCallback } from 'src/utils/hooks';
-import { SearchUserResponse, searchUserWithFilters } from 'src/User/services/users';
+import { searchUserWithFilters } from 'src/User/services/users';
 import JButton from 'src/Lib/JButton';
+import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
+import JAvatar from 'src/Lib/JAvatar';
+import JIcon from 'src/Lib/JIcon';
+import { Post } from 'src/utils/types';
 
 interface Props {
   className?: string;
   value: string;
-  setValue(val: string): void;
+  setValue(content: string): void;
   placeholder?: string;
-  onPost: () => void;
+  onPost: (files: File[] | null) => void;
   isLoading: boolean;
+  post?: Post;
 }
 
-const AppPostEditor: React.FC<Props> = ({
-  className,
-  value,
-  setValue,
-  onPost,
-  isLoading,
-  ...rest
-}) => {
-  const [isSuggestor, setSuggestor] = useState(false);
-  const [suggestions, setSuggestions] = useState<SearchUserResponse[]>([]);
-  const [coords, setCoords] = useState<{
-    top: number;
-    left: number;
-    selection: number;
-  }>({
-    top: null as any,
-    left: null as any,
-    selection: null as any,
-  });
-  const [keySelection, setKeySelection] = useState<number>(null as any);
-  const [searchQuery, setSearchQuery] = useState('');
-  const endTrigger = useRef<() => void | undefined>();
-  const timeout = useRef<number>();
+interface PostAPI {
+  selectFile(): void;
+  removeFileFromAray(file: { url: string; name: string }): void;
+  isLoading: boolean;
+  imageUrls: { url: string; name: string }[];
+  post?: Post;
+}
 
-  function toggleSuggestor(metaInformation: Result) {
-    const { hookType, cursor } = metaInformation;
+const EditorContext = createContext<PostAPI>(null as any);
 
-    if (hookType === 'start') {
-      setCoords({
-        left: cursor.left,
-        top: cursor.top + 10,
-        selection: cursor.selectionStart,
-      });
+const useEditorContext = () => useContext(EditorContext);
 
-      setSuggestor(true);
-      setSuggestions([]);
-    }
+const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, post }) => {
+  const [files, setFiles] = useState<File[]>([]);
 
-    if (hookType === 'cancel') {
-      resetSuggestor();
-    }
+  function selectFile() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.click();
+
+    fileInput.addEventListener('change', () => {
+      if (!fileInput.files) return;
+
+      let filesFromInput = Array.from(!!fileInput.files ? fileInput.files : []);
+
+      filesFromInput = filesFromInput.length > 6 ? filesFromInput.slice(0, 5) : filesFromInput;
+
+      setFiles((o) => [...filesFromInput].concat(!!o.length ? [...o] : []));
+    });
   }
 
-  function resetSuggestor() {
-    setSuggestor(false);
-
-    setSearchQuery('');
-    setSuggestions([]);
-    setKeySelection(null as any);
-
-    timeout.current = setTimeout(() => {
-      setCoords({
-        left: null as any,
-        top: null as any,
-        selection: null as any,
-      });
-    }, 110);
-  }
-
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    if (!isSuggestor) return;
-    const { which } = event;
-
-    if (which === 40) {
-      event.preventDefault();
-
-      setKeySelection((keySelection + 1) % suggestions.length);
-    }
-
-    if (which === 38) {
-      event.preventDefault();
-
-      setKeySelection(keySelection > 0 ? keySelection - 1 : suggestions.length - 1);
-    }
-
-    if (which === 13) {
-      event.preventDefault();
-      insertUser(keySelection);
-    }
-
-    if (which === 27) {
-      event.preventDefault();
-
-      resetSuggestor();
-
-      if (!!endTrigger.current) {
-        endTrigger.current();
-      }
-    }
-  }
-
-  function insertUser(idx: number) {
-    const { selection } = coords;
-    const user = suggestions[idx];
-
-    if (!user) return;
-
-    const newText = `${value.slice(0, selection - 1)}@${user.username}${value.slice(
-      selection + user.username.length,
-      value.length,
-    )}`;
-
-    setValue(newText);
-
-    resetSuggestor();
-
-    if (!!endTrigger.current) {
-      endTrigger.current();
-    }
-  }
-
-  async function findUserByUsername() {
-    if (!isSuggestor) return;
-    if (!searchQuery) return setSuggestions([]);
+  async function findUserByUsername(query: string, callback: (data: SuggestionDataItem[]) => void) {
+    if (!query) return callback([]);
 
     try {
       const {
         data: { data },
-      } = await searchUserWithFilters({ username: searchQuery, limit: 5 });
+      } = await searchUserWithFilters({ username: query, limit: 5 });
 
-      setSuggestions([...data]);
+      return callback(data.map((el) => ({ display: el.username, id: el.id })));
     } catch (error) {
       console.log(error);
     }
   }
 
+  const imageUrls = useMemo(() => {
+    return files && files.map((file) => ({ url: URL.createObjectURL(file), name: file.name }));
+  }, [files]);
+
+  function removeFileFromAray(file: { url: string; name: string }) {
+    URL.revokeObjectURL(file.url);
+    setFiles((o) => (!o.length ? [] : o.filter((f) => f.name !== file.name)));
+  }
+
+  async function submitPost(files: File[]) {
+    onPost(files);
+
+    imageUrls.forEach((file) => URL.revokeObjectURL(file.url));
+    setFiles([]);
+  }
+
   const handleCtrlEnter = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
       if (!value) return;
-      const { which, ctrlKey } = e;
-      if (which === 13 && ctrlKey) {
+
+      const { key, ctrlKey } = e;
+
+      if (key === 'Enter' && ctrlKey) {
         e.preventDefault();
-        onPost();
+
+        submitPost(files);
       }
     },
-    [onPost],
+    [submitPost],
   );
 
   const debounced = useDebounceCallback(findUserByUsername, 300);
-
-  useEffect(() => {
-    debounced();
-  }, [searchQuery]);
-
-  useEffect(() => {
-    () => clearTimeout(timeout.current);
-  }, [timeout.current]);
-
   return (
-    <div className="j-rich" onKeyDown={handleKeyDown}>
-      <AppInputTrigger
-        trigger={{
-          keyCode: 50,
-          shiftKey: true,
-        }}
-        onStart={toggleSuggestor}
-        onCancel={toggleSuggestor}
-        onType={(meta) => setSearchQuery(meta.text || '')}
-        endTrigger={(trigger) => (endTrigger.current = trigger)}
-      >
-        <textarea
-          className={classNames([className || '', 'j-rich__editor'])}
+    <EditorContext.Provider value={{ selectFile, isLoading, imageUrls, removeFileFromAray, post }}>
+      <div className="j-rich">
+        <MentionsInput
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          onKeyUp={handleCtrlEnter}
-          {...rest}
-          autoFocus
-        ></textarea>
-      </AppInputTrigger>
-      <EditorToolbar onPost={onPost} disabled={!value || isLoading} isLoading={isLoading} />
-      <div className="j-menu z-1000">
-        <CSSTransition
-          in={isSuggestor}
-          timeout={{
-            enter: 100,
-            exit: 100,
+          className={classNames(['j-rich__editor'])}
+          style={{
+            '&multiLine': {
+              input: undefined,
+            },
           }}
-          classNames="j-menu"
-          unmountOnExit
+          onKeyDown={handleCtrlEnter}
         >
-          <div
-            className={classNames(['j-menu__list__parent origin-top-right'])}
-            style={{
-              top: coords.top,
-              left: coords.left,
-            }}
-          >
-            <div
-              tab-index="-1"
-              role="listbox"
-              aria-labelledby="assigned-to-label"
-              className={classNames(['j-menu__list'])}
-            >
-              {!!suggestions.length ? (
-                suggestions.map((el, idx) => (
-                  <div
-                    key={el.id}
-                    className={classNames([
-                      'j-menu__list-item',
-                      { 'bg-warm-gray-200': idx === keySelection },
-                    ])}
-                    onClick={() => insertUser(idx)}
-                  >
-                    {el.username}
-                  </div>
-                ))
-              ) : (
-                <div className="j-menu__list-item !cursor-default">search an user</div>
-              )}
-            </div>
-          </div>
-        </CSSTransition>
+          <Mention
+            displayTransform={(_, name) => `@${name}`}
+            trigger="@"
+            data={debounced}
+            markup="@__display__ "
+          />
+        </MentionsInput>
+
+        <EditorToolbar disabled={!value || isLoading} onPost={() => submitPost(files)} />
       </div>
-    </div>
+    </EditorContext.Provider>
   );
 };
 
 interface EditorToolbarProps {
-  onPost: () => void;
   disabled?: boolean;
-  isLoading: boolean;
+  onPost: () => void;
 }
 
-function EditorToolbar({ onPost, disabled, isLoading }: EditorToolbarProps) {
+const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled, onPost }) => {
+  const { selectFile, imageUrls, isLoading, removeFileFromAray } = useEditorContext();
+
   return (
     <div className="j-rich__toolbar">
-      <JButton icon="ion:file-tray-outline" size="16px" sm invert title="Upload image" />
-      <JButton
-        label="Post"
-        sm
-        invert
-        title="Create post"
-        onClick={onPost}
-        disabled={disabled}
-        loading={isLoading}
-      />
+      <div className="flex items-center space-x-3">
+        {!!imageUrls && imageUrls?.length
+          ? imageUrls.map((file) => (
+              <div className="relative" key={file.name}>
+                <span
+                  className="absolute -top-2 -right-2 z-100 cursor-pointer"
+                  onClick={() => removeFileFromAray(file)}
+                >
+                  <JIcon
+                    icon="ion:close-circle"
+                    size="18px"
+                    className="text-red-700 bg-white rounded-full"
+                  />
+                </span>
+
+                <JAvatar src={file.url} key={file.name} size="32px" contentClass="rounded-md" />
+              </div>
+            ))
+          : null}
+      </div>{' '}
+      <div className="flex items-center space-x-1">
+        <JButton icon="ion:image" size="16px" sm invert title="Upload image" onClick={selectFile} />
+        <JButton
+          label="Post"
+          sm
+          invert
+          title="Create post"
+          onClick={onPost}
+          disabled={disabled}
+          loading={isLoading}
+        />
+      </div>
     </div>
   );
-}
+};
 
 export default AppPostEditor;
