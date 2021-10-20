@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { parseEnv } from '../utils/helpers';
+import { parseEnv } from 'src/utils/helpers';
 
 export async function createConnection() {
   try {
