@@ -59,6 +59,8 @@ export async function createCommentOnPost(id: string, comment: DocumentDefinitio
         { $push: { commented_posts: getObjectId(id) } },
       )
       .exec();
+
+    return 'comment created';
   } catch (error) {
     Promise.reject(error);
   }
