@@ -24,6 +24,7 @@ const PostDetail: React.FC<Props> = () => {
     if (!isPost) return false;
 
     const isEdit = new URLSearchParams(search).get('action') === 'edit';
+
     return isEdit;
   }, [isPost, search]);
 

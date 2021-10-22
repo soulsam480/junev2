@@ -10,10 +10,11 @@ export function auth(req: Request, res: Response, next: NextFunction) {
 
   if (!token.startsWith('Bearer ')) return res.status(401).send(createError('Unauthorized !'));
 
-  token = token.split('Bearer ')[1];
-
   try {
+    token = token.split('Bearer ')[1];
+
     const { userId } = <{ userId: string }>verify(token, parseEnv<string>('ACCESS_TOKEN_SECRET'));
+
     req.userId = userId;
     return next();
   } catch {
