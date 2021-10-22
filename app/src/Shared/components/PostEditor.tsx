@@ -24,6 +24,7 @@ interface PostAPI {
   isLoading: boolean;
   imageUrls: { url: string; name: string }[];
   post?: Post;
+  contentLimitMeta: { length: number; exceeded: boolean };
 }
 
 const EditorContext = createContext<PostAPI>(null as any);
@@ -32,6 +33,11 @@ const useEditorContext = () => useContext(EditorContext);
 
 const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, post }) => {
   const [files, setFiles] = useState<File[]>([]);
+
+  const contentLimitMeta = useMemo(
+    () => ({ length: value.length, exceeded: value.length > 50 }),
+    [value],
+  );
 
   function selectFile() {
     const fileInput = document.createElement('input');
@@ -98,12 +104,14 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, po
 
   const debounced = useDebounceCallback(findUserByUsername, 300);
   return (
-    <EditorContext.Provider value={{ selectFile, isLoading, imageUrls, removeFileFromAray, post }}>
+    <EditorContext.Provider
+      value={{ selectFile, isLoading, imageUrls, removeFileFromAray, post, contentLimitMeta }}
+    >
       <div className="j-rich">
         <MentionsInput
+          className={classNames(['j-rich__editor'])}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className={classNames(['j-rich__editor'])}
           style={{
             '&multiLine': {
               input: undefined,
@@ -131,7 +139,8 @@ interface EditorToolbarProps {
 }
 
 const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled, onPost }) => {
-  const { selectFile, imageUrls, isLoading, removeFileFromAray } = useEditorContext();
+  const { selectFile, imageUrls, isLoading, removeFileFromAray, contentLimitMeta } =
+    useEditorContext();
 
   return (
     <div className="j-rich__toolbar">
