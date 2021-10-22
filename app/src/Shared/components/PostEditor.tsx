@@ -8,6 +8,7 @@ import JAvatar from 'src/Lib/JAvatar';
 import JIcon from 'src/Lib/JIcon';
 import { Post } from 'src/utils/types';
 
+const MAX_LENGTH = 200;
 interface Props {
   className?: string;
   value: string;
@@ -24,7 +25,7 @@ interface PostAPI {
   isLoading: boolean;
   imageUrls: { url: string; name: string }[];
   post?: Post;
-  contentLimitMeta: { length: number; exceeded: boolean };
+  contentLimitMeta: { exceeded: boolean; pct: number; c: number; left: number };
 }
 
 const EditorContext = createContext<PostAPI>(null as any);
@@ -34,10 +35,24 @@ const useEditorContext = () => useContext(EditorContext);
 const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, post }) => {
   const [files, setFiles] = useState<File[]>([]);
 
-  const contentLimitMeta = useMemo(
-    () => ({ length: value.length, exceeded: value.length > 50 }),
-    [value],
-  );
+  const contentLimitMeta = useMemo(() => {
+    const c = 13 * 2 * Math.PI;
+
+    let width = value.length;
+
+    if (value.length > MAX_LENGTH) {
+      width = MAX_LENGTH;
+    }
+
+    const pct = c - c * ((MAX_LENGTH - width) / MAX_LENGTH);
+
+    return {
+      left: MAX_LENGTH - value.length,
+      exceeded: value.length > MAX_LENGTH,
+      pct,
+      c,
+    };
+  }, [value]);
 
   function selectFile() {
     const fileInput = document.createElement('input');
@@ -89,7 +104,7 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, po
 
   const handleCtrlEnter = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-      if (!value) return;
+      if (contentLimitMeta.exceeded || !value || isLoading) return;
 
       const { key, ctrlKey } = e;
 
@@ -127,7 +142,10 @@ const AppPostEditor: React.FC<Props> = ({ value, setValue, onPost, isLoading, po
           />
         </MentionsInput>
 
-        <EditorToolbar disabled={!value || isLoading} onPost={() => submitPost(files)} />
+        <EditorToolbar
+          disabled={contentLimitMeta.exceeded || !value || isLoading}
+          onPost={() => submitPost(files)}
+        />
       </div>
     </EditorContext.Provider>
   );
@@ -165,6 +183,26 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({ disabled, onPost }) => {
           : null}
       </div>{' '}
       <div className="flex items-center space-x-1">
+        <div className="j-rich__indicator">
+          <svg
+            width="32"
+            height="32"
+            className={contentLimitMeta.left <= 20 ? 'text-red-500' : 'text-lime-300'}
+          >
+            <circle
+              r="13"
+              cy="16"
+              cx="16"
+              strokeWidth="3"
+              fill="transparent"
+              strokeDashoffset={contentLimitMeta.pct}
+              strokeDasharray={`${contentLimitMeta.c} ${contentLimitMeta.c}`}
+            />
+          </svg>
+          <span className={contentLimitMeta.left <= 20 ? 'text-red-500' : ''}>
+            {contentLimitMeta.left}
+          </span>
+        </div>
         <JButton icon="ion:image" size="16px" sm invert title="Upload image" onClick={selectFile} />
         <JButton
           label="Post"

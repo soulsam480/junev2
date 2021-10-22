@@ -151,9 +151,9 @@
 
   &__editor {
     textarea {
-      @apply outline-none ease-in-out transition-all border-none w-full;
+      @apply outline-none border-none overflow-x-hidden;
       @apply rounded-md focus:(ring-transparent ring-0) p-3 bg-warm-gray-200;
-      @apply text-black dark:text-white min-h-52 resize-none relative;
+      @apply text-black min-h-52 w-full resize-none;
 
       &::-webkit-scrollbar {
         width: 3px;
@@ -172,13 +172,14 @@
     &__highlighter {
       visibility: hidden;
       height: 0;
+      @apply max-w-full;
     }
 
     &__suggestions {
       margin-top: 30px !important;
 
       &__list {
-        @apply min-w-32 rounded-md shadow-md p-1;
+        @apply rounded-md shadow-md p-1;
         @apply bg-warm-gray-300 border-2 border-warm-gray-300;
       }
 
@@ -196,6 +197,21 @@
   &__toolbar {
     @apply absolute bottom-0 left-0 right-0 flex items-center justify-between;
     @apply p-1 bg-warm-gray-300 rounded-b-md;
+  }
+
+  &__indicator {
+    @apply relative;
+    svg circle {
+      @apply stroke-current;
+      transition: 0.35s stroke-dashoffset;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    span {
+      @apply inset-0 absolute transform flex justify-center items-center font-medium;
+      font-size: 10px;
+    }
   }
 }
 
