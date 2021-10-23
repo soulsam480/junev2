@@ -63,7 +63,9 @@ async function main() {
     controllers: [postController, userController],
   });
 
-  app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
+  return app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
 }
 
 main();
+
+export { main };
