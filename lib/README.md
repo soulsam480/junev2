@@ -1,6 +1,7 @@
-## Furikaeru component library
+## June component library
 
 > A minimal component lib for personal projects
+
 ![npm](https://img.shields.io/npm/v/@soulsam480/june) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@soulsam480/june) ![GitHub](https://img.shields.io/github/license/soulsam480/@soulsam480/june) ![npm](https://img.shields.io/npm/dm/@soulsam480/june)
 
 #### Features
@@ -17,6 +18,7 @@
 
 #### Usage
 > please don't skip following steps
+
 __install__
 
 ```
