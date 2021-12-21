@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- docs: update readme [`b58610b`](https://github.com/soulsam480/junev2/commit/b58610b7d3bab1ae95ca862587a9166110791771)
+- chore: add dist to .gitignore [`7c0e2dd`](https://github.com/soulsam480/junev2/commit/7c0e2ddf918f4b3e2d7746882caf358449681c55)
+- chore: update changelog [`7d9098e`](https://github.com/soulsam480/junev2/commit/7d9098ed9c9c8e1b15b411252eee1f62379a208b)
 - chore: update changelog [`0b05c2d`](https://github.com/soulsam480/junev2/commit/0b05c2dcb2a380e398f6e9bcfc930e8ddd20782e)
 - ci: add changelog script [`f1744bc`](https://github.com/soulsam480/junev2/commit/f1744bc962b5ae3d3bae7a9c98f6d3597612483d)
 - ci: better changelogs [`62301e6`](https://github.com/soulsam480/junev2/commit/62301e6ada708c54105349bf1914abc2d094ea92)
