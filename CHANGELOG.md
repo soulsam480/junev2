@@ -36,6 +36,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- chore: update gitignore [`84d52bf`](https://github.com/soulsam480/junev2/commit/84d52bf51e0879b16bfe7256ce706968d9889e66)
+- chore: remove node_modules from repo [`7b5e919`](https://github.com/soulsam480/junev2/commit/7b5e9191f4bb1269fdf7f1fe3ae1414a61d0a057)
+- release: 0.1.1 [`9181368`](https://github.com/soulsam480/junev2/commit/9181368ce2f0384b1e3776c87de9a5ebed662f53)
+- chore: update changelog [`6875c7a`](https://github.com/soulsam480/junev2/commit/6875c7a9d0bf0a3e64a23359e74370f8f5feb49a)
 - docs: update readme [`b58610b`](https://github.com/soulsam480/junev2/commit/b58610b7d3bab1ae95ca862587a9166110791771)
 - chore: add dist to .gitignore [`7c0e2dd`](https://github.com/soulsam480/junev2/commit/7c0e2ddf918f4b3e2d7746882caf358449681c55)
 - chore: update changelog [`7d9098e`](https://github.com/soulsam480/junev2/commit/7d9098ed9c9c8e1b15b411252eee1f62379a208b)
