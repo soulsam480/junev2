@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Merged
 
+- feat: setup june component lib [`#26`](https://github.com/soulsam480/junev2/pull/26)
 - chore: migrate to pnpm [`#23`](https://github.com/soulsam480/junev2/pull/23)
 - chore: upgrade deps and fix breaking changes [`#22`](https://github.com/soulsam480/junev2/pull/22)
 - fix(app): show user profile image in comments [`#21`](https://github.com/soulsam480/junev2/pull/21)
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Commits
 
+- chore: update changelog [`0b05c2d`](https://github.com/soulsam480/junev2/commit/0b05c2dcb2a380e398f6e9bcfc930e8ddd20782e)
 - ci: add changelog script [`f1744bc`](https://github.com/soulsam480/junev2/commit/f1744bc962b5ae3d3bae7a9c98f6d3597612483d)
 - ci: better changelogs [`62301e6`](https://github.com/soulsam480/junev2/commit/62301e6ada708c54105349bf1914abc2d094ea92)
 - chore: update changelog [`3936c6e`](https://github.com/soulsam480/junev2/commit/3936c6ebaabc74a42adb5af8da443c1d68930b18)
