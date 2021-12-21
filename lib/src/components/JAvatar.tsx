@@ -1,6 +1,6 @@
 import React from 'react';
-import { classNames } from 'src/utils/helpers';
-import JIcon from 'src/Lib/JIcon';
+import classNames from 'clsx';
+import JIcon from './JIcon';
 
 interface Props {
   /**
